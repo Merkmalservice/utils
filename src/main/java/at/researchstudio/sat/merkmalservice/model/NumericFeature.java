@@ -8,6 +8,12 @@ public class NumericFeature extends Feature {
         featureType = new FeatureType(quantityKind, unit);
     }
 
+    public NumericFeature(String name) {
+        super(name);
+        featureType = new FeatureType("http://qudt.org/vocab/quantitykind/Dimensionless",
+                        "http://qudt.org/vocab/unit/UNITLESS");
+    }
+
     private class FeatureType {
         private final String type = "NUMERIC";
         private final String quantityKind;
