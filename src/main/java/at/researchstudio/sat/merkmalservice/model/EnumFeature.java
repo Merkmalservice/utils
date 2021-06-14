@@ -70,11 +70,11 @@ public class EnumFeature extends Feature {
     }
 
     public static class MEBooleanValue extends OptionValue {
-        private Boolean booleanValue;
+        private String name;
 
-        public MEBooleanValue(Boolean booleanValue, String description) {
+        public MEBooleanValue(String name, String description) {
             super(description);
-            this.booleanValue = booleanValue;
+            this.name = name;
         }
     }
 }
