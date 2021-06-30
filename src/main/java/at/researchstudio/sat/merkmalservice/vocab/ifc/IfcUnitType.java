@@ -1,5 +1,7 @@
 package at.researchstudio.sat.merkmalservice.vocab.ifc;
 
+import java.util.Objects;
+
 public enum IfcUnitType {
     LENGTHUNIT("LENGTHUNIT"),
     AREAUNIT("AREAUNIT"),
@@ -28,7 +30,18 @@ public enum IfcUnitType {
         this.typeUris = typeUris;
     }
 
-    public static IfcUnitType fromString(String unitType) throws IllegalArgumentException {
+    /**
+     * retrieves corresponding enum value for the given unitType
+     *
+     * @param unitType non null
+     * @return corresponding Enum Value
+     * @throws IllegalArgumentException if no enum value is found
+     * @throws NullPointerException if unitType was null
+     */
+    public static IfcUnitType fromString(String unitType)
+            throws IllegalArgumentException, NullPointerException {
+        Objects.requireNonNull(unitType, "No enum IfcUnitType for nullvalue");
+
         for (IfcUnitType type : IfcUnitType.values()) {
             for (String enumUri : type.typeUris) {
                 if (unitType.contains("#")) {
@@ -42,6 +55,6 @@ public enum IfcUnitType {
                 }
             }
         }
-        throw new IllegalArgumentException("No enum constant for value: " + unitType);
+        throw new IllegalArgumentException("No enum constant for value: '" + unitType + "'");
     }
 }

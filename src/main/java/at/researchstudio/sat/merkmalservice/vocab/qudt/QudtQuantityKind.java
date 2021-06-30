@@ -1,5 +1,7 @@
 package at.researchstudio.sat.merkmalservice.vocab.qudt;
 
+import java.util.Objects;
+
 public abstract class QudtQuantityKind {
     public static final String AREA = "http://qudt.org/vocab/quantitykind/Area";
     public static final String ANGLE = "http://qudt.org/vocab/quantitykind/Angle";
@@ -21,9 +23,12 @@ public abstract class QudtQuantityKind {
      * @param propertyName
      * @throws IllegalArgumentException if there is no matching QudtUnit String for the given prefix
      *     and measure
+     * @throws NullPointerException if the propertyName is null
      * @return Matching QudtQuantityKind String
      */
-    public static String extractQuantityKindFromPropertyName(String propertyName) {
+    public static String extractQuantityKindFromPropertyName(String propertyName)
+            throws IllegalArgumentException, NullPointerException {
+        Objects.requireNonNull(propertyName, "No QudtQuantityKind for nullvalue");
         // TODO: This is really simple and probably not going to be too useful,
         // but it will do the trick
         // for now

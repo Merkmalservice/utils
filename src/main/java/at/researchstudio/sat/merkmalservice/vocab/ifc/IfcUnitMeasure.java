@@ -1,5 +1,7 @@
 package at.researchstudio.sat.merkmalservice.vocab.ifc;
 
+import java.util.Objects;
+
 public enum IfcUnitMeasure {
     METRE("METRE"),
     SQUARE_METRE("SQUARE_METRE"),
@@ -29,7 +31,18 @@ public enum IfcUnitMeasure {
         this.measureUris = measureUris;
     }
 
-    public static IfcUnitMeasure fromString(String unitMeasure) throws IllegalArgumentException {
+    /**
+     * retrieves corresponding enum value for the given unitMeasure
+     *
+     * @param unitMeasure non null
+     * @return corresponding Enum Value
+     * @throws IllegalArgumentException if no enum value is found
+     * @throws NullPointerException if unitMeasure was null
+     */
+    public static IfcUnitMeasure fromString(String unitMeasure)
+            throws IllegalArgumentException, NullPointerException {
+        Objects.requireNonNull(unitMeasure, "No enum IfcUnitMeasure for nullvalue");
+
         for (IfcUnitMeasure type : IfcUnitMeasure.values()) {
             for (String enumUri : type.measureUris) {
                 if (unitMeasure.contains("#")) {
@@ -44,6 +57,6 @@ public enum IfcUnitMeasure {
             }
         }
         throw new IllegalArgumentException(
-                "No enum IfcUnitMeasure constant for value: " + unitMeasure);
+                "No enum IfcUnitMeasure constant for value: '" + unitMeasure + "'");
     }
 }

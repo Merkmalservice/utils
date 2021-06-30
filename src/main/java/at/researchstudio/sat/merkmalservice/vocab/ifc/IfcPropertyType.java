@@ -1,5 +1,7 @@
 package at.researchstudio.sat.merkmalservice.vocab.ifc;
 
+import java.util.Objects;
+
 public enum IfcPropertyType {
     TEXT("IfcText", "IFCTEXT"),
     LABEL("IfcLabel", "IFCLABEL"),
@@ -46,7 +48,18 @@ public enum IfcPropertyType {
         this(false, typeUris);
     }
 
-    public static IfcPropertyType fromString(String propertyType) throws IllegalArgumentException {
+    /**
+     * retrieves corresponding enum value for the given propertyType
+     *
+     * @param propertyType non null
+     * @return corresponding Enum Value
+     * @throws IllegalArgumentException if no enum value is found
+     * @throws NullPointerException if propertyType was null
+     */
+    public static IfcPropertyType fromString(String propertyType)
+            throws IllegalArgumentException, NullPointerException {
+        Objects.requireNonNull(propertyType, "No enum IfcPropertyType for nullvalue");
+
         for (IfcPropertyType type : IfcPropertyType.values()) {
             for (String enumUri : type.typeUris) {
                 if (propertyType.contains("#")) {
@@ -61,13 +74,15 @@ public enum IfcPropertyType {
             }
         }
         throw new IllegalArgumentException(
-                "No IfcPropertyType enum constant for value: " + propertyType);
+                "No IfcPropertyType enum constant for value: '" + propertyType + "'");
     }
 
+    /** @return true if the PropertyType is considered to be a measurement type */
     public boolean isMeasureType() {
         return measureType;
     }
 
+    /** @return return the correct IfcUnitType, null if there is no corresponding unit */
     public IfcUnitType getUnitType() {
         switch (this) {
             case LENGTH_MEASURE:

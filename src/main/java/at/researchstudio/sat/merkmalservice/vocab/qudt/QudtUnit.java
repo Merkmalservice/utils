@@ -2,6 +2,7 @@ package at.researchstudio.sat.merkmalservice.vocab.qudt;
 
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasure;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasurePrefix;
+import java.util.Objects;
 
 public abstract class QudtUnit {
     public static final String METRE = "http://qudt.org/vocab/unit/M";
@@ -27,14 +28,20 @@ public abstract class QudtUnit {
     /**
      * Extracts the appropriate QudtUnit String for the given prefix and measure
      *
-     * @param prefix IfcUnitMeasurePrefix
+     * @param prefix IfcUnitMeasurePrefix if null then the Prefix will be set to NONE
      * @param measure IfcUnitMeasure
      * @throws IllegalArgumentException if there is no matching QudtUnit String for the given prefix
      *     and measure
+     * @throws NullPointerException if the measure is null
      * @return Matching QudtUnit String
      */
     public static String extractUnitFromPrefixAndMeasure(
-            IfcUnitMeasurePrefix prefix, IfcUnitMeasure measure) throws IllegalArgumentException {
+            IfcUnitMeasurePrefix prefix, IfcUnitMeasure measure)
+            throws IllegalArgumentException, NullPointerException {
+        Objects.requireNonNull(measure, "No QudtUnit for null value in measure");
+
+        prefix = Objects.requireNonNullElse(prefix, IfcUnitMeasurePrefix.NONE);
+
         switch (measure) {
             case METRE:
                 switch (prefix) {
