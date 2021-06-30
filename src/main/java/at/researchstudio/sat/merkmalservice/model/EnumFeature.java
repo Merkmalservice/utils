@@ -11,8 +11,11 @@ public class EnumFeature extends Feature {
         this.featureType = new FeatureType(options, allowMultiple);
     }
 
-    public EnumFeature(String name, ArrayList<FeatureGroup> featureGroups, List<OptionValue> options,
-                    Boolean allowMultiple) {
+    public EnumFeature(
+            String name,
+            ArrayList<FeatureGroup> featureGroups,
+            List<OptionValue> options,
+            Boolean allowMultiple) {
         super(name, featureGroups);
         this.featureType = new FeatureType(options, allowMultiple);
     }
@@ -28,7 +31,7 @@ public class EnumFeature extends Feature {
         }
     }
 
-    public static abstract class OptionValue {
+    public abstract static class OptionValue {
         private String value;
         private String description;
 
@@ -78,4 +81,3 @@ public class EnumFeature extends Feature {
         }
     }
 }
-

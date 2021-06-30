@@ -10,20 +10,25 @@ public class NumericFeature extends Feature {
         featureType = new FeatureType(quantityKind, unit);
     }
 
-    public NumericFeature(String name, ArrayList<FeatureGroup> featureGroups, String quantityKind, String unit) {
+    public NumericFeature(
+            String name, ArrayList<FeatureGroup> featureGroups, String quantityKind, String unit) {
         super(name, featureGroups);
         featureType = new FeatureType(quantityKind, unit);
     }
 
     public NumericFeature(String name) {
         super(name);
-        featureType = new FeatureType("http://qudt.org/vocab/quantitykind/Dimensionless",
+        featureType =
+                new FeatureType(
+                        "http://qudt.org/vocab/quantitykind/Dimensionless",
                         "http://qudt.org/vocab/unit/UNITLESS");
     }
 
     public NumericFeature(String name, ArrayList<FeatureGroup> featureGroups) {
         super(name, featureGroups);
-        featureType = new FeatureType("http://qudt.org/vocab/quantitykind/Dimensionless",
+        featureType =
+                new FeatureType(
+                        "http://qudt.org/vocab/quantitykind/Dimensionless",
                         "http://qudt.org/vocab/unit/UNITLESS");
     }
 

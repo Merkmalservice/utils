@@ -16,10 +16,11 @@ public abstract class QudtQuantityKind {
     /**
      * Extracts the appropriate QudtQuantityKind String for the given propertyName
      *
-     * Simple check for Keywords such as length/height etc.
+     * <p>Simple check for Keywords such as length/height etc.
      *
      * @param propertyName
-     * @throws IllegalArgumentException if there is no matching QudtUnit String for the given prefix and measure
+     * @throws IllegalArgumentException if there is no matching QudtUnit String for the given prefix
+     *     and measure
      * @return Matching QudtQuantityKind String
      */
     public static String extractQuantityKindFromPropertyName(String propertyName) {

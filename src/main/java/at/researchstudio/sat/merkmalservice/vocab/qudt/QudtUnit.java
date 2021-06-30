@@ -26,12 +26,15 @@ public abstract class QudtUnit {
 
     /**
      * Extracts the appropriate QudtUnit String for the given prefix and measure
+     *
      * @param prefix IfcUnitMeasurePrefix
      * @param measure IfcUnitMeasure
-     * @throws IllegalArgumentException if there is no matching QudtUnit String for the given prefix and measure
+     * @throws IllegalArgumentException if there is no matching QudtUnit String for the given prefix
+     *     and measure
      * @return Matching QudtUnit String
      */
-    public static String extractUnitFromPrefixAndMeasure(IfcUnitMeasurePrefix prefix, IfcUnitMeasure measure) throws IllegalArgumentException {
+    public static String extractUnitFromPrefixAndMeasure(
+            IfcUnitMeasurePrefix prefix, IfcUnitMeasure measure) throws IllegalArgumentException {
         switch (measure) {
             case METRE:
                 switch (prefix) {
@@ -101,6 +104,6 @@ public abstract class QudtUnit {
         }
 
         throw new IllegalArgumentException(
-                "No QudtUnit for prefix<" + prefix + "> and measure<"+ measure +">");
+                "No QudtUnit for prefix<" + prefix + "> and measure<" + measure + ">");
     }
 }
