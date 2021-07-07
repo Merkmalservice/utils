@@ -7,8 +7,8 @@ import java.util.Objects;
 public abstract class QudtUnit {
     public static final String METRE = "http://qudt.org/vocab/unit/M";
     public static final String CENTIMETRE = "http://qudt.org/vocab/unit/CentiM";
+    public static final String MILLIMITRE = "<http://qudt.org/vocab/unit/MilliM>";
     public static final String DECIMETRE = "http://qudt.org/vocab/unit/DeciM";
-
     public static final String SQUARE_METRE = "http://qudt.org/vocab/unit/M2";
     public static final String CUBIC_METRE = "http://qudt.org/vocab/unit/M3";
     public static final String GRAM = "http://qudt.org/vocab/unit/GM";
@@ -23,6 +23,11 @@ public abstract class QudtUnit {
     public static final String LUMEN = "http://qudt.org/vocab/unit/LM";
     public static final String CANDELA = "http://qudt.org/vocab/unit/CD";
     public static final String PASCAL = "http://qudt.org/vocab/unit/PA";
+    public static final String WATTPERSQUARKEMETERPERKELVIN =
+            "<http://qudt.org/vocab/unit/W-PER-M2-K>";
+    public static final String NEWTONPERSQUAREMILLIMETER =
+            "<http://qudt.org/vocab/unit/N-PER-MilliM2>";
+    public static final String KILOGRAMPERCUBICMETER = "<http://qudt.org/vocab/unit/KiloGM-PER-M3>";
     public static final String UNITLESS = "http://qudt.org/vocab/unit/UNITLESS";
 
     /**
@@ -30,18 +35,16 @@ public abstract class QudtUnit {
      *
      * @param prefix IfcUnitMeasurePrefix if null then the Prefix will be set to NONE
      * @param measure IfcUnitMeasure
+     * @return Matching QudtUnit String
      * @throws IllegalArgumentException if there is no matching QudtUnit String for the given prefix
      *     and measure
      * @throws NullPointerException if the measure is null
-     * @return Matching QudtUnit String
      */
     public static String extractUnitFromPrefixAndMeasure(
             IfcUnitMeasurePrefix prefix, IfcUnitMeasure measure)
             throws IllegalArgumentException, NullPointerException {
         Objects.requireNonNull(measure, "No QudtUnit for null value in measure");
-
         prefix = Objects.requireNonNullElse(prefix, IfcUnitMeasurePrefix.NONE);
-
         switch (measure) {
             case METRE:
                 switch (prefix) {
@@ -109,7 +112,6 @@ public abstract class QudtUnit {
                     return PASCAL;
                 }
         }
-
         throw new IllegalArgumentException(
                 "No QudtUnit for prefix<" + prefix + "> and measure<" + measure + ">");
     }

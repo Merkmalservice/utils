@@ -13,6 +13,10 @@ public abstract class QudtQuantityKind {
     public static final String DIAMETER = "http://qudt.org/vocab/quantitykind/Diameter";
     public static final String DEPTH = "http://qudt.org/vocab/quantitykind/Depth";
     public static final String THICKNESS = "http://qudt.org/vocab/quantitykind/Thickness";
+    public static final String THERMALCONDUCTIVITY =
+            "<http://qudt.org/vocab/quantitykind/ThermalConductivity>";
+    public static final String FORCEPERAREA = "<http://qudt.org/vocab/quantitykind/ForcePerArea>";
+    public static final String DENSITY = "<http://qudt.org/vocab/quantitykind/Density>";
     public static final String DIMENSIONLESS = "http://qudt.org/vocab/quantitykind/Dimensionless";
 
     /**
@@ -21,10 +25,10 @@ public abstract class QudtQuantityKind {
      * <p>Simple check for Keywords such as length/height etc.
      *
      * @param propertyName
+     * @return Matching QudtQuantityKind String
      * @throws IllegalArgumentException if there is no matching QudtUnit String for the given prefix
      *     and measure
      * @throws NullPointerException if the propertyName is null
-     * @return Matching QudtQuantityKind String
      */
     public static String extractQuantityKindFromPropertyName(String propertyName)
             throws IllegalArgumentException, NullPointerException {
@@ -33,7 +37,6 @@ public abstract class QudtQuantityKind {
         // but it will do the trick
         // for now
         String lowerCaseName = propertyName.toLowerCase();
-
         if (lowerCaseName.contains("höhe") || lowerCaseName.contains("height")) {
             return HEIGHT;
         }
@@ -64,7 +67,6 @@ public abstract class QudtQuantityKind {
         if (lowerCaseName.contains("dicke") || lowerCaseName.contains("stärke")) {
             return THICKNESS;
         }
-
         throw new IllegalArgumentException(
                 "No QudtQuantityKind found for propertyName '" + propertyName + "'");
     }
