@@ -14,9 +14,9 @@ public abstract class QudtQuantityKind {
     public static final String DEPTH = "http://qudt.org/vocab/quantitykind/Depth";
     public static final String THICKNESS = "http://qudt.org/vocab/quantitykind/Thickness";
     public static final String THERMALCONDUCTIVITY =
-            "<http://qudt.org/vocab/quantitykind/ThermalConductivity>";
-    public static final String FORCEPERAREA = "<http://qudt.org/vocab/quantitykind/ForcePerArea>";
-    public static final String DENSITY = "<http://qudt.org/vocab/quantitykind/Density>";
+            "http://qudt.org/vocab/quantitykind/ThermalConductivity";
+    public static final String FORCEPERAREA = "http://qudt.org/vocab/quantitykind/ForcePerArea";
+    public static final String DENSITY = "http://qudt.org/vocab/quantitykind/Density";
     public static final String DIMENSIONLESS = "http://qudt.org/vocab/quantitykind/Dimensionless";
 
     /**
