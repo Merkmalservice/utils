@@ -1,5 +1,7 @@
 package at.researchstudio.sat.merkmalservice.model;
 
+import at.researchstudio.sat.merkmalservice.vocab.qudt.QudtQuantityKind;
+import at.researchstudio.sat.merkmalservice.vocab.qudt.QudtUnit;
 import java.util.ArrayList;
 
 public class NumericFeature extends Feature {
@@ -18,18 +20,12 @@ public class NumericFeature extends Feature {
 
     public NumericFeature(String name) {
         super(name);
-        featureType =
-                new FeatureType(
-                        "http://qudt.org/vocab/quantitykind/Dimensionless",
-                        "http://qudt.org/vocab/unit/UNITLESS");
+        featureType = new FeatureType(QudtQuantityKind.DIMENSIONLESS, QudtUnit.UNITLESS);
     }
 
     public NumericFeature(String name, ArrayList<FeatureGroup> featureGroups) {
         super(name, featureGroups);
-        featureType =
-                new FeatureType(
-                        "http://qudt.org/vocab/quantitykind/Dimensionless",
-                        "http://qudt.org/vocab/unit/UNITLESS");
+        featureType = new FeatureType(QudtQuantityKind.DIMENSIONLESS, QudtUnit.UNITLESS);
     }
 
     private class FeatureType {

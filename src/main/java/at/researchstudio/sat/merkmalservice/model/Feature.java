@@ -1,6 +1,7 @@
 package at.researchstudio.sat.merkmalservice.model;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 public abstract class Feature {
     private final String name;
@@ -37,6 +38,20 @@ public abstract class Feature {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setDescriptionFromUniqueValues(Set<String> uniqueValues) {
+        setDescriptionFromUniqueValues(uniqueValues, "### Extracted Values:\n- ", "\n- ", null);
+    }
+
+    public void setDescriptionFromUniqueValues(
+            Set<String> uniqueValues, String prefix, String delimiter, String postfix) {
+        if (uniqueValues != null && uniqueValues.size() > 0) {
+            this.description =
+                    prefix
+                            + String.join(delimiter, uniqueValues)
+                            + ((postfix == null ? "" : postfix));
+        }
     }
 
     public ArrayList<FeatureGroup> getFeatureGroups() {
