@@ -1,12 +1,15 @@
 package at.researchstudio.sat.merkmalservice.model;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Set;
 
 public abstract class Feature {
     private final String name;
     private String description;
     private ArrayList<FeatureGroup> featureGroups;
+
+    private transient Set<String> uniqueValues;
 
     public Feature(String name) {
         this.name = name;
@@ -26,6 +29,14 @@ public abstract class Feature {
         this.name = name;
         this.description = description;
         this.featureGroups = featureGroups;
+    }
+
+    public Set<String> getUniqueValues() {
+        return uniqueValues;
+    }
+
+    public void setUniqueValues(Set<String> uniqueValues) {
+        this.uniqueValues = uniqueValues;
     }
 
     public String getName() {
@@ -60,5 +71,20 @@ public abstract class Feature {
 
     public void setFeatureGroups(ArrayList<FeatureGroup> featureGroups) {
         this.featureGroups = featureGroups;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Feature feature = (Feature) o;
+        return name.equals(feature.name)
+                && Objects.equals(description, feature.description)
+                && Objects.equals(featureGroups, feature.featureGroups);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, description, featureGroups);
     }
 }

@@ -28,6 +28,14 @@ public class NumericFeature extends Feature {
         featureType = new FeatureType(QudtQuantityKind.DIMENSIONLESS, QudtUnit.UNITLESS);
     }
 
+    public String getQuantityKind() {
+        return featureType.quantityKind;
+    }
+
+    public String getUnit() {
+        return featureType.unit;
+    }
+
     private class FeatureType {
         private final String type = "NUMERIC";
         private final String quantityKind;

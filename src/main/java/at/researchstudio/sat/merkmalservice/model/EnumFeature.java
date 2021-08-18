@@ -20,6 +20,14 @@ public class EnumFeature extends Feature {
         this.featureType = new FeatureType(options, allowMultiple);
     }
 
+    public FeatureType getFeatureType() {
+        return featureType;
+    }
+
+    public List<OptionValue> getOptions() {
+        return featureType.options;
+    }
+
     private class FeatureType {
         private final String type = "ENUMERATION";
         private final List<OptionValue> options;
@@ -32,12 +40,20 @@ public class EnumFeature extends Feature {
     }
 
     public abstract static class OptionValue {
-        private String value;
+        private transient String value;
         private String description;
 
         public OptionValue(String value, String description) {
             this.value = value;
             this.description = description;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public String getDescription() {
+            return description;
         }
 
         public OptionValue(String description) {
@@ -49,8 +65,12 @@ public class EnumFeature extends Feature {
         private String stringValue;
 
         public MEStringValue(String stringValue, String description) {
-            super(description);
+            super(stringValue, description);
             this.stringValue = stringValue;
+        }
+
+        public String getStringValue() {
+            return stringValue;
         }
     }
 
@@ -58,8 +78,12 @@ public class EnumFeature extends Feature {
         private Integer integerValue;
 
         public MEIntegerValue(Integer integerValue, String description) {
-            super(description);
+            super(String.valueOf(integerValue), description);
             this.integerValue = integerValue;
+        }
+
+        public Integer getIntegerValue() {
+            return integerValue;
         }
     }
 
@@ -67,8 +91,12 @@ public class EnumFeature extends Feature {
         private Float floatValue;
 
         public MEFloatValue(Float floatValue, String description) {
-            super(description);
+            super(String.valueOf(floatValue), description);
             this.floatValue = floatValue;
+        }
+
+        public Float getFloatValue() {
+            return floatValue;
         }
     }
 
@@ -76,8 +104,12 @@ public class EnumFeature extends Feature {
         private String name;
 
         public MEBooleanValue(String name, String description) {
-            super(description);
+            super(name, description);
             this.name = name;
+        }
+
+        public String getName() {
+            return name;
         }
     }
 }
