@@ -12,13 +12,18 @@ public abstract class QudtUnit {
     public static final String SQUARE_METRE = "http://qudt.org/vocab/unit/M2";
     public static final String CUBIC_METRE = "http://qudt.org/vocab/unit/M3";
     public static final String GRAM = "http://qudt.org/vocab/unit/GM";
+    public static final String KILOGRAM = "http://qudt.org/vocab/unit/GM";
     public static final String SECOND = "http://qudt.org/vocab/unit/SEC";
     public static final String HERTZ = "http://qudt.org/vocab/unit/HZ";
     public static final String DEGREE_CELSIUS = "http://qudt.org/vocab/unit/DEG_C";
     public static final String AMPERE = "http://qudt.org/vocab/unit/A";
     public static final String VOLT = "http://qudt.org/vocab/unit/V";
     public static final String WATT = "http://qudt.org/vocab/unit/W";
+    public static final String KILOWATT = "http://qudt.org/vocab/unit/KiloW";
+    public static final String MEGAWATT = "http://qudt.org/vocab/unit/MegaW";
     public static final String NEWTON = "http://qudt.org/vocab/unit/N";
+    public static final String KILONEWTON = "http://qudt.org/vocab/unit/KiloN";
+    public static final String MEGANEWTON = "http://qudt.org/vocab/unit/MegaN";
     public static final String LUX = "http://qudt.org/vocab/unit/LUX";
     public static final String LUMEN = "http://qudt.org/vocab/unit/LM";
     public static final String CANDELA = "http://qudt.org/vocab/unit/CD";
@@ -55,62 +60,90 @@ public abstract class QudtUnit {
                     case NONE:
                         return METRE;
                 }
+                break;
             case SQUARE_METRE:
                 if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
                     return SQUARE_METRE;
                 }
+                break;
             case CUBIC_METRE:
                 if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
                     return CUBIC_METRE;
                 }
+                break;
             case GRAM:
-                if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
-                    return GRAM;
+                switch (prefix) {
+                    case KILO:
+                        return KILOGRAM;
+                    case NONE:
+                        return GRAM;
                 }
+                break;
             case SECOND:
                 if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
                     return SECOND;
                 }
+                break;
             case HERTZ:
                 if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
                     return HERTZ;
                 }
+                break;
             case DEGREE_CELSIUS:
                 if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
                     return DEGREE_CELSIUS;
                 }
+                break;
             case AMPERE:
                 if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
                     return AMPERE;
                 }
+                break;
             case VOLT:
                 if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
                     return VOLT;
                 }
+                break;
             case WATT:
-                if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
-                    return WATT;
+                switch (prefix) {
+                    case KILO:
+                        return KILOWATT;
+                    case MEGA:
+                        return MEGAWATT;
+                    case NONE:
+                        return WATT;
                 }
+                break;
             case NEWTON:
-                if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
-                    return NEWTON;
+                switch (prefix) {
+                    case KILO:
+                        return KILONEWTON;
+                    case MEGA:
+                        return MEGANEWTON;
+                    case NONE:
+                        return NEWTON;
                 }
+                break;
             case LUX:
                 if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
                     return LUX;
                 }
+                break;
             case LUMEN:
                 if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
                     return LUMEN;
                 }
+                break;
             case CANDELA:
                 if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
                     return CANDELA;
                 }
+                break;
             case PASCAL:
                 if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
                     return PASCAL;
                 }
+                break;
         }
         throw new IllegalArgumentException(
                 "No QudtUnit for prefix<" + prefix + "> and measure<" + measure + ">");
