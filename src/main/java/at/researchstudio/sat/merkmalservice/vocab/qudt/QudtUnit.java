@@ -1,10 +1,18 @@
 package at.researchstudio.sat.merkmalservice.vocab.qudt;
 
+import at.researchstudio.sat.merkmalservice.model.ifc.IfcSIUnit;
+import at.researchstudio.sat.merkmalservice.model.ifc.IfcUnit;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasure;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasurePrefix;
+import java.lang.invoke.MethodHandles;
 import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class QudtUnit {
+    private static final Logger logger =
+            LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
     public static final String METRE = "http://qudt.org/vocab/unit/M";
     public static final String CENTIMETRE = "http://qudt.org/vocab/unit/CentiM";
     public static final String MILLIMETRE = "http://qudt.org/vocab/unit/MilliM";
@@ -38,6 +46,26 @@ public abstract class QudtUnit {
     /**
      * Extracts the appropriate QudtUnit String for the given prefix and measure
      *
+     * @param ifcUnit IfcUnit
+     * @return Matching QudtUnit String
+     * @throws IllegalArgumentException if there is no matching QudtUnit String for the given prefix
+     *     and measure
+     * @throws NullPointerException if the measure is null
+     */
+    public static String extractUnitFromIfcUnit(IfcUnit ifcUnit)
+            throws IllegalArgumentException, NullPointerException {
+        if (ifcUnit instanceof IfcSIUnit) {
+            return extractUnitFromPrefixAndMeasure(
+                    ((IfcSIUnit) ifcUnit).getPrefix(), ((IfcSIUnit) ifcUnit).getMeasure());
+        } else {
+            logger.warn("unit not IfcSIUnit, leaving it empty", ifcUnit);
+            throw new IllegalArgumentException("No QudtUnit for IfcUnit<" + ifcUnit + ">");
+        }
+    }
+
+    /**
+     * Extracts the appropriate QudtUnit String for the given prefix and measure
+     *
      * @param prefix IfcUnitMeasurePrefix if null then the Prefix will be set to NONE
      * @param measure IfcUnitMeasure
      * @return Matching QudtUnit String
@@ -45,7 +73,7 @@ public abstract class QudtUnit {
      *     and measure
      * @throws NullPointerException if the measure is null
      */
-    public static String extractUnitFromPrefixAndMeasure(
+    private static String extractUnitFromPrefixAndMeasure(
             IfcUnitMeasurePrefix prefix, IfcUnitMeasure measure)
             throws IllegalArgumentException, NullPointerException {
         Objects.requireNonNull(measure, "No QudtUnit for null value in measure");

@@ -8,8 +8,13 @@ import com.google.gson.stream.JsonReader;
 import java.io.*;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Utils {
+    public static final Pattern UNICODE_REPLACEMENT_PATTERN =
+            Pattern.compile("\\\\X2\\\\(.*?)\\\\X0\\\\", Pattern.CASE_INSENSITIVE);
+
     public static void writeToJson(
             String outputFileName, List<Feature> extractedFeatures, boolean withDescription)
             throws IOException {
@@ -48,5 +53,21 @@ public class Utils {
     public static void writeToJson(String outputFileName, List<Feature> extractedFeatures)
             throws IOException {
         writeToJson(outputFileName, extractedFeatures, true);
+    }
+
+    /**
+     * Converts any given String occuring in an ifc-file to utf-8 (replace \X2\*\X0\ with the
+     * correct special character
+     */
+    public static String convertIFCStringToUtf8(String s) {
+        Matcher matcher = UNICODE_REPLACEMENT_PATTERN.matcher(s);
+
+        return matcher.replaceAll(
+                replacer -> {
+                    String hexValue = replacer.group().substring(4, 8);
+                    int charValue = Integer.parseInt(hexValue, 16);
+
+                    return Character.toString((char) charValue);
+                });
     }
 }

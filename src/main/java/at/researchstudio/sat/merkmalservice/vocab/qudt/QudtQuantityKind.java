@@ -5,6 +5,23 @@ import java.util.Objects;
 public abstract class QudtQuantityKind {
     public static final String AREA = "http://qudt.org/vocab/quantitykind/Area";
     public static final String ANGLE = "http://qudt.org/vocab/quantitykind/Angle";
+    public static final String LUMINOUS_INTENSITY =
+            "http://qudt.org/vocab/quantitykind/LuminousIntensity";
+    public static final String ELECTRIC_CURRENT =
+            "http://qudt.org/vocab/quantitykind/ElectricCurrent";
+    public static final String MASS_DENSITY = "http://qudt.org/vocab/quantitykind/MassDensity";
+    public static final String ILLUMINANCE = "http://qudt.org/vocab/quantitykind/Illuminance";
+    public static final String FORCE = "http://qudt.org/vocab/quantitykind/Force";
+    public static final String MOMENT_OF_INERTIA =
+            "http://qudt.org/vocab/quantitykind/MomentOfInertia";
+    public static final String MASS = "http://qudt.org/vocab/quantitykind/Mass";
+    public static final String PRESSURE = "http://qudt.org/vocab/quantitykind/Pressure";
+    public static final String LUMINOUS_FLUX = "http://qudt.org/vocab/quantitykind/LuminousFlux";
+    public static final String VOLUME_FLOW_RATE =
+            "http://qudt.org/vocab/quantitykind/VolumeFlowRate";
+    public static final String POWER = "http://qudt.org/vocab/quantitykind/Power";
+    public static final String THERMODYNAMIC_TEMPERATURE =
+            "http://qudt.org/vocab/quantitykind/ThermodynamicTemperature";
     public static final String VOLUME = "http://qudt.org/vocab/quantitykind/Volume";
     public static final String LENGTH = "http://qudt.org/vocab/quantitykind/Length";
     public static final String WIDTH = "http://qudt.org/vocab/quantitykind/Width";
