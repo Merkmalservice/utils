@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonReader;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -19,7 +20,7 @@ public class Utils {
             String outputFileName, List<Feature> extractedFeatures, boolean withDescription)
             throws IOException {
 
-        try (FileWriter jsonFileWriter = new FileWriter(outputFileName)) {
+        try (FileWriter jsonFileWriter = new FileWriter(outputFileName, StandardCharsets.UTF_8)) {
             if (withDescription) {
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
                 gson.toJson(extractedFeatures, jsonFileWriter);
