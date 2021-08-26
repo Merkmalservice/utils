@@ -10,6 +10,7 @@ public enum IfcPropertyType {
             true, null, "IfcCountMeasure", "IFCCOUNTMEASURE"), // TODO WHICH UNIT TYPE IS THIS?
     DIMENSION_COUNT("IfcDimensionCount", "IFCDIMENSIONCOUNT"),
     ELECTRIC_CURRENT_MEASURE(true, IfcUnitType.ELECTRICCURRENTUNIT, "IfcElectricCurrentMeasure"),
+    ELECTRIC_VOLTAGE_MEASURE(true, IfcUnitType.ELECTRIVOLTAGEUNIT, "IfcElectricVoltageMeasure"),
     EXPRESS_BOOL("BOOLEAN"),
     EXPRESS_INTEGER("INTEGER"),
     EXPRESS_REAL("REAL"),
