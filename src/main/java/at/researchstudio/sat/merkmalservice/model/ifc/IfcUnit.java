@@ -11,13 +11,15 @@ public class IfcUnit {
 
     private final IfcUnitType type;
     private final String id;
+    private final boolean projectDefault;
 
-    public IfcUnit(String id, IfcUnitType type) {
+    public IfcUnit(String id, IfcUnitType type, boolean projectDefault) {
         this.id = id;
         this.type = type;
+        this.projectDefault = projectDefault;
     }
 
-    public IfcUnit(String id, String type) {
+    public IfcUnit(String id, String type, boolean projectDefault) {
         IfcUnitType tempType = IfcUnitType.UNKNOWN;
         try {
             tempType = IfcUnitType.fromString(type);
@@ -27,6 +29,7 @@ public class IfcUnit {
 
         this.id = id;
         this.type = tempType;
+        this.projectDefault = projectDefault;
     }
 
     public IfcUnitType getType() {
@@ -35,6 +38,10 @@ public class IfcUnit {
 
     public String getId() {
         return id;
+    }
+
+    public boolean isProjectDefault() {
+        return projectDefault;
     }
 
     @Override

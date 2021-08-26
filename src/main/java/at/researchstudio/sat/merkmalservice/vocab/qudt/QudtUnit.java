@@ -50,20 +50,33 @@ public abstract class QudtUnit {
 
     private static final IfcSIUnit IFCMETER =
             new IfcSIUnit(
-                    "1", IfcUnitType.LENGTHUNIT, IfcUnitMeasure.METRE, IfcUnitMeasurePrefix.NONE);
+                    "1",
+                    IfcUnitType.LENGTHUNIT,
+                    IfcUnitMeasure.METRE,
+                    IfcUnitMeasurePrefix.NONE,
+                    false);
     private static final IfcSIUnit IFCSECOND =
             new IfcSIUnit(
-                    "2", IfcUnitType.TIMEUNIT, IfcUnitMeasure.SECOND, IfcUnitMeasurePrefix.NONE);
+                    "2",
+                    IfcUnitType.TIMEUNIT,
+                    IfcUnitMeasure.SECOND,
+                    IfcUnitMeasurePrefix.NONE,
+                    false);
     private static final IfcSIUnit IFCKILOGRAM =
             new IfcSIUnit(
-                    "3", IfcUnitType.MASSUNIT, IfcUnitMeasure.GRAM, IfcUnitMeasurePrefix.KILO);
+                    "3",
+                    IfcUnitType.MASSUNIT,
+                    IfcUnitMeasure.GRAM,
+                    IfcUnitMeasurePrefix.KILO,
+                    false);
 
     private static final IfcSIUnit IFCKELVIN =
             new IfcSIUnit(
                     "1",
                     IfcUnitType.THERMODYNAMICTEMPERATUREUNIT,
                     IfcUnitMeasure.KELVIN,
-                    IfcUnitMeasurePrefix.NONE);
+                    IfcUnitMeasurePrefix.NONE,
+                    false);
     /**
      * Extracts the appropriate QudtUnit String for the given prefix and measure
      *

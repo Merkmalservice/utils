@@ -10,27 +10,31 @@ public class IfcDerivedUnit extends IfcUnit {
 
     private String userDefinedLabel;
 
-    public IfcDerivedUnit(String id, IfcUnitType type) {
-        super(id, type);
+    public IfcDerivedUnit(String id, IfcUnitType type, boolean projectDefault) {
+        super(id, type, projectDefault);
     }
 
-    public IfcDerivedUnit(String id, String type) {
-        super(id, type);
+    public IfcDerivedUnit(String id, String type, boolean projectDefault) {
+        super(id, type, projectDefault);
     }
 
-    public IfcDerivedUnit(String id, String type, String userDefinedLabel) {
-        this(id, type);
-        this.userDefinedLabel = userDefinedLabel;
-    }
-
-    public IfcDerivedUnit(String id, IfcUnitType type, String userDefinedLabel) {
-        this(id, type);
+    public IfcDerivedUnit(String id, String type, String userDefinedLabel, boolean projectDefault) {
+        this(id, type, projectDefault);
         this.userDefinedLabel = userDefinedLabel;
     }
 
     public IfcDerivedUnit(
-            String id, IfcUnitType type, Map<IfcSIUnit, Integer> derivedUnitElements) {
-        this(id, type);
+            String id, IfcUnitType type, String userDefinedLabel, boolean projectDefault) {
+        this(id, type, projectDefault);
+        this.userDefinedLabel = userDefinedLabel;
+    }
+
+    public IfcDerivedUnit(
+            String id,
+            IfcUnitType type,
+            Map<IfcSIUnit, Integer> derivedUnitElements,
+            boolean projectDefault) {
+        this(id, type, projectDefault);
         this.derivedUnitElements = derivedUnitElements;
     }
 
@@ -38,8 +42,9 @@ public class IfcDerivedUnit extends IfcUnit {
             String id,
             IfcUnitType type,
             String userDefinedLabel,
-            Map<IfcSIUnit, Integer> derivedUnitElements) {
-        this(id, type, userDefinedLabel);
+            Map<IfcSIUnit, Integer> derivedUnitElements,
+            boolean projectDefault) {
+        this(id, type, userDefinedLabel, projectDefault);
         this.derivedUnitElements = derivedUnitElements;
     }
 

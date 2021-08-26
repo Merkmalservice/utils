@@ -63,112 +63,138 @@ public class UtilsTest {
 
     @Test
     public final void TestQudtUnitTransformation() {
-        IfcDerivedUnit du1 = new IfcDerivedUnit("xyz", IfcUnitType.LINEARFORCEUNIT);
+        IfcDerivedUnit du1 = new IfcDerivedUnit("xyz", IfcUnitType.LINEARFORCEUNIT, false);
         du1.addDerivedUnitElement(
                 new IfcSIUnit(
                         "1",
                         IfcUnitType.LENGTHUNIT,
                         IfcUnitMeasure.METRE,
-                        IfcUnitMeasurePrefix.NONE),
+                        IfcUnitMeasurePrefix.NONE,
+                        false),
                 1);
         du1.addDerivedUnitElement(
                 new IfcSIUnit(
                         "2",
                         IfcUnitType.TIMEUNIT,
                         IfcUnitMeasure.SECOND,
-                        IfcUnitMeasurePrefix.NONE),
+                        IfcUnitMeasurePrefix.NONE,
+                        false),
                 -2);
         du1.addDerivedUnitElement(
                 new IfcSIUnit(
-                        "3", IfcUnitType.MASSUNIT, IfcUnitMeasure.GRAM, IfcUnitMeasurePrefix.KILO),
+                        "3",
+                        IfcUnitType.MASSUNIT,
+                        IfcUnitMeasure.GRAM,
+                        IfcUnitMeasurePrefix.KILO,
+                        false),
                 1);
 
         Assert.assertEquals(QudtUnit.NEWTON, QudtUnit.extractUnitFromIfcUnit(du1));
 
-        IfcDerivedUnit du2 = new IfcDerivedUnit("xyz", IfcUnitType.MOMENTOFINERTIAUNIT);
+        IfcDerivedUnit du2 = new IfcDerivedUnit("xyz", IfcUnitType.MOMENTOFINERTIAUNIT, false);
         du2.addDerivedUnitElement(
                 new IfcSIUnit(
                         "1",
                         IfcUnitType.LENGTHUNIT,
                         IfcUnitMeasure.METRE,
-                        IfcUnitMeasurePrefix.NONE),
+                        IfcUnitMeasurePrefix.NONE,
+                        false),
                 4);
 
         Assert.assertEquals(QudtUnit.QUARTIC_METRE, QudtUnit.extractUnitFromIfcUnit(du2));
 
-        IfcDerivedUnit du3 = new IfcDerivedUnit("xyz", IfcUnitType.PLANARFORCEUNIT);
+        IfcDerivedUnit du3 = new IfcDerivedUnit("xyz", IfcUnitType.PLANARFORCEUNIT, false);
         du3.addDerivedUnitElement(
                 new IfcSIUnit(
                         "1",
                         IfcUnitType.LENGTHUNIT,
                         IfcUnitMeasure.METRE,
-                        IfcUnitMeasurePrefix.NONE),
+                        IfcUnitMeasurePrefix.NONE,
+                        false),
                 1);
         du3.addDerivedUnitElement(
                 new IfcSIUnit(
                         "2",
                         IfcUnitType.TIMEUNIT,
                         IfcUnitMeasure.SECOND,
-                        IfcUnitMeasurePrefix.NONE),
+                        IfcUnitMeasurePrefix.NONE,
+                        false),
                 -2);
         du3.addDerivedUnitElement(
                 new IfcSIUnit(
-                        "3", IfcUnitType.MASSUNIT, IfcUnitMeasure.GRAM, IfcUnitMeasurePrefix.KILO),
+                        "3",
+                        IfcUnitType.MASSUNIT,
+                        IfcUnitMeasure.GRAM,
+                        IfcUnitMeasurePrefix.KILO,
+                        false),
                 1);
 
         Assert.assertEquals(QudtUnit.NEWTON, QudtUnit.extractUnitFromIfcUnit(du3));
 
-        IfcDerivedUnit du4 = new IfcDerivedUnit("xyz", IfcUnitType.MASSDENSITYUNIT);
+        IfcDerivedUnit du4 = new IfcDerivedUnit("xyz", IfcUnitType.MASSDENSITYUNIT, false);
         du4.addDerivedUnitElement(
                 new IfcSIUnit(
                         "1",
                         IfcUnitType.LENGTHUNIT,
                         IfcUnitMeasure.METRE,
-                        IfcUnitMeasurePrefix.NONE),
+                        IfcUnitMeasurePrefix.NONE,
+                        false),
                 -3);
         du4.addDerivedUnitElement(
                 new IfcSIUnit(
-                        "3", IfcUnitType.MASSUNIT, IfcUnitMeasure.GRAM, IfcUnitMeasurePrefix.KILO),
+                        "3",
+                        IfcUnitType.MASSUNIT,
+                        IfcUnitMeasure.GRAM,
+                        IfcUnitMeasurePrefix.KILO,
+                        false),
                 1);
 
         Assert.assertEquals(QudtUnit.KILOGRAMPERCUBICMETER, QudtUnit.extractUnitFromIfcUnit(du4));
 
-        IfcDerivedUnit du5 = new IfcDerivedUnit("xyz", IfcUnitType.THERMALTRANSMITTANCEUNIT);
+        IfcDerivedUnit du5 = new IfcDerivedUnit("xyz", IfcUnitType.THERMALTRANSMITTANCEUNIT, false);
         du5.addDerivedUnitElement(
                 new IfcSIUnit(
                         "2",
                         IfcUnitType.TIMEUNIT,
                         IfcUnitMeasure.SECOND,
-                        IfcUnitMeasurePrefix.NONE),
+                        IfcUnitMeasurePrefix.NONE,
+                        false),
                 -3);
         du5.addDerivedUnitElement(
                 new IfcSIUnit(
                         "1",
                         IfcUnitType.THERMODYNAMICTEMPERATUREUNIT,
                         IfcUnitMeasure.KELVIN,
-                        IfcUnitMeasurePrefix.NONE),
+                        IfcUnitMeasurePrefix.NONE,
+                        false),
                 -1);
         du5.addDerivedUnitElement(
                 new IfcSIUnit(
-                        "3", IfcUnitType.MASSUNIT, IfcUnitMeasure.GRAM, IfcUnitMeasurePrefix.KILO),
+                        "3",
+                        IfcUnitType.MASSUNIT,
+                        IfcUnitMeasure.GRAM,
+                        IfcUnitMeasurePrefix.KILO,
+                        false),
                 1);
 
         // Assert.assertEquals(null, QudtUnit.extractUnitFromIfcUnit(du5)); //TODO FIX TEST
 
-        IfcDerivedUnit du6 = new IfcDerivedUnit("xyz", IfcUnitType.VOLUMETRICFLOWRATEUNIT);
+        IfcDerivedUnit du6 = new IfcDerivedUnit("xyz", IfcUnitType.VOLUMETRICFLOWRATEUNIT, false);
         du6.addDerivedUnitElement(
                 new IfcSIUnit(
                         "2",
                         IfcUnitType.TIMEUNIT,
                         IfcUnitMeasure.SECOND,
-                        IfcUnitMeasurePrefix.NONE),
+                        IfcUnitMeasurePrefix.NONE,
+                        false),
                 3);
         du6.addDerivedUnitElement(
                 new IfcSIUnit(
                         "1",
                         IfcUnitType.LENGTHUNIT,
                         IfcUnitMeasure.METRE,
-                        IfcUnitMeasurePrefix.NONE),
+                        IfcUnitMeasurePrefix.NONE,
+                        false),
                 -1);
 
         // Assert.assertEquals(null, QudtUnit.extractUnitFromIfcUnit(du6)); //TODO FIX TEST
