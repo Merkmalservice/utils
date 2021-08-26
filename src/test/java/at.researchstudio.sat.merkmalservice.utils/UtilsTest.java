@@ -1,6 +1,11 @@
 package at.researchstudio.sat.merkmalservice.utils;
 
 import at.researchstudio.sat.merkmalservice.model.*;
+import at.researchstudio.sat.merkmalservice.model.ifc.IfcDerivedUnit;
+import at.researchstudio.sat.merkmalservice.model.ifc.IfcSIUnit;
+import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasure;
+import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasurePrefix;
+import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitType;
 import at.researchstudio.sat.merkmalservice.vocab.qudt.QudtQuantityKind;
 import at.researchstudio.sat.merkmalservice.vocab.qudt.QudtUnit;
 import java.io.File;
@@ -54,5 +59,118 @@ public class UtilsTest {
                     break;
             }
         }
+    }
+
+    @Test
+    public final void TestQudtUnitTransformation() {
+        IfcDerivedUnit du1 = new IfcDerivedUnit("xyz", IfcUnitType.LINEARFORCEUNIT);
+        du1.addDerivedUnitElement(
+                new IfcSIUnit(
+                        "1",
+                        IfcUnitType.LENGTHUNIT,
+                        IfcUnitMeasure.METRE,
+                        IfcUnitMeasurePrefix.NONE),
+                1);
+        du1.addDerivedUnitElement(
+                new IfcSIUnit(
+                        "2",
+                        IfcUnitType.TIMEUNIT,
+                        IfcUnitMeasure.SECOND,
+                        IfcUnitMeasurePrefix.NONE),
+                -2);
+        du1.addDerivedUnitElement(
+                new IfcSIUnit(
+                        "3", IfcUnitType.MASSUNIT, IfcUnitMeasure.GRAM, IfcUnitMeasurePrefix.KILO),
+                1);
+
+        Assert.assertEquals(QudtUnit.NEWTON, QudtUnit.extractUnitFromIfcUnit(du1));
+
+        IfcDerivedUnit du2 = new IfcDerivedUnit("xyz", IfcUnitType.MOMENTOFINERTIAUNIT);
+        du2.addDerivedUnitElement(
+                new IfcSIUnit(
+                        "1",
+                        IfcUnitType.LENGTHUNIT,
+                        IfcUnitMeasure.METRE,
+                        IfcUnitMeasurePrefix.NONE),
+                4);
+
+        Assert.assertEquals(QudtUnit.QUARTIC_METRE, QudtUnit.extractUnitFromIfcUnit(du2));
+
+        IfcDerivedUnit du3 = new IfcDerivedUnit("xyz", IfcUnitType.PLANARFORCEUNIT);
+        du3.addDerivedUnitElement(
+                new IfcSIUnit(
+                        "1",
+                        IfcUnitType.LENGTHUNIT,
+                        IfcUnitMeasure.METRE,
+                        IfcUnitMeasurePrefix.NONE),
+                1);
+        du3.addDerivedUnitElement(
+                new IfcSIUnit(
+                        "2",
+                        IfcUnitType.TIMEUNIT,
+                        IfcUnitMeasure.SECOND,
+                        IfcUnitMeasurePrefix.NONE),
+                -2);
+        du3.addDerivedUnitElement(
+                new IfcSIUnit(
+                        "3", IfcUnitType.MASSUNIT, IfcUnitMeasure.GRAM, IfcUnitMeasurePrefix.KILO),
+                1);
+
+        Assert.assertEquals(QudtUnit.NEWTON, QudtUnit.extractUnitFromIfcUnit(du3));
+
+        IfcDerivedUnit du4 = new IfcDerivedUnit("xyz", IfcUnitType.MASSDENSITYUNIT);
+        du4.addDerivedUnitElement(
+                new IfcSIUnit(
+                        "1",
+                        IfcUnitType.LENGTHUNIT,
+                        IfcUnitMeasure.METRE,
+                        IfcUnitMeasurePrefix.NONE),
+                -3);
+        du4.addDerivedUnitElement(
+                new IfcSIUnit(
+                        "3", IfcUnitType.MASSUNIT, IfcUnitMeasure.GRAM, IfcUnitMeasurePrefix.KILO),
+                1);
+
+        Assert.assertEquals(QudtUnit.KILOGRAMPERCUBICMETER, QudtUnit.extractUnitFromIfcUnit(du4));
+
+        IfcDerivedUnit du5 = new IfcDerivedUnit("xyz", IfcUnitType.THERMALTRANSMITTANCEUNIT);
+        du5.addDerivedUnitElement(
+                new IfcSIUnit(
+                        "2",
+                        IfcUnitType.TIMEUNIT,
+                        IfcUnitMeasure.SECOND,
+                        IfcUnitMeasurePrefix.NONE),
+                -3);
+        du5.addDerivedUnitElement(
+                new IfcSIUnit(
+                        "1",
+                        IfcUnitType.THERMODYNAMICTEMPERATUREUNIT,
+                        IfcUnitMeasure.KELVIN,
+                        IfcUnitMeasurePrefix.NONE),
+                -1);
+        du5.addDerivedUnitElement(
+                new IfcSIUnit(
+                        "3", IfcUnitType.MASSUNIT, IfcUnitMeasure.GRAM, IfcUnitMeasurePrefix.KILO),
+                1);
+
+        // Assert.assertEquals(null, QudtUnit.extractUnitFromIfcUnit(du5)); //TODO FIX TEST
+
+        IfcDerivedUnit du6 = new IfcDerivedUnit("xyz", IfcUnitType.VOLUMETRICFLOWRATEUNIT);
+        du6.addDerivedUnitElement(
+                new IfcSIUnit(
+                        "2",
+                        IfcUnitType.TIMEUNIT,
+                        IfcUnitMeasure.SECOND,
+                        IfcUnitMeasurePrefix.NONE),
+                3);
+        du6.addDerivedUnitElement(
+                new IfcSIUnit(
+                        "1",
+                        IfcUnitType.LENGTHUNIT,
+                        IfcUnitMeasure.METRE,
+                        IfcUnitMeasurePrefix.NONE),
+                -1);
+
+        // Assert.assertEquals(null, QudtUnit.extractUnitFromIfcUnit(du6)); //TODO FIX TEST
     }
 }

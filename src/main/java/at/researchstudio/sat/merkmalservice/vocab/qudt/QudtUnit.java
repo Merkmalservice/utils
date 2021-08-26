@@ -1,10 +1,13 @@
 package at.researchstudio.sat.merkmalservice.vocab.qudt;
 
+import at.researchstudio.sat.merkmalservice.model.ifc.IfcDerivedUnit;
 import at.researchstudio.sat.merkmalservice.model.ifc.IfcSIUnit;
 import at.researchstudio.sat.merkmalservice.model.ifc.IfcUnit;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasure;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasurePrefix;
+import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitType;
 import java.lang.invoke.MethodHandles;
+import java.util.Map;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +22,9 @@ public abstract class QudtUnit {
     public static final String DECIMETRE = "http://qudt.org/vocab/unit/DeciM";
     public static final String SQUARE_METRE = "http://qudt.org/vocab/unit/M2";
     public static final String CUBIC_METRE = "http://qudt.org/vocab/unit/M3";
+    public static final String QUARTIC_METRE = "http://qudt.org/vocab/unit/M4";
     public static final String GRAM = "http://qudt.org/vocab/unit/GM";
-    public static final String KILOGRAM = "http://qudt.org/vocab/unit/GM";
+    public static final String KILOGRAM = "http://qudt.org/vocab/unit/KiloGM";
     public static final String SECOND = "http://qudt.org/vocab/unit/SEC";
     public static final String HERTZ = "http://qudt.org/vocab/unit/HZ";
     public static final String DEGREE_CELSIUS = "http://qudt.org/vocab/unit/DEG_C";
@@ -41,8 +45,25 @@ public abstract class QudtUnit {
     public static final String NEWTONPERSQUAREMILLIMETER =
             "http://qudt.org/vocab/unit/N-PER-MilliM2";
     public static final String KILOGRAMPERCUBICMETER = "http://qudt.org/vocab/unit/KiloGM-PER-M3";
+    public static final String CUBICMETERPERSECOND = "http://qudt.org/vocab/unit/M3-PER-SEC";
     public static final String UNITLESS = "http://qudt.org/vocab/unit/UNITLESS";
 
+    private static final IfcSIUnit IFCMETER =
+            new IfcSIUnit(
+                    "1", IfcUnitType.LENGTHUNIT, IfcUnitMeasure.METRE, IfcUnitMeasurePrefix.NONE);
+    private static final IfcSIUnit IFCSECOND =
+            new IfcSIUnit(
+                    "2", IfcUnitType.TIMEUNIT, IfcUnitMeasure.SECOND, IfcUnitMeasurePrefix.NONE);
+    private static final IfcSIUnit IFCKILOGRAM =
+            new IfcSIUnit(
+                    "3", IfcUnitType.MASSUNIT, IfcUnitMeasure.GRAM, IfcUnitMeasurePrefix.KILO);
+
+    private static final IfcSIUnit IFCKELVIN =
+            new IfcSIUnit(
+                    "1",
+                    IfcUnitType.THERMODYNAMICTEMPERATUREUNIT,
+                    IfcUnitMeasure.KELVIN,
+                    IfcUnitMeasurePrefix.NONE);
     /**
      * Extracts the appropriate QudtUnit String for the given prefix and measure
      *
@@ -57,10 +78,38 @@ public abstract class QudtUnit {
         if (ifcUnit instanceof IfcSIUnit) {
             return extractUnitFromPrefixAndMeasure(
                     ((IfcSIUnit) ifcUnit).getPrefix(), ((IfcSIUnit) ifcUnit).getMeasure());
-        } else {
-            logger.warn("unit not IfcSIUnit, leaving it empty", ifcUnit);
-            throw new IllegalArgumentException("No QudtUnit for IfcUnit<" + ifcUnit + ">");
+        } else if (ifcUnit instanceof IfcDerivedUnit) {
+            IfcDerivedUnit derivedUnit = (IfcDerivedUnit) ifcUnit;
+            Map<IfcSIUnit, Integer> derivedUnitElements = derivedUnit.getDerivedUnitElements();
+
+            if (derivedUnitElements.size() == 1) {
+                if (derivedUnitElements.getOrDefault(IFCMETER, 0) == 4) {
+                    return QudtUnit.QUARTIC_METRE;
+                }
+            } else if (derivedUnitElements.size() == 2) {
+                if (derivedUnitElements.getOrDefault(IFCKILOGRAM, 0) == 1
+                        && derivedUnitElements.getOrDefault(IFCMETER, 0) == -3) {
+                    return QudtUnit.KILOGRAMPERCUBICMETER;
+                } else if (derivedUnitElements.getOrDefault(IFCSECOND, 0) == -1
+                        && derivedUnitElements.getOrDefault(IFCMETER, 0) == 3) {
+                    return QudtUnit.CUBICMETERPERSECOND;
+                }
+            } else if (derivedUnitElements.size() == 3) {
+                if (derivedUnitElements.getOrDefault(IFCMETER, 0) == 1
+                        && derivedUnitElements.getOrDefault(IFCSECOND, 0) == -2
+                        && derivedUnitElements.getOrDefault(IFCKILOGRAM, 0) == 1) {
+
+                    return QudtUnit.NEWTON;
+                } else if (derivedUnitElements.getOrDefault(IFCKELVIN, 0) == -1
+                        && derivedUnitElements.getOrDefault(IFCSECOND, 0) == -3
+                        && derivedUnitElements.getOrDefault(IFCKILOGRAM, 0) == 1) {
+                    // TODO: FIND UNIT
+                }
+            }
+            throw new IllegalArgumentException(
+                    "No QudtUnit for IfcDerivedUnit<" + derivedUnit + ">");
         }
+        throw new IllegalArgumentException("No QudtUnit for IfcUnit<" + ifcUnit + ">");
     }
 
     /**

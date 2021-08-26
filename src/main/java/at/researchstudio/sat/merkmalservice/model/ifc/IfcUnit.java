@@ -10,12 +10,14 @@ public class IfcUnit {
             LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private final IfcUnitType type;
+    private final String id;
 
-    public IfcUnit(IfcUnitType type) {
+    public IfcUnit(String id, IfcUnitType type) {
+        this.id = id;
         this.type = type;
     }
 
-    public IfcUnit(String type) {
+    public IfcUnit(String id, String type) {
         IfcUnitType tempType = IfcUnitType.UNKNOWN;
         try {
             tempType = IfcUnitType.fromString(type);
@@ -23,6 +25,7 @@ public class IfcUnit {
             logger.error(e.getMessage());
         }
 
+        this.id = id;
         this.type = tempType;
     }
 
@@ -30,8 +33,12 @@ public class IfcUnit {
         return type;
     }
 
+    public String getId() {
+        return id;
+    }
+
     @Override
     public String toString() {
-        return "IfcUnit{" + "type=" + type + '}';
+        return "IfcUnit{" + "type=" + type + ", id='" + id + '\'' + '}';
     }
 }

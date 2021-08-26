@@ -10,34 +10,36 @@ public class IfcDerivedUnit extends IfcUnit {
 
     private String userDefinedLabel;
 
-    public IfcDerivedUnit(IfcUnitType type) {
-        super(type);
+    public IfcDerivedUnit(String id, IfcUnitType type) {
+        super(id, type);
     }
 
-    public IfcDerivedUnit(String type) {
-        super(type);
+    public IfcDerivedUnit(String id, String type) {
+        super(id, type);
     }
 
-    public IfcDerivedUnit(String type, String userDefinedLabel) {
-        this(type);
+    public IfcDerivedUnit(String id, String type, String userDefinedLabel) {
+        this(id, type);
         this.userDefinedLabel = userDefinedLabel;
     }
 
-    public IfcDerivedUnit(IfcUnitType type, String userDefinedLabel) {
-        this(type);
+    public IfcDerivedUnit(String id, IfcUnitType type, String userDefinedLabel) {
+        this(id, type);
         this.userDefinedLabel = userDefinedLabel;
     }
 
-    public IfcDerivedUnit(IfcUnitType type, Map<IfcSIUnit, Integer> derivedUnitElements) {
-        this(type);
+    public IfcDerivedUnit(
+            String id, IfcUnitType type, Map<IfcSIUnit, Integer> derivedUnitElements) {
+        this(id, type);
         this.derivedUnitElements = derivedUnitElements;
     }
 
     public IfcDerivedUnit(
+            String id,
             IfcUnitType type,
             String userDefinedLabel,
             Map<IfcSIUnit, Integer> derivedUnitElements) {
-        this(type, userDefinedLabel);
+        this(id, type, userDefinedLabel);
         this.derivedUnitElements = derivedUnitElements;
     }
 

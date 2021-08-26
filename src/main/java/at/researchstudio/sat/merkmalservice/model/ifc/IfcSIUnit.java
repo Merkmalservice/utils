@@ -14,14 +14,15 @@ public class IfcSIUnit extends IfcUnit {
     private final IfcUnitMeasure measure;
     private final IfcUnitMeasurePrefix prefix;
 
-    public IfcSIUnit(IfcUnitType type, IfcUnitMeasure measure, IfcUnitMeasurePrefix prefix) {
-        super(type);
+    public IfcSIUnit(
+            String id, IfcUnitType type, IfcUnitMeasure measure, IfcUnitMeasurePrefix prefix) {
+        super(id, type);
         this.measure = measure;
         this.prefix = prefix;
     }
 
-    public IfcSIUnit(String type, String measure, String prefix) {
-        super(type);
+    public IfcSIUnit(String id, String type, String measure, String prefix) {
+        super(id, type);
 
         IfcUnitMeasure tempMeasure = IfcUnitMeasure.UNKNOWN;
         try {
