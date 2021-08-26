@@ -40,6 +40,10 @@ public abstract class QudtUnit {
     public static final String LUMEN = "http://qudt.org/vocab/unit/LM";
     public static final String CANDELA = "http://qudt.org/vocab/unit/CD";
     public static final String PASCAL = "http://qudt.org/vocab/unit/PA";
+    public static final String RADIAN = "http://qudt.org/vocab/unit/RAD";
+    public static final String STERADIAN = "http://qudt.org/vocab/unit/SR";
+    public static final String KELVIN = "http://qudt.org/vocab/unit/K";
+    public static final String JOULE = "http://qudt.org/vocab/unit/J";
     public static final String WATTPERSQUARKEMETERPERKELVIN =
             "http://qudt.org/vocab/unit/W-PER-M2-K";
     public static final String NEWTONPERSQUAREMILLIMETER =
@@ -234,6 +238,23 @@ public abstract class QudtUnit {
                     return PASCAL;
                 }
                 break;
+            case RADIAN:
+                if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
+                    return RADIAN;
+                }
+                break;
+            case JOULE:
+                if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
+                    return JOULE;
+                }
+            case KELVIN:
+                if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
+                    return KELVIN;
+                }
+            case STERADIAN:
+                if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
+                    return STERADIAN;
+                }
         }
         throw new IllegalArgumentException(
                 "No QudtUnit for prefix<" + prefix + "> and measure<" + measure + ">");
