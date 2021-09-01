@@ -39,10 +39,12 @@ public class IfcSIUnit extends IfcUnit {
         this.measure = tempMeasure;
 
         IfcUnitMeasurePrefix tempPrefix = IfcUnitMeasurePrefix.NONE;
-        try {
-            tempPrefix = IfcUnitMeasurePrefix.fromString(prefix);
-        } catch (IllegalArgumentException e) {
-            logger.error(e.getMessage());
+        if (Objects.nonNull(prefix)) {
+            try {
+                tempPrefix = IfcUnitMeasurePrefix.fromString(prefix);
+            } catch (IllegalArgumentException e) {
+                logger.error(e.getMessage());
+            }
         }
 
         this.prefix = tempPrefix;

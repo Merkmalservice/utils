@@ -48,15 +48,6 @@ public class IfcProperty {
         }
     }
 
-    public IfcProperty(IfcProperty ifc, Map<IfcUnitType, List<IfcUnit>> projectUnits) {
-        this.name = Utils.convertIFCStringToUtf8(ifc.name);
-        this.type = ifc.type;
-
-        if (this.type.isMeasureType()) {
-            this.unit = getIfcUnitFromProjectUnits(ifc.type, projectUnits);
-        }
-    }
-
     private static IfcUnit getIfcUnitFromProjectUnits(
             IfcPropertyType type, Map<IfcUnitType, List<IfcUnit>> projectUnits) {
         if (Objects.nonNull(projectUnits)) {
