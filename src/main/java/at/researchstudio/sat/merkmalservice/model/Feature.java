@@ -52,7 +52,7 @@ public abstract class Feature {
     }
 
     public void setDescriptionFromUniqueValues(Set<String> uniqueValues) {
-        setDescriptionFromUniqueValues(uniqueValues, "### Extracted Values:\n- `", "\n- `", "`");
+        setDescriptionFromUniqueValues(uniqueValues, "### Extracted Values:\n- `", "`\n- `", "`");
     }
 
     public void setDescriptionFromUniqueValues(
