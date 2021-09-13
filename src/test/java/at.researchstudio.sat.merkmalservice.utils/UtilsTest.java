@@ -18,6 +18,21 @@ import org.junit.Test;
 
 public class UtilsTest {
     @Test
+    public final void TestIfcUtf8Conversion() {
+        String s1 = "1-Fl\\X2\\00FC\\X0\\gelfenster 23";
+        String s2 = "Zugeh\\X2\\00F6\\X0\\riger Raumname";
+        String s3 = "\\X2\\00DC\\X0\\berobjekt-ID";
+
+        Assert.assertEquals("1-Flügelfenster 23", Utils.convertIFCStringToUtf8(s1));
+        Assert.assertEquals("Zugehöriger Raumname", Utils.convertIFCStringToUtf8(s2));
+        Assert.assertEquals("Überobjekt-ID", Utils.convertIFCStringToUtf8(s3));
+
+        Assert.assertEquals(s1, Utils.convertUtf8ToIFCString(Utils.convertIFCStringToUtf8(s1)));
+        Assert.assertEquals(s2, Utils.convertUtf8ToIFCString(Utils.convertIFCStringToUtf8(s2)));
+        Assert.assertEquals(s3, Utils.convertUtf8ToIFCString(Utils.convertIFCStringToUtf8(s3)));
+    }
+
+    @Test
     public final void TestReadWrite() throws IOException {
         List<Feature> features = new ArrayList<>();
 

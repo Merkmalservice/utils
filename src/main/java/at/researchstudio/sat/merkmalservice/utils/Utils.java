@@ -85,4 +85,21 @@ public class Utils {
                     return Character.toString((char) charValue);
                 });
     }
+
+    /**
+     * Converts any given String back to the correct IFC representation Any character code lower
+     * than 32 or higher than 126 will be translated back into \X2\[4 digit hexcode]\X0\
+     */
+    public static String convertUtf8ToIFCString(String convertIFCStringToUtf8) {
+        StringBuilder sb = new StringBuilder();
+        for (Character c : convertIFCStringToUtf8.toCharArray()) {
+            int ascii = (int) c;
+            if (ascii > 126 || ascii < 32) {
+                sb.append("\\X2\\").append(String.format("%1$04X", ascii)).append("\\X0\\");
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
 }
