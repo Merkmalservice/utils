@@ -6,7 +6,6 @@ import java.lang.reflect.Type;
 import java.util.Set;
 
 public class InterfaceAdapter<T> implements JsonDeserializer<T> {
-
     @Override
     public final T deserialize(
             final JsonElement elem,
@@ -15,33 +14,38 @@ public class InterfaceAdapter<T> implements JsonDeserializer<T> {
             throws JsonParseException {
         if (interfaceType.equals(EnumFeature.OptionValue.class)) {
             final JsonObject member = (JsonObject) elem;
-
             return context.deserialize(member, typeForOptionValue(member));
         } else {
             final JsonObject member = (JsonObject) elem;
             final JsonElement type = get(member, "featureType");
-
             return context.deserialize(member, typeForFeature(type));
         }
     }
 
     private Type typeForOptionValue(final JsonObject typeElem) {
         Set<String> keys = typeElem.keySet();
-
-        if (keys.size() == 1) {
-            String optionTypeKey = keys.iterator().next();
-            switch (optionTypeKey) {
-                case "stringValue":
-                    return EnumFeature.MEStringValue.class;
-                case "floatValue":
-                    return EnumFeature.MEFloatValue.class;
-                case "name":
-                    return EnumFeature.MEBooleanValue.class;
-                case "integerValue":
-                    return EnumFeature.MEIntegerValue.class;
-                default:
-                    throw new JsonParseException(
-                            "Could not find optiontype for String: " + optionTypeKey);
+        if (keys.size() >= 1 && keys.size() <= 2) {
+            String optionTypeKey = null;
+            if (keys.size() == 2 && keys.contains("description")) {
+                keys.remove("description");
+                optionTypeKey = keys.iterator().next();
+            } else if (keys.size() == 1 && !keys.contains("description")) {
+                optionTypeKey = keys.iterator().next();
+            }
+            if (optionTypeKey != null) {
+                switch (optionTypeKey) {
+                    case "stringValue":
+                        return EnumFeature.MEStringValue.class;
+                    case "floatValue":
+                        return EnumFeature.MEFloatValue.class;
+                    case "name":
+                        return EnumFeature.MEBooleanValue.class;
+                    case "integerValue":
+                        return EnumFeature.MEIntegerValue.class;
+                    default:
+                        throw new JsonParseException(
+                                "Could not find optiontype for String: " + optionTypeKey);
+                }
             }
         }
         throw new JsonParseException("Could not find optiontype typeElem keyset not of size 1");
@@ -67,7 +71,6 @@ public class InterfaceAdapter<T> implements JsonDeserializer<T> {
 
     private JsonElement get(final JsonObject wrapper, final String memberName) {
         final JsonElement elem = wrapper.get(memberName);
-
         if (elem == null) {
             throw new JsonParseException("no '" + memberName + "' member found in json file.");
         }
