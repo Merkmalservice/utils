@@ -50,6 +50,7 @@ public abstract class QudtUnit {
             "http://qudt.org/vocab/unit/N-PER-MilliM2";
     public static final String KILOGRAMPERCUBICMETER = "http://qudt.org/vocab/unit/KiloGM-PER-M3";
     public static final String CUBICMETERPERSECOND = "http://qudt.org/vocab/unit/M3-PER-SEC";
+    public static final String DEGREES = "http://qudt.org/vocab/unit/DEG";
     public static final String UNITLESS = "http://qudt.org/vocab/unit/UNITLESS";
 
     private static final IfcSIUnit IFCMETER =
