@@ -34,13 +34,11 @@ public class Project {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Project project = (Project) o;
-        return Objects.equals(name, project.name)
-                && Objects.equals(id, project.id)
-                && Objects.equals(standards, project.standards);
+        return Objects.equals(id, project.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, id, standards);
+        return Objects.hash(id);
     }
 }

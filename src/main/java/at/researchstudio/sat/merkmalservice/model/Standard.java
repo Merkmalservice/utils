@@ -26,12 +26,11 @@ public class Standard {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Standard standard = (Standard) o;
-        return Objects.equals(id, standard.id)
-                && Objects.equals(organization, standard.organization);
+        return Objects.equals(id, standard.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, organization);
+        return Objects.hash(id);
     }
 }
