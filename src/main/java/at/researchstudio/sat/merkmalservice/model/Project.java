@@ -6,15 +6,17 @@ import java.util.Objects;
 public class Project {
     private final String name;
     private final String id;
+    private final String description;
     private final List<Standard> standards;
 
-    public Project(String name, String id, List<Standard> standards) {
+    public Project(String id, String name, String description, List<Standard> standards) {
         Objects.requireNonNull(name);
         Objects.requireNonNull(id);
         Objects.requireNonNull(standards);
         this.name = name;
         this.id = id;
         this.standards = standards;
+        this.description = description;
     }
 
     public String getName() {
@@ -27,6 +29,10 @@ public class Project {
 
     public List<Standard> getStandards() {
         return standards;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     @Override
