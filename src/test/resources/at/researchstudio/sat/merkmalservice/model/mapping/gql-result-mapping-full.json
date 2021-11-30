@@ -1,0 +1,43 @@
+{
+  "data": {
+    "mapping": {
+      "id": "urn:uuid:a7724f34-0b0a-436f-bfc4-46c5f40e9740",
+      "name": "3D Bauteil löschen",
+      "featureSets": [
+        {
+          "id": "urn:uuid:5cd46f98-a7a1-457f-b431-21c8be74b019"
+        }
+      ],
+      "actionGroups": [
+        {
+          "__typename": "DeleteActionGroup",
+          "actions": [
+            {
+              "__typename": "DeleteAction",
+              "feature": {
+                "id": "urn:uuid:687c2f9c-dc9d-44bd-ac0a-a35e937169b1",
+                "name": "3D.Bauteil",
+                "type": {
+                  "__typename": "StringValue"
+                }
+              },
+              "id": "urn:uuid:9a06b7fe-8af5-44d0-b732-a069201bd2fd"
+            }
+          ]
+        }
+      ],
+      "condition": {
+        "__typename": "SingleCondition",
+        "feature": {
+          "id": "urn:uuid:687c2f9c-dc9d-44bd-ac0a-a35e937169b1",
+          "name": "3D.Bauteil",
+          "type": {
+            "__typename": "StringValue"
+          }
+        },
+        "predicate": "PRESENT",
+        "value": null
+      }
+    }
+  }
+}

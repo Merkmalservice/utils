@@ -1,44 +1,16 @@
-package at.researchstudio.sat.merkmalservice.model;
+package at.researchstudio.sat.merkmalservice.model.mapping.feature.featuretype;
 
-import java.util.ArrayList;
+import at.researchstudio.sat.merkmalservice.model.EnumFeature;
 import java.util.List;
 
-public class EnumFeature extends Feature {
-    private FeatureType featureType;
+public class EnumFeatureType extends FeatureType {
+    private List<EnumFeature.OptionValue> options;
+    private Boolean allowMultiple;
 
-    public EnumFeature() {}
-
-    public EnumFeature(String name, List<OptionValue> options, Boolean allowMultiple) {
-        super(name);
-        this.featureType = new FeatureType(options, allowMultiple);
-    }
-
-    public EnumFeature(
-            String name,
-            ArrayList<FeatureGroup> featureGroups,
-            List<OptionValue> options,
-            Boolean allowMultiple) {
-        super(name, featureGroups);
-        this.featureType = new FeatureType(options, allowMultiple);
-    }
-
-    public FeatureType getFeatureType() {
-        return featureType;
-    }
-
-    public List<OptionValue> getOptions() {
-        return featureType.options;
-    }
-
-    private class FeatureType {
-        private final String type = "ENUMERATION";
-        private final List<OptionValue> options;
-        private final Boolean allowMultiple;
-
-        public FeatureType(List<OptionValue> options, Boolean allowMultiple) {
-            this.options = options;
-            this.allowMultiple = allowMultiple;
-        }
+    public EnumFeatureType(List<EnumFeature.OptionValue> options, Boolean allowMultiple) {
+        super("ENUMERATION");
+        this.options = options;
+        this.allowMultiple = allowMultiple;
     }
 
     public abstract static class OptionValue {
@@ -63,7 +35,7 @@ public class EnumFeature extends Feature {
         }
     }
 
-    public static class MEStringValue extends OptionValue {
+    public static class MEStringValue extends EnumFeature.OptionValue {
         private String stringValue;
 
         public MEStringValue(String stringValue, String description) {
@@ -76,7 +48,7 @@ public class EnumFeature extends Feature {
         }
     }
 
-    public static class MEIntegerValue extends OptionValue {
+    public static class MEIntegerValue extends EnumFeature.OptionValue {
         private Integer integerValue;
 
         public MEIntegerValue(Integer integerValue, String description) {
@@ -89,7 +61,7 @@ public class EnumFeature extends Feature {
         }
     }
 
-    public static class MEFloatValue extends OptionValue {
+    public static class MEFloatValue extends EnumFeature.OptionValue {
         private Float floatValue;
 
         public MEFloatValue(Float floatValue, String description) {
@@ -102,7 +74,7 @@ public class EnumFeature extends Feature {
         }
     }
 
-    public static class MEBooleanValue extends OptionValue {
+    public static class MEBooleanValue extends EnumFeature.OptionValue {
         private String name;
 
         public MEBooleanValue(String name, String description) {

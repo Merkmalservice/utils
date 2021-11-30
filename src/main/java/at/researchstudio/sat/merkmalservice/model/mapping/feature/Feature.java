@@ -1,13 +1,17 @@
-package at.researchstudio.sat.merkmalservice.model;
+package at.researchstudio.sat.merkmalservice.model.mapping.feature;
 
+import at.researchstudio.sat.merkmalservice.model.FeatureGroup;
+import at.researchstudio.sat.merkmalservice.model.mapping.feature.featuretype.FeatureType;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
-public abstract class Feature {
+public class Feature {
+    private String id;
     private String name;
     private String description;
     private List<FeatureGroup> featureGroups;
+    private FeatureType type;
 
     private transient Set<String> uniqueValues;
 
@@ -31,6 +35,19 @@ public abstract class Feature {
         this.name = name;
         this.description = description;
         this.featureGroups = featureGroups;
+    }
+
+    public Feature(
+            String id,
+            String name,
+            String description,
+            List<FeatureGroup> featureGroups,
+            FeatureType type) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.featureGroups = featureGroups;
+        this.type = type;
     }
 
     public Set<String> getUniqueValues() {
@@ -73,6 +90,26 @@ public abstract class Feature {
 
     public void setFeatureGroups(List<FeatureGroup> featureGroups) {
         this.featureGroups = featureGroups;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public FeatureType getType() {
+        return type;
+    }
+
+    public void setType(FeatureType type) {
+        this.type = type;
     }
 
     @Override

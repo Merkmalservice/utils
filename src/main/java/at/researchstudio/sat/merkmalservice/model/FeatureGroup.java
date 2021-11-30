@@ -1,8 +1,10 @@
 package at.researchstudio.sat.merkmalservice.model;
 
 public class FeatureGroup {
-    private final String name;
-    private final String description;
+    private String name;
+    private String description;
+
+    public FeatureGroup() {}
 
     public FeatureGroup(String name) {
         this.name = name;
