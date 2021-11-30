@@ -3,10 +3,12 @@ package at.researchstudio.sat.merkmalservice.model;
 import java.util.Objects;
 
 public class Standard {
-    private final String id;
-    private final String description;
-    private final boolean isPublic;
-    private final Organization organization;
+    private String id;
+    private String description;
+    private boolean isPublic;
+    private Organization organization;
+
+    public Standard() {}
 
     public Standard(String id, String description, boolean isPublic, Organization organization) {
         Objects.requireNonNull(id);

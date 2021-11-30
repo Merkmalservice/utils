@@ -3,8 +3,10 @@ package at.researchstudio.sat.merkmalservice.model;
 import java.util.Objects;
 
 public class Organization {
-    private final String id;
-    private final String name;
+    private String id;
+    private String name;
+
+    public Organization() {}
 
     public Organization(String id, String name) {
         Objects.requireNonNull(id);

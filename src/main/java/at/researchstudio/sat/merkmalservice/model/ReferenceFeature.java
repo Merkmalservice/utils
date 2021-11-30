@@ -3,7 +3,9 @@ package at.researchstudio.sat.merkmalservice.model;
 import java.util.ArrayList;
 
 public class ReferenceFeature extends Feature {
-    private final FeatureType featureType = new FeatureType();
+    private FeatureType featureType = new FeatureType();
+
+    public ReferenceFeature() {}
 
     public ReferenceFeature(String name) {
         super(name);

@@ -5,7 +5,9 @@ import at.researchstudio.sat.merkmalservice.vocab.qudt.QudtUnit;
 import java.util.ArrayList;
 
 public class NumericFeature extends Feature {
-    private final FeatureType featureType;
+    private FeatureType featureType;
+
+    public NumericFeature() {}
 
     public NumericFeature(String name, String quantityKind, String unit) {
         super(name);

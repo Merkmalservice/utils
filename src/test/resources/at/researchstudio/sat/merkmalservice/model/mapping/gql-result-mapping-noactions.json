@@ -1,0 +1,25 @@
+{
+  "data": {
+    "mapping": {
+      "id": "urn:uuid:80225d8f-6a24-49e0-bf41-e5096059be15",
+      "name": "Drehflügel löschen",
+      "featureSets": [
+        {
+          "id": "urn:uuid:aa68da9d-ce5a-4ee7-8c73-eb0cba2035cd"
+        }
+      ],
+      "condition": {
+        "__typename": "SingleCondition",
+        "feature": {
+          "id": "urn:uuid:5d38dc66-f3f0-4962-8b7b-08a350ef8b4e",
+          "name": "2D Drehfl�gel links sichtbar",
+          "type": {
+            "__typename": "BooleanValue"
+          }
+        },
+        "predicate": "PRESENT",
+        "value": null
+      }
+    }
+  }
+}
