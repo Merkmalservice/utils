@@ -1,6 +1,7 @@
 package at.researchstudio.sat.merkmalservice.model.mapping;
 
 import at.researchstudio.sat.merkmalservice.model.mapping.feature.Feature;
+import java.util.Optional;
 
 public class SingleCondition implements Condition {
     private Feature feature;
@@ -22,8 +23,8 @@ public class SingleCondition implements Condition {
         return feature;
     }
 
-    public MappingExecutionValue getValue() {
-        return value;
+    public Optional<MappingExecutionValue> getValue() {
+        return Optional.ofNullable(value);
     }
 
     public MappingPredicate getPredicate() {
