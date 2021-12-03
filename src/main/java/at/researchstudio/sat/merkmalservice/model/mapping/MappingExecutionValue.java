@@ -80,4 +80,23 @@ public class MappingExecutionValue {
     public Optional<String> getGraphQLType() {
         return Optional.ofNullable(graphQLType);
     }
+
+    public <T> T getValue() {
+        if (stringValue != null) {
+            return (T) stringValue;
+        }
+        if (integerValue != null) {
+            return (T) integerValue;
+        }
+        if (booleanValue != null) {
+            return (T) booleanValue;
+        }
+        if (floatValue != null) {
+            return (T) floatValue;
+        }
+        if (idValue != null) {
+            return (T) idValue;
+        }
+        throw new IllegalStateException("No value found in MappingExecutionValue");
+    }
 }

@@ -113,4 +113,38 @@ public enum IfcPropertyType {
     public IfcUnitType getUnitType() {
         return this.unitType;
     }
+
+    /**
+     * Convert the specified string to an IfcPropertyType and check if the result is the specified
+     * type.
+     *
+     * @param typeString the name of the type
+     * @param type the type to test against
+     * @return true if equal
+     */
+    public static boolean is(String typeString, IfcPropertyType type) {
+        Objects.requireNonNull(typeString);
+        Objects.requireNonNull(type);
+        return fromString(typeString) == type;
+    }
+
+    /**
+     * Convert the specified string to an IfcPropertyType and check if the result is one of the
+     * specified types.
+     *
+     * @param typeString the name of the type
+     * @param types the types to test against
+     * @return
+     */
+    public static boolean isOneOf(String typeString, IfcPropertyType... types) {
+        Objects.requireNonNull(typeString);
+        Objects.requireNonNull(types);
+        IfcPropertyType fromString = fromString(typeString);
+        for (IfcPropertyType type : types) {
+            if (type == fromString) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
