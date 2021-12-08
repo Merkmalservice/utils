@@ -1,6 +1,7 @@
 package at.researchstudio.sat.merkmalservice.model;
 
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public class Standard {
     private String id;
@@ -46,5 +47,47 @@ public class Standard {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder implements IBuilder<Standard> {
+        private Standard product;
+
+        public Builder() {
+            this.product = new Standard();
+        }
+
+        public Standard build() {
+            return product;
+        }
+
+        public Builder id(String id) {
+            product.id = id;
+            return this;
+        }
+
+        public Builder description(String description) {
+            product.description = description;
+            return this;
+        }
+
+        public Builder isPublic(boolean isPublic) {
+            product.isPublic = isPublic;
+            return this;
+        }
+
+        public Builder organization(Organization organization) {
+            product.organization = organization;
+            return this;
+        }
+
+        public Builder organization(Consumer<Organization.Builder> organizationConfigurer) {
+            Organization.Builder builder = Organization.builder();
+            organizationConfigurer.accept(builder);
+            return organization(builder.build());
+        }
     }
 }

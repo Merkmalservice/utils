@@ -23,4 +23,30 @@ public class FeatureGroup {
     public String getDescription() {
         return description;
     }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private FeatureGroup product;
+
+        public Builder() {
+            this.product = new FeatureGroup();
+        }
+
+        public FeatureGroup build() {
+            return product;
+        }
+
+        public Builder name(String name) {
+            product.name = name;
+            return this;
+        }
+
+        public Builder description(String description) {
+            product.description = description;
+            return this;
+        }
+    }
 }

@@ -2,9 +2,11 @@ package at.researchstudio.sat.merkmalservice.model.mapping.feature;
 
 import at.researchstudio.sat.merkmalservice.model.FeatureGroup;
 import at.researchstudio.sat.merkmalservice.model.mapping.feature.featuretype.FeatureType;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public class Feature {
     private String id;
@@ -125,5 +127,61 @@ public class Feature {
     @Override
     public int hashCode() {
         return Objects.hash(name, description, featureGroups);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private Feature product;
+
+        Builder() {
+            this.product = new Feature();
+        }
+
+        public Feature build() {
+            return product;
+        }
+
+        public Builder featureGroup(FeatureGroup featureGroup) {
+            if (product.featureGroups == null) {
+                product.featureGroups = new ArrayList<>();
+            }
+            product.featureGroups.add(featureGroup);
+            return this;
+        }
+
+        public Builder featureGroup(Consumer<FeatureGroup.Builder> featureGroupConfigurer) {
+            FeatureGroup.Builder builder = FeatureGroup.builder();
+            featureGroupConfigurer.accept(builder);
+            return featureGroup(builder.build());
+        }
+
+        public Builder name(String name) {
+            product.name = name;
+            return this;
+        }
+
+        public Builder description(String descrption) {
+            product.description = descrption;
+            return this;
+        }
+
+        public Builder id(String id) {
+            product.id = id;
+            return this;
+        }
+
+        public Builder featureType(FeatureType featureType) {
+            product.type = featureType;
+            return this;
+        }
+
+        public Builder featureType(Consumer<FeatureType.Builder> featureTypeConfigurer) {
+            FeatureType.Builder builder = FeatureType.builder();
+            featureTypeConfigurer.accept(builder);
+            return featureType(builder.build());
+        }
     }
 }

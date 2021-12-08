@@ -62,4 +62,20 @@ public class Project {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private Project product;
+
+        Builder() {
+            this.product = new Project();
+        }
+
+        public Project build() {
+            return product;
+        }
+    }
 }

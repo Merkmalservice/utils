@@ -35,4 +35,30 @@ public class Organization {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder implements IBuilder<Organization> {
+        private Organization product;
+
+        public Builder() {
+            this.product = new Organization();
+        }
+
+        public Organization build() {
+            return product;
+        }
+
+        public Builder id(String id) {
+            product.id = id;
+            return this;
+        }
+
+        public Builder name(String name) {
+            product.name = name;
+            return this;
+        }
+    }
 }
