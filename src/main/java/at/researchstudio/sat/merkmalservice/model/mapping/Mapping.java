@@ -1,8 +1,9 @@
 package at.researchstudio.sat.merkmalservice.model.mapping;
 
-import at.researchstudio.sat.merkmalservice.model.IBuilder;
 import at.researchstudio.sat.merkmalservice.model.Project;
 import at.researchstudio.sat.merkmalservice.model.Standard;
+import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.builder.ListBuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.mapping.action.Action;
 import at.researchstudio.sat.merkmalservice.model.mapping.action.ActionGroup;
 import at.researchstudio.sat.merkmalservice.model.mapping.condition.Condition;
@@ -66,12 +67,48 @@ public class Mapping {
         return new Builder();
     }
 
-    public static class Builder implements IBuilder<Mapping> {
+    public static <PARENT extends BuilderScaffold<PARENT, ?>> Builder<PARENT> builder(
+            PARENT parent) {
+        return new Builder(parent);
+    }
+
+    public abstract static class MyBuilderScaffold<
+                    THIS extends BuilderScaffold<THIS, PARENT>,
+                    PARENT extends BuilderScaffold<PARENT, ?>>
+            extends at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold<
+                    THIS, PARENT> {
+        public MyBuilderScaffold(PARENT parent) {
+            super(parent);
+        }
+
+        public MyBuilderScaffold() {}
+    }
+    ;
+
+    public static class Builder<PARENT extends BuilderScaffold<PARENT, ?>>
+            extends MyBuilderScaffold<Builder<PARENT>, PARENT> {
         private Mapping product = new Mapping();
+        private Project.Builder projectBuilder;
+        private SingleCondition.Builder<Builder<PARENT>> singleConditionBuilder;
+        private ConditionGroup.Builder<Builder<PARENT>> conditionGroupBuilder;
+
+        public Builder(PARENT parent) {
+            super(parent);
+        }
 
         public Builder() {}
 
+        public PARENT endMapping() {
+            return end();
+        }
+
         public Mapping build() {
+            if (projectBuilder != null) {
+                product.project = projectBuilder.build();
+            }
+            if (singleConditionBuilder != null) {
+                product.condition = singleConditionBuilder.build();
+            }
             return product;
         }
 
@@ -90,11 +127,9 @@ public class Mapping {
             return this;
         }
 
-        public Builder project(Consumer<Project.Builder> projectConfigurer) {
-            Project.Builder pb = Project.builder();
-            projectConfigurer.accept(pb);
-            product.project = pb.build();
-            return this;
+        public Project.Builder project() {
+            this.projectBuilder = Project.builder(this);
+            return this.projectBuilder;
         }
 
         public Builder featureSet(Standard featureSet) {
@@ -106,7 +141,7 @@ public class Mapping {
         }
 
         public Builder featureSet(Consumer<Standard.Builder> featureSetConfigurer) {
-            Standard.Builder builder = Standard.builder();
+            Standard.Builder builder = Standard.builder(this);
             featureSetConfigurer.accept(builder);
             return featureSet(builder.build());
         }
@@ -125,33 +160,28 @@ public class Mapping {
             return actionGroup(builder.build());
         }
 
-        public Builder condition(Condition condition) {
-            product.condition = condition;
-            return this;
+        public ConditionGroup.Builder<Builder<PARENT>> ifAllOf() {
+            this.conditionGroupBuilder = ConditionGroup.builder(this);
+            this.conditionGroupBuilder.connective(Connective.AND);
+            return this.conditionGroupBuilder;
         }
 
-        public Builder condition(Consumer<Condition.Builder> conditionConfigurer) {
-            Condition.Builder builder = Condition.builder();
-            conditionConfigurer.accept(builder);
-            return condition(builder.build());
+        public ConditionGroup.Builder<Builder<PARENT>> ifOneOf() {
+            this.conditionGroupBuilder = ConditionGroup.builder(this);
+            this.conditionGroupBuilder.connective(Connective.OR);
+            return this.conditionGroupBuilder;
         }
 
-        public Builder and(Consumer<ConditionGroup.Builder> groupConditionConfigurer) {
-            ConditionGroup.Builder builder = new ConditionGroup.Builder();
-            groupConditionConfigurer.accept(builder.connective(Connective.AND));
-            return condition(builder.build());
+        public SingleCondition.Builder<Builder<PARENT>> ifIs() {
+            this.singleConditionBuilder = SingleCondition.builder(this);
+            return this.singleConditionBuilder;
         }
+    }
 
-        public Builder or(Consumer<ConditionGroup.Builder> groupConditionConfigurer) {
-            ConditionGroup.Builder builder = new ConditionGroup.Builder();
-            groupConditionConfigurer.accept(builder.connective(Connective.OR));
-            return condition(builder.build());
-        }
-
-        public Builder is(Consumer<SingleCondition.Builder> singleConditionConfigurer) {
-            SingleCondition.Builder builder = new SingleCondition.Builder();
-            singleConditionConfigurer.accept(builder);
-            return condition(builder.build());
+    public static class ListBuilder<PARENT extends BuilderScaffold<PARENT, ?>>
+            extends ListBuilderScaffold<Mapping, Builder<PARENT>, PARENT> {
+        public ListBuilder(PARENT parent) {
+            super(() -> Mapping.builder(parent));
         }
     }
 }

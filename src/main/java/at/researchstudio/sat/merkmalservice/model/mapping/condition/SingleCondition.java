@@ -1,10 +1,12 @@
 package at.researchstudio.sat.merkmalservice.model.mapping.condition;
 
+import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.builder.ListBuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.builder.TerminalBuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.mapping.MappingExecutionValue;
 import at.researchstudio.sat.merkmalservice.model.mapping.MappingPredicate;
 import at.researchstudio.sat.merkmalservice.model.mapping.feature.Feature;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 public class SingleCondition implements Condition {
     private Feature feature;
@@ -38,15 +40,27 @@ public class SingleCondition implements Condition {
         return id;
     }
 
-    public static Builder builder() {
+    public static <PARENT extends BuilderScaffold<PARENT, ?>> Builder<PARENT> builder() {
         return new Builder();
     }
 
-    public static class Builder {
+    public static <PARENT extends BuilderScaffold<PARENT, ?>> Builder<PARENT> builder(
+            PARENT parent) {
+        return new Builder(parent);
+    }
+
+    public static class Builder<PARENT extends BuilderScaffold<PARENT, ?>>
+            extends TerminalBuilderScaffold<SingleCondition, Builder<PARENT>, PARENT> {
         private SingleCondition product;
+        private Feature.Builder<Builder<PARENT>> featureBuilder = null;
+
+        public Builder(PARENT parent) {
+            super(parent);
+            this.product = new SingleCondition();
+        }
 
         public Builder() {
-            this.product = new SingleCondition();
+            this(null);
         }
 
         public SingleCondition build() {
@@ -58,10 +72,9 @@ public class SingleCondition implements Condition {
             return this;
         }
 
-        public Builder feature(Consumer<Feature.Builder> featureConfigurer) {
-            Feature.Builder builder = Feature.builder();
-            featureConfigurer.accept(builder);
-            return feature(builder.build());
+        public Feature.Builder<Builder<PARENT>> feature() {
+            this.featureBuilder = Feature.builder(this);
+            return this.featureBuilder;
         }
 
         public Builder id(String id) {
@@ -69,29 +82,25 @@ public class SingleCondition implements Condition {
             return this;
         }
 
-        public Builder value(MappingExecutionValue value) {
-            product.value = value;
-            return this;
-        }
-
-        public Builder value(String value) {
-            product.value = new MappingExecutionValue(value);
-            return this;
-        }
-
-        public Builder value(Double value) {
-            product.value = new MappingExecutionValue(value);
-            return this;
-        }
-
-        public Builder value(Boolean value) {
-            product.value = new MappingExecutionValue(value);
+        public Builder value(Object value) {
+            product.value = MappingExecutionValue.of(value);
             return this;
         }
 
         public Builder predicate(MappingPredicate predicate) {
             product.predicate = predicate;
             return this;
+        }
+
+        public PARENT endSingleCondition() {
+            return end();
+        }
+    }
+
+    public static class ListBuilder<PARENT extends BuilderScaffold<PARENT, ?>>
+            extends ListBuilderScaffold<SingleCondition, SingleCondition.Builder<PARENT>, PARENT> {
+        public ListBuilder(PARENT parent) {
+            super(() -> SingleCondition.builder(parent));
         }
     }
 }

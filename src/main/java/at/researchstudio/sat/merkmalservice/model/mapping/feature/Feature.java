@@ -1,6 +1,8 @@
 package at.researchstudio.sat.merkmalservice.model.mapping.feature;
 
 import at.researchstudio.sat.merkmalservice.model.FeatureGroup;
+import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.builder.TerminalBuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.mapping.feature.featuretype.FeatureType;
 import java.util.ArrayList;
 import java.util.List;
@@ -129,19 +131,35 @@ public class Feature {
         return Objects.hash(name, description, featureGroups);
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public static <PARENT extends BuilderScaffold<PARENT, ?>> Builder<PARENT> builder() {
+        return new Builder<>();
     }
 
-    public static class Builder {
+    public static <PARENT extends BuilderScaffold<PARENT, ?>> Builder<PARENT> builder(
+            PARENT parent) {
+        return new Builder<>(parent);
+    }
+
+    public static class Builder<PARENT extends BuilderScaffold<PARENT, ?>>
+            extends TerminalBuilderScaffold<Feature, Builder<PARENT>, PARENT> {
         private Feature product;
 
         Builder() {
+            super();
+            this.product = new Feature();
+        }
+
+        Builder(PARENT parent) {
+            super(parent);
             this.product = new Feature();
         }
 
         public Feature build() {
             return product;
+        }
+
+        public PARENT endFeature() {
+            return end();
         }
 
         public Builder featureGroup(FeatureGroup featureGroup) {
@@ -181,7 +199,8 @@ public class Feature {
         public Builder featureType(Consumer<FeatureType.Builder> featureTypeConfigurer) {
             FeatureType.Builder builder = FeatureType.builder();
             featureTypeConfigurer.accept(builder);
-            return featureType(builder.build());
+            product.type = builder.build();
+            return this;
         }
     }
 }

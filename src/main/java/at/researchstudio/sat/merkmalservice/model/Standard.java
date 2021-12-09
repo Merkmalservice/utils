@@ -1,5 +1,8 @@
 package at.researchstudio.sat.merkmalservice.model;
 
+import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.builder.ListBuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.builder.TerminalBuilderScaffold;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -49,19 +52,35 @@ public class Standard {
         return Objects.hash(id);
     }
 
-    public static Builder builder() {
+    public static <T extends BuilderScaffold<T, ?>> Builder<T> builder() {
         return new Builder();
     }
 
-    public static class Builder implements IBuilder<Standard> {
+    public static <PARENT extends BuilderScaffold<PARENT, ?>> Builder<PARENT> builder(
+            PARENT parent) {
+        return new Builder(parent);
+    }
+
+    public static class Builder<PARENT extends BuilderScaffold<PARENT, ?>>
+            extends TerminalBuilderScaffold<Standard, Builder<PARENT>, PARENT> {
         private Standard product;
 
         public Builder() {
+            super();
             this.product = new Standard();
+        }
+
+        public Builder(PARENT parent) {
+            super(parent);
+            this.product = product;
         }
 
         public Standard build() {
             return product;
+        }
+
+        public PARENT endStandard() {
+            return parent;
         }
 
         public Builder id(String id) {
@@ -88,6 +107,13 @@ public class Standard {
             Organization.Builder builder = Organization.builder();
             organizationConfigurer.accept(builder);
             return organization(builder.build());
+        }
+    }
+
+    public static class ListBuilder<PARENT extends BuilderScaffold<PARENT, ?>>
+            extends ListBuilderScaffold<Standard, Builder<PARENT>, PARENT> {
+        public ListBuilder(PARENT parent) {
+            super(() -> Standard.builder(parent));
         }
     }
 }

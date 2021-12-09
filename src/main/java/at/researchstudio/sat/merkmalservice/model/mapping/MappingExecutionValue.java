@@ -1,5 +1,6 @@
 package at.researchstudio.sat.merkmalservice.model.mapping;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class MappingExecutionValue {
@@ -55,6 +56,31 @@ public class MappingExecutionValue {
         this.floatValue = null;
         this.idValue = idValue;
         this.graphQLType = graphQLType;
+    }
+
+    public static MappingExecutionValue of(Object value) {
+        Objects.requireNonNull(value);
+        if (value instanceof String) {
+            new MappingExecutionValue((String) value);
+        }
+        if (value instanceof Integer) {
+            new MappingExecutionValue((Integer) value);
+        }
+        if (value instanceof Boolean) {
+            new MappingExecutionValue((Boolean) value);
+        }
+        if (value instanceof Double) {
+            new MappingExecutionValue((Double) value);
+        }
+        if (value instanceof Float) {
+            new MappingExecutionValue(((Float) value).doubleValue());
+        }
+        if (value instanceof Long) {
+            new MappingExecutionValue(((Long) value).intValue());
+        }
+        throw new IllegalArgumentException(
+                "Cannot create MappingExecutionValue from value of type "
+                        + value.getClass().getName());
     }
 
     public Optional<String> getStringValue() {

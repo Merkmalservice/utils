@@ -1,6 +1,9 @@
 package at.researchstudio.sat.merkmalservice.model;
 
+import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.builder.TerminalBuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.mapping.Mapping;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -63,19 +66,88 @@ public class Project {
         return Objects.hash(id);
     }
 
-    public static Builder builder() {
+    public static Builder<?> builder() {
         return new Builder();
     }
 
-    public static class Builder {
-        private Project product;
+    public static <PARENT extends BuilderScaffold<PARENT, ?>> Builder builder(PARENT parent) {
+        return new Builder(parent);
+    }
 
-        Builder() {
+    public static class Builder<PARENT extends BuilderScaffold<PARENT, ?>>
+            extends TerminalBuilderScaffold<Project, Builder<PARENT>, PARENT> {
+        private Project product;
+        private Standard.ListBuilder<Builder<PARENT>> standardListBuilder =
+                new Standard.ListBuilder<>(this);
+        private Mapping.ListBuilder<Builder<PARENT>> mappingListBuilder =
+                new Mapping.ListBuilder<>(this);
+
+        Builder(PARENT parent) {
+            super(parent);
             this.product = new Project();
         }
 
+        public Builder() {
+            super();
+        }
+
+        public Builder id(String id) {
+            product.id = id;
+            return this;
+        }
+
+        public Builder name(String name) {
+            product.name = name;
+            return this;
+        }
+
+        public Builder description(String description) {
+            product.description = description;
+            return this;
+        }
+
+        public Builder standard(Standard standard) {
+            initializeStandardsList();
+            product.standards.add(standard);
+            return this;
+        }
+
+        private void initializeStandardsList() {
+            if (product.standards == null) {
+                product.standards = new ArrayList<>();
+            }
+        }
+
+        public Standard.Builder standard() {
+            return standardListBuilder.newBuilder();
+        }
+
+        public Builder mapping(Mapping mapping) {
+            initializeMappingsList();
+            product.mappings.add(mapping);
+            return this;
+        }
+
+        public Mapping.Builder mapping() {
+            return mappingListBuilder.newBuilder();
+        }
+
+        private void initializeMappingsList() {
+            if (product.mappings == null) {
+                product.mappings = new ArrayList<>();
+            }
+        }
+
         public Project build() {
+            initializeStandardsList();
+            product.standards.addAll(standardListBuilder.build());
+            initializeMappingsList();
+            product.mappings.addAll(mappingListBuilder.build());
             return product;
+        }
+
+        public PARENT endProject() {
+            return end();
         }
     }
 }
