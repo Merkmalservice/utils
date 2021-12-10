@@ -3,7 +3,7 @@ package at.researchstudio.sat.merkmalservice.model.mapping.feature;
 import at.researchstudio.sat.merkmalservice.model.FeatureGroup;
 import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.builder.SubBuilderScaffold;
-import at.researchstudio.sat.merkmalservice.model.mapping.feature.featuretype.FeatureType;
+import at.researchstudio.sat.merkmalservice.model.mapping.feature.featuretype.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -156,6 +156,8 @@ public class Feature {
         private FeatureGroup.ListBuilder<THIS> featureGroupListBuilder =
                 FeatureGroup.listBuilder((THIS) this);
         private FeatureType.Builder<THIS> featureTypeBuilder;
+        private EnumFeatureType.Builder<THIS> enumFeatureTypeBuilder;
+        private NumericFeatureType.Builder<THIS> numericFeatureTypeBuilder;
 
         MyBuilderScaffold() {
             super();
@@ -173,11 +175,13 @@ public class Feature {
             if (this.featureTypeBuilder != null) {
                 product.type = featureTypeBuilder.build();
             }
+            if (this.numericFeatureTypeBuilder != null) {
+                product.type = this.numericFeatureTypeBuilder.build();
+            }
+            if (this.enumFeatureTypeBuilder != null) {
+                product.type = this.enumFeatureTypeBuilder.build();
+            }
             return product;
-        }
-
-        public PARENT endFeature() {
-            return end();
         }
 
         public THIS featureGroup(FeatureGroup featureGroup) {
@@ -216,9 +220,29 @@ public class Feature {
             return (THIS) this;
         }
 
-        public FeatureType.Builder<THIS> featureType() {
-            this.featureTypeBuilder = FeatureType.builder((THIS) this);
-            return this.featureTypeBuilder;
+        public THIS stringType() {
+            this.featureTypeBuilder = StringFeatureType.builder((THIS) this).stringType();
+            return (THIS) this;
+        }
+
+        public THIS referenceType() {
+            this.featureTypeBuilder = ReferenceFeatureType.builder((THIS) this).referenceType();
+            return (THIS) this;
+        }
+
+        public THIS booleanType() {
+            this.featureTypeBuilder = BooleanFeatureType.builder((THIS) this).booleanType();
+            return (THIS) this;
+        }
+
+        public EnumFeatureType.Builder<THIS> enumType() {
+            this.enumFeatureTypeBuilder = EnumFeatureType.enumTypeBuilder((THIS) this);
+            return this.enumFeatureTypeBuilder;
+        }
+
+        public NumericFeatureType.Builder<THIS> numericType() {
+            this.numericFeatureTypeBuilder = NumericFeatureType.numericFeatureBuilder((THIS) this);
+            return this.numericFeatureTypeBuilder;
         }
     }
 }

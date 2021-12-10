@@ -7,13 +7,15 @@ import at.researchstudio.sat.merkmalservice.model.builder.ListBuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.builder.SubBuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.mapping.action.Action;
 import at.researchstudio.sat.merkmalservice.model.mapping.action.ActionGroup;
+import at.researchstudio.sat.merkmalservice.model.mapping.action.add.AddActionGroup;
+import at.researchstudio.sat.merkmalservice.model.mapping.action.convert.ConvertActionGroup;
+import at.researchstudio.sat.merkmalservice.model.mapping.action.delete.DeleteActionGroup;
 import at.researchstudio.sat.merkmalservice.model.mapping.condition.Condition;
 import at.researchstudio.sat.merkmalservice.model.mapping.condition.ConditionGroup;
 import at.researchstudio.sat.merkmalservice.model.mapping.condition.Connective;
 import at.researchstudio.sat.merkmalservice.model.mapping.condition.SingleCondition;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class Mapping {
     private String id;
@@ -103,6 +105,12 @@ public class Mapping {
         private SingleCondition.Builder<THIS> singleConditionBuilder;
         private ConditionGroup.Builder<THIS> conditionGroupBuilder;
         private Standard.Builder<THIS> standardBuilder = null;
+        private AddActionGroup.ListBuilder<THIS> addActionGroupListBuilder =
+                AddActionGroup.addActionGroupListBuilder((THIS) this);
+        private DeleteActionGroup.ListBuilder<THIS> deleteActionGroupListBuilder =
+                DeleteActionGroup.deleteActionGroupListBuilder((THIS) this);
+        private ConvertActionGroup.ListBuilder<THIS> convertActionGroupListBuilder =
+                ConvertActionGroup.convertActionGroupListBuilder((THIS) this);
 
         public MyBuilderScaffold(PARENT parent) {
             super(parent);
@@ -121,6 +129,10 @@ public class Mapping {
             if (singleConditionBuilder != null) {
                 product.condition = singleConditionBuilder.build();
             }
+            initializeActionGroupsList();
+            product.actionGroups.addAll(convertActionGroupListBuilder.build());
+            product.actionGroups.addAll(deleteActionGroupListBuilder.build());
+            product.actionGroups.addAll(addActionGroupListBuilder.build());
             return product;
         }
 
@@ -158,15 +170,27 @@ public class Mapping {
         }
 
         public THIS actionGroup(ActionGroup actionGroup) {
-            if (product.actionGroups == null) {
-                product.actionGroups = new ArrayList<>();
-            }
+            initializeActionGroupsList();
             product.actionGroups.add(actionGroup);
             return (THIS) this;
         }
 
-        public ActionGroup.Builder<THIS> actionGroup(){
-            return this.actionGroupListBuilder.newBuilder();
+        public DeleteActionGroup.Builder<THIS> deleteActionGroup() {
+            return this.deleteActionGroupListBuilder.newBuilder();
+        }
+
+        public AddActionGroup.Builder<THIS> addActionGroup() {
+            return this.addActionGroupListBuilder.newBuilder();
+        }
+
+        public ConvertActionGroup.Builder<THIS> convertActionGroup() {
+            return this.convertActionGroupListBuilder.newBuilder();
+        }
+
+        private void initializeActionGroupsList() {
+            if (product.actionGroups == null) {
+                product.actionGroups = new ArrayList<>();
+            }
         }
 
         public ConditionGroup.Builder<THIS> allMatch() {

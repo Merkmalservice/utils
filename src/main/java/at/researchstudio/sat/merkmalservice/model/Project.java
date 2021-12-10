@@ -155,9 +155,5 @@ public class Project {
             product.mappings.addAll(mappingListBuilder.build());
             return product;
         }
-
-        public PARENT endProject() {
-            return end();
-        }
     }
 }

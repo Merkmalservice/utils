@@ -99,10 +99,6 @@ public class Standard {
             this.product = product;
         }
 
-        public PARENT endStandard() {
-            return parent;
-        }
-
         public THIS id(String id) {
             product.id = id;
             return (THIS) this;

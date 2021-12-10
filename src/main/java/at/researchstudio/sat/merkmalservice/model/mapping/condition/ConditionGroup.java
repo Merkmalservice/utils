@@ -88,10 +88,6 @@ public class ConditionGroup implements Condition {
             return product;
         }
 
-        public PARENT endConditionGroup() {
-            return end();
-        }
-
         public THIS condition(Condition condition) {
             prepareConditionGroupList();
             product.conditions.add(condition);

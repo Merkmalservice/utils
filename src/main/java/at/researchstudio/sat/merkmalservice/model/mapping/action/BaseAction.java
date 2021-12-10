@@ -16,10 +16,11 @@ public abstract class BaseAction implements Action {
         return id;
     }
 
-    protected abstract static class MyBuilderScaffold<T extends BaseAction,
+    protected abstract static class MyBuilderScaffold<
+                    T extends BaseAction,
                     THIS extends MyBuilderScaffold<T, THIS, PARENT>,
-                    PARENT extends BuilderScaffold<?, PARENT>
-                    > extends SubBuilderScaffold<T, THIS, PARENT> {
+                    PARENT extends BuilderScaffold<?, PARENT>>
+            extends SubBuilderScaffold<T, THIS, PARENT> {
 
         protected T product;
 

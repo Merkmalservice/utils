@@ -20,9 +20,8 @@ public abstract class FeatureAction extends BaseAction {
     protected abstract static class MyBuilderScaffold<
                     T extends FeatureAction,
                     THIS extends MyBuilderScaffold<T, THIS, PARENT>,
-                    PARENT extends BuilderScaffold<?, PARENT>
-                    >
-                    extends BaseAction.MyBuilderScaffold<T, THIS, PARENT> {
+                    PARENT extends BuilderScaffold<?, PARENT>>
+            extends BaseAction.MyBuilderScaffold<T, THIS, PARENT> {
 
         protected Feature.Builder<THIS> featureBuilder = null;
 
@@ -39,7 +38,13 @@ public abstract class FeatureAction extends BaseAction {
             return (THIS) this;
         }
 
-        @Override public T build() {
+        public Feature.Builder<THIS> feature() {
+            this.featureBuilder = Feature.builder((THIS) this);
+            return this.featureBuilder;
+        }
+
+        @Override
+        public T build() {
             super.build();
             if (this.featureBuilder != null) {
                 this.product.feature = featureBuilder.build();

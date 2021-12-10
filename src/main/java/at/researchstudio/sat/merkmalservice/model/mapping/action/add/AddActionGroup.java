@@ -1,9 +1,11 @@
 package at.researchstudio.sat.merkmalservice.model.mapping.action.add;
 
+import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.builder.ListBuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.builder.SubBuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.mapping.MappingExecutionValue;
 import at.researchstudio.sat.merkmalservice.model.mapping.action.ActionGroup;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class AddActionGroup extends ActionGroup<AddAction> {
     private MappingExecutionValue value;
@@ -19,21 +21,63 @@ public class AddActionGroup extends ActionGroup<AddAction> {
         return value;
     }
 
-    public static class Builder extends BuilderBase<AddActionGroup, AddAction, Builder> {
-        public Builder() {
-            super(new AddActionGroup());
+    public static Builder<?> addActionGroupBuilder() {
+        return new Builder<>();
+    }
+
+    public static <PARENT extends BuilderScaffold<?, PARENT>> Builder<PARENT> addActionGroupBuilder(
+            PARENT parent) {
+        return new Builder<>(parent);
+    }
+
+    public static <PARENT extends BuilderScaffold<?, PARENT>>
+            ListBuilder<PARENT> addActionGroupListBuilder(PARENT parent) {
+        return new ListBuilder<>(parent);
+    }
+
+    public static class ListBuilder<PARENT extends BuilderScaffold<?, PARENT>>
+            extends ListBuilderScaffold<AddActionGroup, Builder<PARENT>, PARENT> {
+        ListBuilder(PARENT parent) {
+            super(() -> AddActionGroup.addActionGroupBuilder(parent));
+        }
+    }
+
+    public static class Builder<PARENT extends BuilderScaffold<?, PARENT>>
+            extends MyBuilderScaffold<Builder<PARENT>, PARENT> {
+        Builder(PARENT parent) {
+            super(parent);
         }
 
-        public Builder value(MappingExecutionValue value) {
-            product.value = value;
-            return this;
+        Builder() {}
+    }
+
+    abstract static class MyBuilderScaffold<
+                    THIS extends MyBuilderScaffold<THIS, PARENT>,
+                    PARENT extends BuilderScaffold<?, PARENT>>
+            extends SubBuilderScaffold<AddActionGroup, THIS, PARENT>
+            implements ActionGroupBuilder<PARENT, AddActionGroup, AddAction> {
+        private AddAction.ListBuilder<THIS> addActionListBuilder =
+                AddAction.listBuilder((THIS) this);
+        private MappingExecutionValue value = null;
+
+        public MyBuilderScaffold(PARENT parent) {
+            super(parent);
         }
 
-        public Builder action(Consumer<AddAction.Builder> addActionConfigurer) {
-            AddAction.Builder builder = AddAction.builder();
-            addActionConfigurer.accept(builder);
-            action(builder.build());
-            return this;
+        public MyBuilderScaffold() {}
+
+        @Override
+        public AddActionGroup build() {
+            return new AddActionGroup(addActionListBuilder.build(), value);
+        }
+
+        public THIS value(Object value) {
+            this.value = MappingExecutionValue.of(value);
+            return (THIS) this;
+        }
+
+        public AddAction.Builder<THIS> addAction() {
+            return addActionListBuilder.newBuilder();
         }
     }
 }

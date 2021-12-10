@@ -106,14 +106,84 @@ public class SingleCondition implements Condition {
             return (THIS) this;
         }
 
-        public THIS value(Object value) {
-            product.value = MappingExecutionValue.of(value);
+        public THIS valueEquals(Object value) {
+            setValue(value);
+            product.predicate = MappingPredicate.EQUALS;
             return (THIS) this;
         }
 
-        public THIS predicate(MappingPredicate predicate) {
-            product.predicate = predicate;
+        public THIS valueNotEquals(Object value) {
+            setValue(value);
+            product.predicate = MappingPredicate.NOT;
             return (THIS) this;
+        }
+
+        public THIS valueMatches(String value) {
+            setValue(value);
+            product.predicate = MappingPredicate.MATCHES;
+            return (THIS) this;
+        }
+
+        public THIS valueContains(String value) {
+            setValue(value);
+            product.predicate = MappingPredicate.CONTAINS;
+            return (THIS) this;
+        }
+
+        public THIS valueNotContains(String value) {
+            setValue(value);
+            product.predicate = MappingPredicate.CONTAINS_NOT;
+            return (THIS) this;
+        }
+
+        public THIS valuePresent() {
+            product.predicate = MappingPredicate.PRESENT;
+            return (THIS) this;
+        }
+
+        public THIS valueNotPresent() {
+            product.predicate = MappingPredicate.NOT_PRESENT;
+            return (THIS) this;
+        }
+
+        public THIS valueGreaterThan(Object value) {
+            setValue(value);
+            product.predicate = MappingPredicate.GREATER_THAN;
+            return (THIS) this;
+        }
+
+        public THIS valueGreaterThanOrEqualTo(Object value) {
+            setValue(value);
+            product.predicate = MappingPredicate.GREATER_OR_EQUALS;
+            return (THIS) this;
+        }
+
+        public THIS valueLessThan(Object value) {
+            setValue(value);
+            product.predicate = MappingPredicate.LESS_THAN;
+            return (THIS) this;
+        }
+
+        public THIS valueLessThanOrEqualTo(Object value) {
+            setValue(value);
+            product.predicate = MappingPredicate.LESS_OR_EQUALS;
+            return (THIS) this;
+        }
+
+        public THIS valueHas(String value) {
+            setValue(value);
+            product.predicate = MappingPredicate.HAS;
+            return (THIS) this;
+        }
+
+        public THIS valueHasNot(String value) {
+            setValue(value);
+            product.predicate = MappingPredicate.HAS_NOT;
+            return (THIS) this;
+        }
+
+        private void setValue(Object value) {
+            product.value = MappingExecutionValue.of(value);
         }
     }
 }
