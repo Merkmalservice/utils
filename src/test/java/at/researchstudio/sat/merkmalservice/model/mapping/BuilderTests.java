@@ -74,5 +74,9 @@ public class BuilderTests {
                         /*------*/ .end()
                         /*----*/ .end()
                         /**/ .build();
+        Assertions.assertNotNull(mapping.getProject());
+        Assertions.assertNotNull(mapping.getCondition());
+        Assertions.assertNotNull(mapping.getActionGroups());
+        Assertions.assertEquals(1, mapping.getActionGroups().size());
     }
 }
