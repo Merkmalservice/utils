@@ -1,6 +1,7 @@
 package at.researchstudio.sat.merkmalservice.model.mapping.feature.featuretype;
 
-import at.researchstudio.sat.merkmalservice.model.IBuilder;
+import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.builder.SubBuilderScaffold;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,10 +9,12 @@ public class EnumFeatureType extends FeatureType {
     private List<OptionValue> options;
     private Boolean allowMultiple;
 
-    public EnumFeatureType() {}
+    public EnumFeatureType() {
+        super("EnumerationValue");
+    }
 
     public EnumFeatureType(List<OptionValue> options, Boolean allowMultiple) {
-        super("ENUMERATION");
+        super("EnumerationValue");
         this.options = options;
         this.allowMultiple = allowMultiple;
     }
@@ -90,48 +93,71 @@ public class EnumFeatureType extends FeatureType {
         }
     }
 
-    public static class Builder implements IBuilder<EnumFeatureType> {
-        private EnumFeatureType product;
+    public static Builder<?> enumTypeBuilder() {
+        return new Builder<>();
+    }
 
-        Builder() {
-            this.product = new EnumFeatureType();
+    public static <PARENT extends BuilderScaffold<?, PARENT>> Builder<PARENT> enumTypeBuilder(
+            PARENT parent) {
+        return new Builder<>(parent);
+    }
+
+    public static class Builder<PARENT extends BuilderScaffold<?, PARENT>>
+            extends MyBuilderScaffold<Builder<PARENT>, PARENT> {
+        Builder(PARENT parent) {
+            super(parent);
         }
+
+        Builder() {}
+    }
+
+    abstract static class MyBuilderScaffold<
+                    THIS extends MyBuilderScaffold<THIS, PARENT>,
+                    PARENT extends BuilderScaffold<?, PARENT>>
+            extends SubBuilderScaffold<EnumFeatureType, THIS, PARENT> {
+        private EnumFeatureType product = new EnumFeatureType();
+
+        MyBuilderScaffold(PARENT parent) {
+            super(parent);
+        }
+
+        MyBuilderScaffold() {}
 
         public EnumFeatureType build() {
             return product;
         }
 
-        public Builder option(OptionValue optionValue) {
+        public THIS option(OptionValue optionValue) {
             if (product.options == null) {
                 product.options = new ArrayList<>();
             }
             product.options.add(optionValue);
-            return this;
+            return (THIS) this;
         }
 
-        public Builder option(String value, String description) {
+        public THIS option(String value, String description) {
             return option(new MEStringValue(value, description));
         }
 
-        public Builder option(Integer value, String description) {
+        public THIS option(Integer value, String description) {
             return option(new MEIntegerValue(value, description));
         }
 
-        public Builder option(Double value, String description) {
+        public THIS option(Double value, String description) {
             return option(new MEFloatValue(value.floatValue(), description));
         }
 
-        public Builder option(Float value, String description) {
+        public THIS option(Float value, String description) {
             return option(new MEFloatValue(value, description));
         }
 
-        public Builder option(Boolean value, String description) {
+        public THIS option(Boolean value, String description) {
             return option(new MEBooleanValue(value, description));
         }
 
-        public Builder allowMultiple(boolean allowMultiple) {
+        public THIS allowMultiple(boolean allowMultiple) {
             product.allowMultiple = allowMultiple;
-            return this;
+            return (THIS) this;
         }
     }
 }

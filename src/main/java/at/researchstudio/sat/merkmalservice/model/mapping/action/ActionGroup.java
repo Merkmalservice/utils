@@ -1,11 +1,14 @@
 package at.researchstudio.sat.merkmalservice.model.mapping.action;
 
 import at.researchstudio.sat.merkmalservice.model.IBuilder;
+import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.builder.SubBuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.mapping.action.add.AddActionGroup;
 import at.researchstudio.sat.merkmalservice.model.mapping.action.convert.ConvertActionGroup;
 import at.researchstudio.sat.merkmalservice.model.mapping.action.delete.DeleteActionGroup;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,14 +34,20 @@ public abstract class ActionGroup<T extends Action> {
         return new Builder();
     }
 
-    public static class Builder implements IBuilder<ActionGroup<? extends Action>> {
-        private IBuilder<? extends ActionGroup> builder;
 
-        public Builder() {}
+    public static interface ActionGroupBuilder<PARENT>{
+        PARENT end();
+    }
 
-        public ConvertActionGroup.Builder convertActionGroup() {
-            this.builder = new ConvertActionGroup.Builder();
-            return (ConvertActionGroup.Builder) this.builder;
+    abstract static class MyBuilderScaffold<
+                    THIS extends MyBuilderScaffold<THIS, PARENT>,
+                    PARENT extends BuilderScaffold<?, PARENT>> implements Finisher {
+
+        ActionGroupBuilder<THIS> builder = null;
+
+        public ConvertActionGroup.Builder<Finisher> convertActionGroup() {
+            this.actionGroupBuilder<Finisher> = ConvertActionGroup.convertActionGroupBuilder((Finisher) this);
+            return (ConvertActionGroup.Builder<Finisher>) this.actionGroupBuilder;
         }
 
         public DeleteActionGroup.Builder deleteActionGroup() {

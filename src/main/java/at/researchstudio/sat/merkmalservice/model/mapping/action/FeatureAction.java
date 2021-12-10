@@ -1,7 +1,7 @@
 package at.researchstudio.sat.merkmalservice.model.mapping.action;
 
+import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.mapping.feature.Feature;
-import java.util.function.Consumer;
 
 public abstract class FeatureAction extends BaseAction {
     protected Feature feature;
@@ -17,20 +17,34 @@ public abstract class FeatureAction extends BaseAction {
         return feature;
     }
 
-    public static class Builder<T extends FeatureAction> extends BaseAction.Builder<T> {
-        protected Builder(T product) {
+    protected abstract static class MyBuilderScaffold<
+                    T extends FeatureAction,
+                    THIS extends MyBuilderScaffold<T, THIS, PARENT>,
+                    PARENT extends BuilderScaffold<?, PARENT>
+                    >
+                    extends BaseAction.MyBuilderScaffold<T, THIS, PARENT> {
+
+        protected Feature.Builder<THIS> featureBuilder = null;
+
+        protected MyBuilderScaffold(T product) {
             super(product);
         }
 
-        public Builder<?> feature(Feature feature) {
-            product.feature = feature;
-            return this;
+        public MyBuilderScaffold(PARENT parent, T product) {
+            super(parent, product);
         }
 
-        public Builder<?> feature(Consumer<Feature.Builder> featureConfigurer) {
-            Feature.Builder builder = Feature.builder();
-            featureConfigurer.accept(builder);
-            return feature(builder.build());
+        public THIS feature(Feature feature) {
+            product.feature = feature;
+            return (THIS) this;
+        }
+
+        @Override public T build() {
+            super.build();
+            if (this.featureBuilder != null) {
+                this.product.feature = featureBuilder.build();
+            }
+            return product;
         }
     }
 }

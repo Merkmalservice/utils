@@ -1,6 +1,7 @@
 package at.researchstudio.sat.merkmalservice.model.mapping.action;
 
-import at.researchstudio.sat.merkmalservice.model.IBuilder;
+import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.builder.SubBuilderScaffold;
 
 public abstract class BaseAction implements Action {
     protected String id;
@@ -15,17 +16,25 @@ public abstract class BaseAction implements Action {
         return id;
     }
 
-    public static class Builder<T extends BaseAction> implements IBuilder<T> {
+    protected abstract static class MyBuilderScaffold<T extends BaseAction,
+                    THIS extends MyBuilderScaffold<T, THIS, PARENT>,
+                    PARENT extends BuilderScaffold<?, PARENT>
+                    > extends SubBuilderScaffold<T, THIS, PARENT> {
 
         protected T product;
 
-        protected Builder(T product) {
+        protected MyBuilderScaffold(T product) {
             this.product = product;
         }
 
-        public Builder id(String id) {
+        public MyBuilderScaffold(PARENT parent, T product) {
+            super(parent);
+            this.product = product;
+        }
+
+        public THIS id(String id) {
             product.id = id;
-            return this;
+            return (THIS) this;
         }
 
         public T build() {

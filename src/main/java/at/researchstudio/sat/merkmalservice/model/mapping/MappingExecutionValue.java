@@ -61,22 +61,22 @@ public class MappingExecutionValue {
     public static MappingExecutionValue of(Object value) {
         Objects.requireNonNull(value);
         if (value instanceof String) {
-            new MappingExecutionValue((String) value);
+            return new MappingExecutionValue((String) value);
         }
         if (value instanceof Integer) {
-            new MappingExecutionValue((Integer) value);
+            return new MappingExecutionValue((Integer) value);
         }
         if (value instanceof Boolean) {
-            new MappingExecutionValue((Boolean) value);
+            return new MappingExecutionValue((Boolean) value);
         }
         if (value instanceof Double) {
-            new MappingExecutionValue((Double) value);
+            return new MappingExecutionValue((Double) value);
         }
         if (value instanceof Float) {
-            new MappingExecutionValue(((Float) value).doubleValue());
+            return new MappingExecutionValue(((Float) value).doubleValue());
         }
         if (value instanceof Long) {
-            new MappingExecutionValue(((Long) value).intValue());
+            return new MappingExecutionValue(((Long) value).intValue());
         }
         throw new IllegalArgumentException(
                 "Cannot create MappingExecutionValue from value of type "

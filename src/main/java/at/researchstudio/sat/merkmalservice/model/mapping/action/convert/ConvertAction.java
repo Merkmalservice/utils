@@ -1,16 +1,16 @@
 package at.researchstudio.sat.merkmalservice.model.mapping.action.convert;
 
+import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.builder.ListBuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.mapping.action.BaseAction;
 import at.researchstudio.sat.merkmalservice.model.mapping.feature.Feature;
-import java.util.function.Consumer;
 
 public class ConvertAction extends BaseAction {
-
     private Feature inputFeature;
-
     private Feature outputFeature;
 
-    public ConvertAction() {}
+    public ConvertAction() {
+    }
 
     public ConvertAction(String id, Feature inputFeature, Feature outputFeature) {
         super(id);
@@ -26,36 +26,68 @@ public class ConvertAction extends BaseAction {
         return outputFeature;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public static Builder<?> builder() {
+        return new Builder<>();
     }
 
-    public static class Builder extends BaseAction.Builder<ConvertAction> {
+    public static <PARENT extends BuilderScaffold<?, PARENT>> Builder<PARENT> builder(PARENT parent) {
+        return new Builder<>(parent);
+    }
 
-        public Builder() {
+    public static <PARENT extends BuilderScaffold<?, PARENT>> ListBuilder<PARENT> listBuilder(PARENT parent) {
+        return new ListBuilder<>(parent);
+    }
+
+    public static class ListBuilder<PARENT extends BuilderScaffold<?, PARENT>>
+                    extends ListBuilderScaffold<ConvertAction, Builder<PARENT>, PARENT> {
+        ListBuilder(PARENT parent) {
+            super(() -> ConvertAction.builder(parent));
+        }
+    }
+
+    public static class Builder<PARENT extends BuilderScaffold<?, PARENT>>
+                    extends MyBuilderScaffold<Builder<PARENT>, PARENT> {
+        Builder() {
+        }
+
+        Builder(PARENT parent) {
+            super(parent);
+        }
+    }
+
+    abstract static class MyBuilderScaffold<
+                    THIS extends MyBuilderScaffold<THIS, PARENT>,
+                    PARENT extends BuilderScaffold<?, PARENT>
+                    > extends BaseAction.MyBuilderScaffold<ConvertAction, THIS, PARENT> {
+        private Feature.Builder<THIS> inputFeatureBuilder = null;
+        private Feature.Builder<THIS> outputFeatureBuilder = null;
+
+        public MyBuilderScaffold() {
             super(new ConvertAction());
         }
 
-        public Builder inputFeature(Feature inputFeature) {
+        public MyBuilderScaffold(PARENT parent) {
+            super(parent, new ConvertAction());
+        }
+
+        public THIS inputFeature(Feature inputFeature) {
             product.inputFeature = inputFeature;
-            return this;
+            return (THIS) this;
         }
 
-        public Builder outputFeature(Feature outputFeature) {
+        public Feature.Builder<THIS> inputFeature() {
+            this.inputFeatureBuilder = Feature.builder((THIS) this);
+            return this.inputFeatureBuilder;
+        }
+
+        public THIS outputFeature(Feature outputFeature) {
             product.outputFeature = outputFeature;
-            return this;
+            return (THIS) this;
         }
 
-        public Builder inputFeature(Consumer<Feature.Builder> featureConfigurer) {
-            Feature.Builder builder = Feature.builder();
-            featureConfigurer.accept(builder);
-            return inputFeature(builder.build());
-        }
-
-        public Builder outputFeature(Consumer<Feature.Builder> featureConfigurer) {
-            Feature.Builder builder = Feature.builder();
-            featureConfigurer.accept(builder);
-            return outputFeature(builder.build());
+        public Feature.Builder<THIS> outputFeature() {
+            this.outputFeatureBuilder = Feature.builder((THIS) this);
+            return this.outputFeatureBuilder;
         }
     }
 }

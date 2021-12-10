@@ -1,5 +1,9 @@
 package at.researchstudio.sat.merkmalservice.model;
 
+import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.builder.ListBuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.builder.SubBuilderScaffold;
+
 public class FeatureGroup {
     private String name;
     private String description;
@@ -24,29 +28,60 @@ public class FeatureGroup {
         return description;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public static Builder<?> builder() {
+        return new Builder<>();
     }
 
-    public static class Builder {
-        private FeatureGroup product;
+    public static <PARENT extends BuilderScaffold<?, PARENT>> Builder<PARENT> builder(
+            PARENT parent) {
+        return new Builder<>(parent);
+    }
 
-        public Builder() {
-            this.product = new FeatureGroup();
+    public static <PARENT extends BuilderScaffold<?, PARENT>> ListBuilder<PARENT> listBuilder(
+            PARENT parent) {
+        return new ListBuilder<>(parent);
+    }
+
+    public static class ListBuilder<PARENT extends BuilderScaffold<?, PARENT>>
+            extends ListBuilderScaffold<FeatureGroup, Builder<PARENT>, PARENT> {
+        private ListBuilder(PARENT parent) {
+            super(() -> FeatureGroup.builder(parent));
+        }
+    }
+
+    public static class Builder<PARENT extends BuilderScaffold<?, PARENT>>
+            extends MyBuilderScaffold<Builder<PARENT>, PARENT> {
+        Builder() {}
+
+        Builder(PARENT parent) {
+            super(parent);
+        }
+    }
+
+    abstract static class MyBuilderScaffold<
+                    THIS extends MyBuilderScaffold<THIS, PARENT>,
+                    PARENT extends BuilderScaffold<?, PARENT>>
+            extends SubBuilderScaffold<FeatureGroup, THIS, PARENT> {
+        private FeatureGroup product = new FeatureGroup();
+
+        MyBuilderScaffold() {}
+
+        MyBuilderScaffold(PARENT parent) {
+            super(parent);
         }
 
         public FeatureGroup build() {
             return product;
         }
 
-        public Builder name(String name) {
+        public THIS name(String name) {
             product.name = name;
-            return this;
+            return (THIS) this;
         }
 
-        public Builder description(String description) {
+        public THIS description(String description) {
             product.description = description;
-            return this;
+            return (THIS) this;
         }
     }
 }

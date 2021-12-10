@@ -1,8 +1,10 @@
 package at.researchstudio.sat.merkmalservice.model.mapping.action.convert;
 
+import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.builder.SubBuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.mapping.action.ActionGroup;
+
 import java.util.List;
-import java.util.function.Consumer;
 
 public class ConvertActionGroup extends ActionGroup<ConvertAction> {
 
@@ -12,16 +14,27 @@ public class ConvertActionGroup extends ActionGroup<ConvertAction> {
         super(actions);
     }
 
-    public static class Builder extends BuilderBase<ConvertActionGroup, ConvertAction, Builder> {
-        public Builder() {
-            super(new ConvertActionGroup());
+    abstract static class MyBuilderScaffold<
+                    THIS extends MyBuilderScaffold<THIS, PARENT>,
+                    PARENT extends BuilderScaffold<?, PARENT>>
+        extends SubBuilderScaffold<ConvertActionGroup, THIS, PARENT>
+        implements ActionGroupBuilder<PARENT> {
+
+        private ConvertAction.ListBuilder<THIS> convertActionListBuilder = ConvertAction.listBuilder((THIS) this);
+
+        public MyBuilderScaffold(PARENT parent) {
+            super(parent);
         }
 
-        public Builder action(Consumer<ConvertAction.Builder> addActionConfigurer) {
-            ConvertAction.Builder builder = ConvertAction.builder();
-            addActionConfigurer.accept(builder);
-            action(builder.build());
-            return this;
+        public MyBuilderScaffold() {
+        }
+
+        public ConvertAction.Builder<THIS> action() {
+            return this.convertActionListBuilder.newBuilder();
+        }
+
+        @Override public ConvertActionGroup build() {
+            return new ConvertActionGroup(this.convertActionListBuilder.build());
         }
     }
 }

@@ -9,7 +9,7 @@ public class NumericFeatureType extends FeatureType {
     private String unit;
 
     public NumericFeatureType(String quantityKind, String unit) {
-        super("NUMERIC");
+        super("NumericValue");
         this.quantityKind = quantityKind;
         this.unit = unit;
     }

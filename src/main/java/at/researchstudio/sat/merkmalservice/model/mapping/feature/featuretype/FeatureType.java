@@ -1,6 +1,9 @@
 package at.researchstudio.sat.merkmalservice.model.mapping.feature.featuretype;
 
-import at.researchstudio.sat.merkmalservice.model.IBuilder;
+import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.builder.SubBuilderScaffold;
+import at.researchstudio.sat.merkmalservice.vocab.qudt.QudtQuantityKind;
+import at.researchstudio.sat.merkmalservice.vocab.qudt.QudtUnit;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -26,43 +29,71 @@ public abstract class FeatureType {
         return type;
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public static Builder<?> builder() {
+        return new Builder<>();
     }
 
-    public static class Builder implements IBuilder<FeatureType> {
+    public static <PARENT extends BuilderScaffold<?, PARENT>> Builder<PARENT> builder(
+            PARENT parent) {
+        return new Builder(parent);
+    }
 
-        private IBuilder<? extends FeatureType> builder;
-
-        public Builder() {}
-
-        public BooleanFeatureType.Builder booleanFeatureType() {
-            this.builder = new BooleanFeatureType.Builder();
-            return (BooleanFeatureType.Builder) this.builder;
+    public static class Builder<PARENT extends BuilderScaffold<?, PARENT>>
+            extends MyBuilderScaffold<Builder<PARENT>, PARENT> {
+        Builder(PARENT parent) {
+            super(parent);
         }
 
-        public EnumFeatureType.Builder enumFeatureType() {
-            this.builder = new EnumFeatureType.Builder();
-            return (EnumFeatureType.Builder) this.builder;
+        Builder() {}
+    }
+
+    abstract static class MyBuilderScaffold<
+                    THIS extends MyBuilderScaffold<THIS, PARENT>,
+                    PARENT extends BuilderScaffold<?, PARENT>>
+            extends SubBuilderScaffold<FeatureType, THIS, PARENT> {
+
+        private FeatureType product = null;
+        private EnumFeatureType.Builder<THIS> enumFeatureTypeBuilder = null;
+
+        public MyBuilderScaffold(PARENT parent) {
+            super(parent);
         }
 
-        public NumericFeatureType.Builder numericFeatureType() {
-            this.builder = new NumericFeatureType.Builder();
-            return (NumericFeatureType.Builder) this.builder;
+        public MyBuilderScaffold() {}
+
+        public THIS booleanType() {
+            this.product = new BooleanFeatureType();
+            return (THIS) this;
         }
 
-        public ReferenceFeatureType.Builder referenceFeatureType() {
-            this.builder = new ReferenceFeatureType.Builder();
-            return (ReferenceFeatureType.Builder) this.builder;
+        public EnumFeatureType.Builder<THIS> enumType() {
+            this.enumFeatureTypeBuilder = EnumFeatureType.enumTypeBuilder((THIS) this);
+            return this.enumFeatureTypeBuilder;
         }
 
-        public StringFeatureType.Builder stringFeatureType() {
-            this.builder = new StringFeatureType.Builder();
-            return (StringFeatureType.Builder) this.builder;
+        public THIS numericType(QudtQuantityKind quantityKind, QudtUnit qudtUnit) {
+            this.product = new NumericFeatureType(quantityKind.toString(), qudtUnit.toString());
+            return (THIS) this;
+        }
+
+        public THIS referenceType() {
+            this.product = new ReferenceFeatureType();
+            return (THIS) this;
+        }
+
+        public THIS stringType() {
+            this.product = new StringFeatureType();
+            return (THIS) this;
         }
 
         public FeatureType build() {
-            return this.builder.build();
+            if (this.enumFeatureTypeBuilder != null) {
+                return this.enumFeatureTypeBuilder.build();
+            }
+            if (this.product != null) {
+                return this.product;
+            }
+            throw new IllegalStateException("No feature type selected yet, cannot build!");
         }
     }
 }

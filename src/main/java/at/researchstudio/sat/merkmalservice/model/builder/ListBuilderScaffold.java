@@ -6,21 +6,23 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public abstract class ListBuilderScaffold<
-        T, B extends TerminalBuilderScaffold<T, B, P>, P extends BuilderScaffold<P, ?>> {
-    private List<B> builders = new ArrayList<>();
-    private Supplier<B> builderSupplier;
+        PRODUCT,
+        BUILDER extends SubBuilderScaffold<PRODUCT, BUILDER, PARENT>,
+        PARENT extends BuilderScaffold<?, PARENT>> {
+    private List<BUILDER> builders = new ArrayList<>();
+    private Supplier<BUILDER> builderSupplier;
 
-    public ListBuilderScaffold(Supplier<B> builderSupplier) {
+    public ListBuilderScaffold(Supplier<BUILDER> builderSupplier) {
         this.builderSupplier = builderSupplier;
     }
 
-    public B newBuilder() {
-        B newBuilder = builderSupplier.get();
+    public BUILDER newBuilder() {
+        BUILDER newBuilder = builderSupplier.get();
         builders.add(newBuilder);
         return newBuilder;
     }
 
-    public List<T> build() {
+    public List<PRODUCT> build() {
         return builders.stream().map(b -> b.build()).collect(Collectors.toList());
     }
 }

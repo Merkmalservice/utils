@@ -1,7 +1,7 @@
 package at.researchstudio.sat.merkmalservice.model;
 
 import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
-import at.researchstudio.sat.merkmalservice.model.builder.TerminalBuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.builder.SubBuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.mapping.Mapping;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,49 +67,59 @@ public class Project {
     }
 
     public static Builder<?> builder() {
-        return new Builder();
+        return new Builder<>();
     }
 
-    public static <PARENT extends BuilderScaffold<PARENT, ?>> Builder builder(PARENT parent) {
+    public static <PARENT extends BuilderScaffold<?, PARENT>> Builder<PARENT> builder(
+            PARENT parent) {
         return new Builder(parent);
     }
 
-    public static class Builder<PARENT extends BuilderScaffold<PARENT, ?>>
-            extends TerminalBuilderScaffold<Project, Builder<PARENT>, PARENT> {
-        private Project product;
-        private Standard.ListBuilder<Builder<PARENT>> standardListBuilder =
-                new Standard.ListBuilder<>(this);
-        private Mapping.ListBuilder<Builder<PARENT>> mappingListBuilder =
-                new Mapping.ListBuilder<>(this);
+    public static class Builder<PARENT extends BuilderScaffold<?, PARENT>>
+            extends MyBuilderScaffold<Builder<PARENT>, PARENT> {
+        public Builder(PARENT parent) {
+            super(parent);
+        }
 
-        Builder(PARENT parent) {
+        public Builder() {}
+    }
+
+    abstract static class MyBuilderScaffold<
+                    THIS extends MyBuilderScaffold<THIS, PARENT>,
+                    PARENT extends BuilderScaffold<?, PARENT>>
+            extends SubBuilderScaffold<Project, THIS, PARENT> {
+        private Project product;
+        private Standard.ListBuilder<THIS> standardListBuilder = Standard.listBuilder((THIS) this);
+        private Mapping.ListBuilder<THIS> mappingListBuilder = Mapping.listBuilder((THIS) this);
+
+        MyBuilderScaffold(PARENT parent) {
             super(parent);
             this.product = new Project();
         }
 
-        public Builder() {
+        public MyBuilderScaffold() {
             super();
         }
 
-        public Builder id(String id) {
+        public THIS id(String id) {
             product.id = id;
-            return this;
+            return (THIS) this;
         }
 
-        public Builder name(String name) {
+        public THIS name(String name) {
             product.name = name;
-            return this;
+            return (THIS) this;
         }
 
-        public Builder description(String description) {
+        public THIS description(String description) {
             product.description = description;
-            return this;
+            return (THIS) this;
         }
 
-        public Builder standard(Standard standard) {
+        public THIS standard(Standard standard) {
             initializeStandardsList();
             product.standards.add(standard);
-            return this;
+            return (THIS) this;
         }
 
         private void initializeStandardsList() {
@@ -122,10 +132,10 @@ public class Project {
             return standardListBuilder.newBuilder();
         }
 
-        public Builder mapping(Mapping mapping) {
+        public THIS mapping(Mapping mapping) {
             initializeMappingsList();
             product.mappings.add(mapping);
-            return this;
+            return (THIS) this;
         }
 
         public Mapping.Builder mapping() {

@@ -2,7 +2,7 @@ package at.researchstudio.sat.merkmalservice.model.mapping.condition;
 
 import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.builder.ListBuilderScaffold;
-import at.researchstudio.sat.merkmalservice.model.builder.TerminalBuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.builder.SubBuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.mapping.MappingExecutionValue;
 import at.researchstudio.sat.merkmalservice.model.mapping.MappingPredicate;
 import at.researchstudio.sat.merkmalservice.model.mapping.feature.Feature;
@@ -40,67 +40,80 @@ public class SingleCondition implements Condition {
         return id;
     }
 
-    public static <PARENT extends BuilderScaffold<PARENT, ?>> Builder<PARENT> builder() {
-        return new Builder();
+    public static Builder<?> builder() {
+        return new Builder<>();
     }
 
-    public static <PARENT extends BuilderScaffold<PARENT, ?>> Builder<PARENT> builder(
+    public static <PARENT extends BuilderScaffold<?, PARENT>> Builder<PARENT> builder(
             PARENT parent) {
         return new Builder(parent);
     }
 
-    public static class Builder<PARENT extends BuilderScaffold<PARENT, ?>>
-            extends TerminalBuilderScaffold<SingleCondition, Builder<PARENT>, PARENT> {
-        private SingleCondition product;
-        private Feature.Builder<Builder<PARENT>> featureBuilder = null;
+    public static <PARENT extends BuilderScaffold<?, PARENT>> ListBuilder<PARENT> listBuilder(
+            PARENT parent) {
+        return new ListBuilder<PARENT>(parent);
+    }
 
-        public Builder(PARENT parent) {
-            super(parent);
-            this.product = new SingleCondition();
-        }
-
-        public Builder() {
-            this(null);
-        }
-
-        public SingleCondition build() {
-            return product;
-        }
-
-        public Builder feature(Feature feature) {
-            product.feature = feature;
-            return this;
-        }
-
-        public Feature.Builder<Builder<PARENT>> feature() {
-            this.featureBuilder = Feature.builder(this);
-            return this.featureBuilder;
-        }
-
-        public Builder id(String id) {
-            product.id = id;
-            return this;
-        }
-
-        public Builder value(Object value) {
-            product.value = MappingExecutionValue.of(value);
-            return this;
-        }
-
-        public Builder predicate(MappingPredicate predicate) {
-            product.predicate = predicate;
-            return this;
-        }
-
-        public PARENT endSingleCondition() {
-            return end();
+    public static class ListBuilder<PARENT extends BuilderScaffold<?, PARENT>>
+            extends ListBuilderScaffold<SingleCondition, SingleCondition.Builder<PARENT>, PARENT> {
+        private ListBuilder(PARENT parent) {
+            super(() -> SingleCondition.builder(parent));
         }
     }
 
-    public static class ListBuilder<PARENT extends BuilderScaffold<PARENT, ?>>
-            extends ListBuilderScaffold<SingleCondition, SingleCondition.Builder<PARENT>, PARENT> {
-        public ListBuilder(PARENT parent) {
-            super(() -> SingleCondition.builder(parent));
+    public static class Builder<PARENT extends BuilderScaffold<?, PARENT>>
+            extends MyBuilderScaffold<Builder<PARENT>, PARENT> {
+        private Builder(PARENT parent) {
+            super(parent);
+        }
+
+        private Builder() {}
+    }
+
+    abstract static class MyBuilderScaffold<
+                    THIS extends MyBuilderScaffold<THIS, PARENT>,
+                    PARENT extends BuilderScaffold<?, PARENT>>
+            extends SubBuilderScaffold<SingleCondition, THIS, PARENT> {
+        private SingleCondition product = new SingleCondition();
+        ;
+        private Feature.Builder<THIS> featureBuilder = null;
+
+        MyBuilderScaffold(PARENT parent) {
+            super(parent);
+        }
+
+        MyBuilderScaffold() {}
+
+        public SingleCondition build() {
+            if (this.featureBuilder != null) {
+                this.product.feature = featureBuilder.build();
+            }
+            return product;
+        }
+
+        public THIS feature(Feature feature) {
+            product.feature = feature;
+            return (THIS) this;
+        }
+
+        public Feature.Builder<THIS> feature() {
+            this.featureBuilder = Feature.builder((THIS) this);
+            return this.featureBuilder;
+        }
+
+        public THIS id(String id) {
+            product.id = id;
+            return (THIS) this;
+        }
+
+        public THIS value(Object value) {
+            product.value = MappingExecutionValue.of(value);
+            return (THIS) this;
+        }
+
+        public THIS predicate(MappingPredicate predicate) {
+            product.predicate = predicate;
+            return (THIS) this;
         }
     }
 }

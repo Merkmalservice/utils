@@ -2,13 +2,12 @@ package at.researchstudio.sat.merkmalservice.model.mapping.feature;
 
 import at.researchstudio.sat.merkmalservice.model.FeatureGroup;
 import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
-import at.researchstudio.sat.merkmalservice.model.builder.TerminalBuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.builder.SubBuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.mapping.feature.featuretype.FeatureType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.function.Consumer;
 
 public class Feature {
     private String id;
@@ -131,30 +130,49 @@ public class Feature {
         return Objects.hash(name, description, featureGroups);
     }
 
-    public static <PARENT extends BuilderScaffold<PARENT, ?>> Builder<PARENT> builder() {
+    public static <PARENT extends BuilderScaffold<?, PARENT>> Builder<PARENT> builder() {
         return new Builder<>();
     }
 
-    public static <PARENT extends BuilderScaffold<PARENT, ?>> Builder<PARENT> builder(
+    public static <PARENT extends BuilderScaffold<?, PARENT>> Builder<PARENT> builder(
             PARENT parent) {
         return new Builder<>(parent);
     }
 
-    public static class Builder<PARENT extends BuilderScaffold<PARENT, ?>>
-            extends TerminalBuilderScaffold<Feature, Builder<PARENT>, PARENT> {
-        private Feature product;
+    public static class Builder<PARENT extends BuilderScaffold<?, PARENT>>
+            extends MyBuilderScaffold<Builder<PARENT>, PARENT> {
+        Builder() {}
 
-        Builder() {
+        Builder(PARENT parent) {
+            super(parent);
+        }
+    }
+
+    abstract static class MyBuilderScaffold<
+                    THIS extends MyBuilderScaffold<THIS, PARENT>,
+                    PARENT extends BuilderScaffold<?, PARENT>>
+            extends SubBuilderScaffold<Feature, THIS, PARENT> {
+        private Feature product;
+        private FeatureGroup.ListBuilder<THIS> featureGroupListBuilder =
+                FeatureGroup.listBuilder((THIS) this);
+        private FeatureType.Builder<THIS> featureTypeBuilder;
+
+        MyBuilderScaffold() {
             super();
             this.product = new Feature();
         }
 
-        Builder(PARENT parent) {
+        MyBuilderScaffold(PARENT parent) {
             super(parent);
             this.product = new Feature();
         }
 
         public Feature build() {
+            initializeFeatureGroupList();
+            product.featureGroups.addAll(this.featureGroupListBuilder.build());
+            if (this.featureTypeBuilder != null) {
+                product.type = featureTypeBuilder.build();
+            }
             return product;
         }
 
@@ -162,45 +180,45 @@ public class Feature {
             return end();
         }
 
-        public Builder featureGroup(FeatureGroup featureGroup) {
+        public THIS featureGroup(FeatureGroup featureGroup) {
+            initializeFeatureGroupList();
+            product.featureGroups.add(featureGroup);
+            return (THIS) this;
+        }
+
+        private void initializeFeatureGroupList() {
             if (product.featureGroups == null) {
                 product.featureGroups = new ArrayList<>();
             }
-            product.featureGroups.add(featureGroup);
-            return this;
         }
 
-        public Builder featureGroup(Consumer<FeatureGroup.Builder> featureGroupConfigurer) {
-            FeatureGroup.Builder builder = FeatureGroup.builder();
-            featureGroupConfigurer.accept(builder);
-            return featureGroup(builder.build());
+        public FeatureGroup.Builder<THIS> featureGroup() {
+            return this.featureGroupListBuilder.newBuilder();
         }
 
-        public Builder name(String name) {
+        public THIS name(String name) {
             product.name = name;
-            return this;
+            return (THIS) this;
         }
 
-        public Builder description(String descrption) {
+        public THIS description(String descrption) {
             product.description = descrption;
-            return this;
+            return (THIS) this;
         }
 
-        public Builder id(String id) {
+        public THIS id(String id) {
             product.id = id;
-            return this;
+            return (THIS) this;
         }
 
-        public Builder featureType(FeatureType featureType) {
+        public THIS featureType(FeatureType featureType) {
             product.type = featureType;
-            return this;
+            return (THIS) this;
         }
 
-        public Builder featureType(Consumer<FeatureType.Builder> featureTypeConfigurer) {
-            FeatureType.Builder builder = FeatureType.builder();
-            featureTypeConfigurer.accept(builder);
-            product.type = builder.build();
-            return this;
+        public FeatureType.Builder<THIS> featureType() {
+            this.featureTypeBuilder = FeatureType.builder((THIS) this);
+            return this.featureTypeBuilder;
         }
     }
 }

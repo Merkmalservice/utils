@@ -2,7 +2,7 @@ package at.researchstudio.sat.merkmalservice.model.mapping.condition;
 
 import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.builder.ListBuilderScaffold;
-import at.researchstudio.sat.merkmalservice.model.builder.TerminalBuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.builder.SubBuilderScaffold;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,25 +35,48 @@ public class ConditionGroup implements Condition {
         return new Builder();
     }
 
-    public static <PARENT extends BuilderScaffold<PARENT, ?>> Builder<PARENT> builder(
+    public static <PARENT extends BuilderScaffold<?, PARENT>> Builder<PARENT> builder(
             PARENT parent) {
         return new Builder(parent);
     }
 
-    public static class Builder<PARENT extends BuilderScaffold<PARENT, ?>>
-            extends TerminalBuilderScaffold<ConditionGroup, Builder<PARENT>, PARENT> {
-        private ConditionGroup product;
-        private SingleCondition.ListBuilder<Builder<PARENT>> singleConditionListBuilder =
-                new SingleCondition.ListBuilder(this);
-        private ConditionGroup.ListBuilder<Builder<PARENT>> conditionGroupListBuilder =
-                new ConditionGroup.ListBuilder<>(this);
+    public static <PARENT extends BuilderScaffold<?, PARENT>> ListBuilder<PARENT> listBuilder(
+            PARENT parent) {
+        return new ListBuilder<>(parent);
+    }
 
-        public Builder() {
+    public static class Builder<PARENT extends BuilderScaffold<?, PARENT>>
+            extends MyBuilderScaffold<Builder<PARENT>, PARENT> {
+        Builder() {}
+
+        Builder(PARENT parent) {
+            super(parent);
+        }
+    }
+
+    public static class ListBuilder<PARENT extends BuilderScaffold<?, PARENT>>
+            extends ListBuilderScaffold<ConditionGroup, Builder<PARENT>, PARENT> {
+        private ListBuilder(PARENT parent) {
+            super(() -> ConditionGroup.builder(parent));
+        }
+    }
+
+    abstract static class MyBuilderScaffold<
+                    THIS extends MyBuilderScaffold<THIS, PARENT>,
+                    PARENT extends BuilderScaffold<?, PARENT>>
+            extends SubBuilderScaffold<ConditionGroup, THIS, PARENT> {
+        private ConditionGroup product;
+        private SingleCondition.ListBuilder<THIS> singleConditionListBuilder =
+                SingleCondition.listBuilder((THIS) this);
+        private ConditionGroup.ListBuilder<THIS> conditionGroupListBuilder =
+                ConditionGroup.listBuilder((THIS) this);
+
+        private MyBuilderScaffold() {
             super();
             product = new ConditionGroup();
         }
 
-        public Builder(PARENT parent) {
+        private MyBuilderScaffold(PARENT parent) {
             super(parent);
             product = new ConditionGroup();
         }
@@ -69,10 +92,10 @@ public class ConditionGroup implements Condition {
             return end();
         }
 
-        public Builder condition(Condition condition) {
+        public THIS condition(Condition condition) {
             prepareConditionGroupList();
             product.conditions.add(condition);
-            return this;
+            return (THIS) this;
         }
 
         private void prepareConditionGroupList() {
@@ -81,34 +104,25 @@ public class ConditionGroup implements Condition {
             }
         }
 
-        public ConditionGroup.Builder<Builder<PARENT>> and() {
-            ConditionGroup.Builder<Builder<PARENT>> builder =
-                    this.conditionGroupListBuilder.newBuilder();
+        public ConditionGroup.Builder<THIS> allMatch() {
+            ConditionGroup.Builder<THIS> builder = this.conditionGroupListBuilder.newBuilder();
             builder.connective(Connective.AND);
             return builder;
         }
 
-        public ConditionGroup.Builder<Builder<PARENT>> or() {
-            ConditionGroup.Builder<Builder<PARENT>> builder =
-                    this.conditionGroupListBuilder.newBuilder();
+        public ConditionGroup.Builder<THIS> anyMatch() {
+            ConditionGroup.Builder<THIS> builder = this.conditionGroupListBuilder.newBuilder();
             builder.connective(Connective.OR);
             return builder;
         }
 
-        public SingleCondition.Builder<Builder<PARENT>> is() {
+        public SingleCondition.Builder<THIS> matches() {
             return singleConditionListBuilder.newBuilder();
         }
 
-        public Builder connective(Connective connective) {
+        public THIS connective(Connective connective) {
             product.connective = connective;
-            return this;
-        }
-    }
-
-    public static class ListBuilder<PARENT extends BuilderScaffold<PARENT, ?>>
-            extends ListBuilderScaffold<ConditionGroup, Builder<PARENT>, PARENT> {
-        public ListBuilder(PARENT parent) {
-            super(() -> ConditionGroup.builder(parent));
+            return (THIS) this;
         }
     }
 }

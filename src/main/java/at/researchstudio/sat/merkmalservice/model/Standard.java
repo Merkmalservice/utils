@@ -2,7 +2,7 @@ package at.researchstudio.sat.merkmalservice.model;
 
 import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.builder.ListBuilderScaffold;
-import at.researchstudio.sat.merkmalservice.model.builder.TerminalBuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.builder.SubBuilderScaffold;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -52,68 +52,86 @@ public class Standard {
         return Objects.hash(id);
     }
 
-    public static <T extends BuilderScaffold<T, ?>> Builder<T> builder() {
-        return new Builder();
+    public static Builder<?> builder() {
+        return new Builder<>();
     }
 
-    public static <PARENT extends BuilderScaffold<PARENT, ?>> Builder<PARENT> builder(
+    public static <PARENT extends BuilderScaffold<?, PARENT>> Builder<PARENT> builder(
             PARENT parent) {
         return new Builder(parent);
     }
 
-    public static class Builder<PARENT extends BuilderScaffold<PARENT, ?>>
-            extends TerminalBuilderScaffold<Standard, Builder<PARENT>, PARENT> {
+    public static <PARENT extends BuilderScaffold<?, PARENT>> ListBuilder<PARENT> listBuilder(
+            PARENT parent) {
+        return new ListBuilder<>(parent);
+    }
+
+    public static class ListBuilder<PARENT extends BuilderScaffold<?, PARENT>>
+            extends ListBuilderScaffold<Standard, Builder<PARENT>, PARENT> {
+        private ListBuilder(PARENT parent) {
+            super(() -> Standard.builder(parent));
+        }
+    }
+
+    public static class Builder<PARENT extends BuilderScaffold<?, PARENT>>
+            extends MyBuilderScaffold<Builder<PARENT>, PARENT> {
+
+        public Builder() {}
+
+        public Builder(PARENT parent) {
+            super(parent);
+        }
+    }
+
+    abstract static class MyBuilderScaffold<
+                    THIS extends MyBuilderScaffold<THIS, PARENT>,
+                    PARENT extends BuilderScaffold<?, PARENT>>
+            extends SubBuilderScaffold<Standard, THIS, PARENT> {
         private Standard product;
 
-        public Builder() {
+        public MyBuilderScaffold() {
             super();
             this.product = new Standard();
         }
 
-        public Builder(PARENT parent) {
+        public MyBuilderScaffold(PARENT parent) {
             super(parent);
             this.product = product;
-        }
-
-        public Standard build() {
-            return product;
         }
 
         public PARENT endStandard() {
             return parent;
         }
 
-        public Builder id(String id) {
+        public THIS id(String id) {
             product.id = id;
-            return this;
+            return (THIS) this;
         }
 
-        public Builder description(String description) {
+        public THIS description(String description) {
             product.description = description;
-            return this;
+            return (THIS) this;
         }
 
-        public Builder isPublic(boolean isPublic) {
+        public THIS isPublic(boolean isPublic) {
             product.isPublic = isPublic;
-            return this;
+            return (THIS) this;
         }
 
-        public Builder organization(Organization organization) {
+        public THIS organization(Organization organization) {
             product.organization = organization;
-            return this;
+            return (THIS) this;
         }
 
-        public Builder organization(Consumer<Organization.Builder> organizationConfigurer) {
+        @Override
+        public Standard build() {
+            return product;
+        }
+
+        public THIS organization(Consumer<Organization.Builder> organizationConfigurer) {
             Organization.Builder builder = Organization.builder();
             organizationConfigurer.accept(builder);
             return organization(builder.build());
-        }
-    }
-
-    public static class ListBuilder<PARENT extends BuilderScaffold<PARENT, ?>>
-            extends ListBuilderScaffold<Standard, Builder<PARENT>, PARENT> {
-        public ListBuilder(PARENT parent) {
-            super(() -> Standard.builder(parent));
         }
     }
 }
