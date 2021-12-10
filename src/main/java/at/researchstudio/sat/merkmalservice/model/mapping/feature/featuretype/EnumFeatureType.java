@@ -127,7 +127,7 @@ public class EnumFeatureType extends FeatureType {
             return product;
         }
 
-        public THIS option(OptionValue optionValue) {
+        private THIS option(OptionValue optionValue) {
             if (product.options == null) {
                 product.options = new ArrayList<>();
             }
