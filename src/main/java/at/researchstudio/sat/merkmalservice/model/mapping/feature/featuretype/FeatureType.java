@@ -17,6 +17,15 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @JsonSubTypes.Type(name = "EnumerationValue", value = EnumFeatureType.class),
 })
 public abstract class FeatureType {
+
+    public static enum Types {
+        BooleanValue,
+        StringValue,
+        ReferenceValue,
+        NumericValue,
+        EnumerationValue;
+    }
+
     @JsonIgnore private String type;
 
     public FeatureType() {}

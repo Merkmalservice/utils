@@ -71,8 +71,13 @@ public class AddActionGroup extends ActionGroup<AddAction> {
             return new AddActionGroup(addActionListBuilder.build(), value);
         }
 
-        public THIS value(Object value) {
-            this.value = MappingExecutionValue.of(value);
+        public THIS propertySetName(String value) {
+            this.value = new MappingExecutionValue(value);
+            return (THIS) this;
+        }
+
+        public THIS propertySetId(String id) {
+            this.value = new MappingExecutionValue(id, "PropertySet");
             return (THIS) this;
         }
 

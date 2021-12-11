@@ -114,6 +114,14 @@ public enum IfcPropertyType {
         return this.unitType;
     }
 
+    public String getStepTypeName() {
+        if (this.typeUris == null || this.typeUris.length == 0) {
+            throw new UnsupportedOperationException(
+                    String.format("No step type name found for property type %s", name()));
+        }
+        return typeUris[0].toUpperCase();
+    }
+
     /**
      * Convert the specified string to an IfcPropertyType and check if the result is the specified
      * type.

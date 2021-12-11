@@ -128,6 +128,8 @@ public class Mapping {
             }
             if (singleConditionBuilder != null) {
                 product.condition = singleConditionBuilder.build();
+            } else if (conditionGroupBuilder != null) {
+                product.condition = conditionGroupBuilder.build();
             }
             initializeActionGroupsList();
             product.actionGroups.addAll(convertActionGroupListBuilder.build());

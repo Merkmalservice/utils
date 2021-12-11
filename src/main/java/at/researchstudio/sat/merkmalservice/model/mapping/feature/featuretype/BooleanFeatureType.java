@@ -4,7 +4,7 @@ import at.researchstudio.sat.merkmalservice.model.IBuilder;
 
 public class BooleanFeatureType extends FeatureType {
     public BooleanFeatureType() {
-        super("BOOLEAN");
+        super(Types.BooleanValue.name());
     }
 
     public static class Builder implements IBuilder<BooleanFeatureType> {
