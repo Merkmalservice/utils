@@ -15,7 +15,9 @@ public class NumericFeatureType extends FeatureType {
         this.unit = unit;
     }
 
-    public NumericFeatureType() {}
+    public NumericFeatureType() {
+        super(Types.NumericValue.name());
+    }
 
     public String getQuantityKind() {
         return quantityKind;
@@ -70,9 +72,17 @@ public class NumericFeatureType extends FeatureType {
             return (THIS) this;
         }
 
+        public THIS unitless() {
+            return unit(QudtUnit.UNITLESS);
+        }
+
         public THIS quantityKind(QudtQuantityKind quantityKind) {
             this.product.quantityKind = quantityKind.toString();
             return (THIS) this;
+        }
+
+        public THIS dimensionless() {
+            return quantityKind(QudtQuantityKind.DIMENSIONLESS);
         }
 
         public THIS unit(QudtUnit qudtUnit) {
