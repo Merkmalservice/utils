@@ -3,6 +3,7 @@ package at.researchstudio.sat.merkmalservice.model.mapping.feature.featuretype;
 import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.builder.SubBuilderScaffold;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class EnumFeatureType extends FeatureType {
@@ -17,6 +18,14 @@ public class EnumFeatureType extends FeatureType {
         super(Types.EnumerationValue.name());
         this.options = options;
         this.allowMultiple = allowMultiple;
+    }
+
+    public List<OptionValue> getOptions() {
+        return Collections.unmodifiableList(this.options);
+    }
+
+    public Boolean isAllowMultiple() {
+        return allowMultiple;
     }
 
     public abstract static class OptionValue {
