@@ -14,19 +14,26 @@ import java.util.List;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "__typename")
 @JsonSubTypes({
     @JsonSubTypes.Type(value = AddActionGroup.class, name = "AddActionGroup"),
-    @JsonSubTypes.Type(value = DeleteActionGroup.class, name = "DeleteActionGroup")
+    @JsonSubTypes.Type(value = DeleteActionGroup.class, name = "DeleteActionGroup"),
+    @JsonSubTypes.Type(value = ConvertActionGroup.class, name = "ConvertActionGroup")
 })
 public abstract class ActionGroup<T extends Action> {
     protected List<T> actions;
+    protected String id;
 
     public ActionGroup() {}
 
-    public ActionGroup(List<T> actions) {
+    public ActionGroup(String id, List<T> actions) {
+        this.id = id;
         this.actions = new ArrayList<>(actions);
     }
 
     public List<T> getActions() {
         return actions;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public static Builder<?> builder() {

@@ -10,8 +10,8 @@ public class ConvertActionGroup extends ActionGroup<ConvertAction> {
 
     public ConvertActionGroup() {}
 
-    public ConvertActionGroup(List<ConvertAction> actions) {
-        super(actions);
+    public ConvertActionGroup(String id, List<ConvertAction> actions) {
+        super(id, actions);
     }
 
     public static Builder<?> convertActionGroupBuilder() {
@@ -52,6 +52,7 @@ public class ConvertActionGroup extends ActionGroup<ConvertAction> {
 
         private ConvertAction.ListBuilder<THIS> convertActionListBuilder =
                 ConvertAction.listBuilder((THIS) this);
+        private String id = null;
 
         public MyBuilderScaffold(PARENT parent) {
             super(parent);
@@ -63,9 +64,14 @@ public class ConvertActionGroup extends ActionGroup<ConvertAction> {
             return this.convertActionListBuilder.newBuilder();
         }
 
+        public THIS id(String id) {
+            this.id = id;
+            return (THIS) this;
+        }
+
         @Override
         public ConvertActionGroup build() {
-            return new ConvertActionGroup(this.convertActionListBuilder.build());
+            return new ConvertActionGroup(id, this.convertActionListBuilder.build());
         }
     }
 }

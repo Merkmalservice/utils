@@ -7,6 +7,7 @@ public enum IfcUnitMeasurePrefix {
     KILO("KILO"),
     DECI("DECI"),
     CENTI("CENTI"),
+    MILLI("MIILLI"),
     NONE();
 
     // declaring private variable for getting values

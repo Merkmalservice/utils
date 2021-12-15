@@ -131,7 +131,9 @@ public enum IfcPropertyType {
      * @return true if equal
      */
     public static boolean is(String typeString, IfcPropertyType type) {
-        Objects.requireNonNull(typeString);
+        if (typeString == null) {
+            return false;
+        }
         Objects.requireNonNull(type);
         return fromString(typeString) == type;
     }
@@ -145,7 +147,9 @@ public enum IfcPropertyType {
      * @return
      */
     public static boolean isOneOf(String typeString, IfcPropertyType... types) {
-        Objects.requireNonNull(typeString);
+        if (typeString == null) {
+            return false;
+        }
         Objects.requireNonNull(types);
         IfcPropertyType fromString = fromString(typeString);
         for (IfcPropertyType type : types) {

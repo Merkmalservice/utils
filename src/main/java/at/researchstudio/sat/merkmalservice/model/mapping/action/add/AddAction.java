@@ -87,6 +87,11 @@ public class AddAction extends FeatureAction {
             return (THIS) this;
         }
 
+        public THIS value(String id, String graphqlType) {
+            product.value = new MappingExecutionValue(id, graphqlType);
+            return (THIS) this;
+        }
+
         public THIS id(String id) {
             product.id = id;
             return (THIS) this;

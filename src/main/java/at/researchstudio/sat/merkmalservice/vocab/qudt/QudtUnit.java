@@ -9,6 +9,8 @@ import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitType;
 import java.lang.invoke.MethodHandles;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +21,7 @@ public abstract class QudtUnit {
     public static final String METRE = "http://qudt.org/vocab/unit/M";
     public static final String CENTIMETRE = "http://qudt.org/vocab/unit/CentiM";
     public static final String MILLIMETRE = "http://qudt.org/vocab/unit/MilliM";
+    public static final String KILOMETRE = "http://qudt.org/vocab/unit/KiloM";
     public static final String DECIMETRE = "http://qudt.org/vocab/unit/DeciM";
     public static final String SQUARE_METRE = "http://qudt.org/vocab/unit/M2";
     public static final String CUBIC_METRE = "http://qudt.org/vocab/unit/M3";
@@ -82,6 +85,165 @@ public abstract class QudtUnit {
                     IfcUnitMeasure.KELVIN,
                     IfcUnitMeasurePrefix.NONE,
                     false);
+
+    private static Map<String, IfcUnit> QUDT_UNIT_TO_IFC_UNIT =
+            Map.ofEntries(
+                    Map.entry(
+                            MILLIMETRE,
+                            new IfcSIUnit(
+                                    toUuid(MILLIMETRE),
+                                    IfcUnitType.LENGTHUNIT,
+                                    IfcUnitMeasure.METRE,
+                                    IfcUnitMeasurePrefix.MILLI,
+                                    false)),
+                    Map.entry(
+                            CENTIMETRE,
+                            new IfcSIUnit(
+                                    toUuid(CENTIMETRE),
+                                    IfcUnitType.LENGTHUNIT,
+                                    IfcUnitMeasure.METRE,
+                                    IfcUnitMeasurePrefix.CENTI,
+                                    false)),
+                    Map.entry(
+                            DECIMETRE,
+                            new IfcSIUnit(
+                                    toUuid(DECIMETRE),
+                                    IfcUnitType.LENGTHUNIT,
+                                    IfcUnitMeasure.METRE,
+                                    IfcUnitMeasurePrefix.DECI,
+                                    false)),
+                    Map.entry(METRE, IFCMETER),
+                    Map.entry(
+                            SQUARE_METRE,
+                            new IfcSIUnit(
+                                    toUuid(SQUARE_METRE),
+                                    IfcUnitType.AREAUNIT,
+                                    IfcUnitMeasure.SQUARE_METRE,
+                                    IfcUnitMeasurePrefix.NONE,
+                                    false)));
+    /*
+    switch (measure) {
+        case METRE:
+            switch (prefix) {
+                case DECI:
+                    return DECIMETRE;
+                case CENTI:
+                    return CENTIMETRE;
+                case NONE:
+                    return METRE;
+            }
+            break;
+        case SQUARE_METRE:
+            if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
+                return SQUARE_METRE;
+            }
+            break;
+        case CUBIC_METRE:
+            if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
+                return CUBIC_METRE;
+            }
+            break;
+        case GRAM:
+            switch (prefix) {
+                case KILO:
+                    return KILOGRAM;
+                case NONE:
+                    return GRAM;
+            }
+            break;
+        case SECOND:
+            if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
+                return SECOND;
+            }
+            break;
+        case HERTZ:
+            if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
+                return HERTZ;
+            }
+            break;
+        case DEGREE_CELSIUS:
+            if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
+                return DEGREE_CELSIUS;
+            }
+            break;
+        case AMPERE:
+            if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
+                return AMPERE;
+            }
+            break;
+        case VOLT:
+            if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
+                return VOLT;
+            }
+            break;
+        case WATT:
+            switch (prefix) {
+                case KILO:
+                    return KILOWATT;
+                case MEGA:
+                    return MEGAWATT;
+                case NONE:
+                    return WATT;
+            }
+            break;
+        case NEWTON:
+            switch (prefix) {
+                case KILO:
+                    return KILONEWTON;
+                case MEGA:
+                    return MEGANEWTON;
+                case NONE:
+                    return NEWTON;
+            }
+            break;
+        case LUX:
+            if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
+                return LUX;
+            }
+            break;
+        case LUMEN:
+            if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
+                return LUMEN;
+            }
+            break;
+        case CANDELA:
+            if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
+                return CANDELA;
+            }
+            break;
+        case PASCAL:
+            if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
+                return PASCAL;
+            }
+            break;
+        case RADIAN:
+            if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
+                return RADIAN;
+            }
+            break;
+        case JOULE:
+            if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
+                return JOULE;
+            }
+        case KELVIN:
+            if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
+                return KELVIN;
+            }
+        case STERADIAN:
+            if (IfcUnitMeasurePrefix.NONE.equals(prefix)) {
+                return STERADIAN;
+            }
+            */
+
+    private static String toUuid(String forName) {
+        return UUID.nameUUIDFromBytes(forName.getBytes()).toString();
+    }
+
+    public static Optional<IfcUnit> mapQudtUnitToIfcUnit(String qudtUnit) {
+        IfcUnit mapped = QUDT_UNIT_TO_IFC_UNIT.get(qudtUnit);
+        return Optional.ofNullable(mapped);
+    }
+
     /**
      * Extracts the appropriate QudtUnit String for the given prefix and measure
      *
@@ -91,7 +253,7 @@ public abstract class QudtUnit {
      *     and measure
      * @throws NullPointerException if the measure is null
      */
-    public static String extractUnitFromIfcUnit(IfcUnit ifcUnit)
+    public static String mapIfcUnitToQudtUnit(IfcUnit ifcUnit)
             throws IllegalArgumentException, NullPointerException {
         if (ifcUnit instanceof IfcSIUnit) {
             return extractUnitFromPrefixAndMeasure(

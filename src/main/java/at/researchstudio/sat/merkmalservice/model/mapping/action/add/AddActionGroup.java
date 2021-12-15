@@ -8,17 +8,18 @@ import at.researchstudio.sat.merkmalservice.model.mapping.action.ActionGroup;
 import java.util.List;
 
 public class AddActionGroup extends ActionGroup<AddAction> {
-    private MappingExecutionValue value;
+    private MappingExecutionValue addToPropertySet;
 
     public AddActionGroup() {}
 
-    public AddActionGroup(List<AddAction> actions, MappingExecutionValue value) {
-        super(actions);
-        this.value = value;
+    public AddActionGroup(
+            String id, List<AddAction> actions, MappingExecutionValue addToPropertySet) {
+        super(id, actions);
+        this.addToPropertySet = addToPropertySet;
     }
 
-    public MappingExecutionValue getValue() {
-        return value;
+    public MappingExecutionValue getAddToPropertySet() {
+        return addToPropertySet;
     }
 
     public static Builder<?> addActionGroupBuilder() {
@@ -58,7 +59,8 @@ public class AddActionGroup extends ActionGroup<AddAction> {
             implements ActionGroupBuilder<PARENT, AddActionGroup, AddAction> {
         private AddAction.ListBuilder<THIS> addActionListBuilder =
                 AddAction.listBuilder((THIS) this);
-        private MappingExecutionValue value = null;
+        private MappingExecutionValue addToPropertySet = null;
+        private String id = null;
 
         public MyBuilderScaffold(PARENT parent) {
             super(parent);
@@ -68,16 +70,21 @@ public class AddActionGroup extends ActionGroup<AddAction> {
 
         @Override
         public AddActionGroup build() {
-            return new AddActionGroup(addActionListBuilder.build(), value);
+            return new AddActionGroup(id, addActionListBuilder.build(), addToPropertySet);
         }
 
         public THIS propertySetName(String value) {
-            this.value = new MappingExecutionValue(value);
+            this.addToPropertySet = new MappingExecutionValue(value);
             return (THIS) this;
         }
 
         public THIS propertySetId(String id) {
-            this.value = new MappingExecutionValue(id, "PropertySet");
+            this.addToPropertySet = new MappingExecutionValue(id, "PropertySet");
+            return (THIS) this;
+        }
+
+        public THIS id(String id) {
+            this.id = id;
             return (THIS) this;
         }
 

@@ -9,8 +9,8 @@ import java.util.List;
 public class DeleteActionGroup extends ActionGroup<DeleteAction> {
     public DeleteActionGroup() {}
 
-    public DeleteActionGroup(List<DeleteAction> actions) {
-        super(actions);
+    public DeleteActionGroup(String id, List<DeleteAction> actions) {
+        super(id, actions);
     }
 
     public static Builder<?> deleteActionGroupBuilder() {
@@ -50,6 +50,7 @@ public class DeleteActionGroup extends ActionGroup<DeleteAction> {
             implements ActionGroupBuilder<PARENT, DeleteActionGroup, DeleteAction> {
         private DeleteAction.ListBuilder<THIS> deleteActionListBuilder =
                 DeleteAction.listBuilder((THIS) this);
+        private String id = null;
 
         public MyBuilderScaffold(PARENT parent) {
             super(parent);
@@ -61,9 +62,14 @@ public class DeleteActionGroup extends ActionGroup<DeleteAction> {
             return deleteActionListBuilder.newBuilder();
         }
 
+        public THIS id(String id) {
+            this.id = id;
+            return (THIS) this;
+        }
+
         @Override
         public DeleteActionGroup build() {
-            return new DeleteActionGroup(deleteActionListBuilder.build());
+            return new DeleteActionGroup(id, deleteActionListBuilder.build());
         }
     }
 }

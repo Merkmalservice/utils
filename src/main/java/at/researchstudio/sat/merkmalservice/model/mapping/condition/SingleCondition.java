@@ -106,6 +106,16 @@ public class SingleCondition implements Condition {
             return (THIS) this;
         }
 
+        public THIS predicate(MappingPredicate predicate) {
+            product.predicate = predicate;
+            return (THIS) this;
+        }
+
+        public THIS value(MappingExecutionValue value) {
+            product.value = value;
+            return (THIS) this;
+        }
+
         public THIS valueEquals(Object value) {
             setValue(value);
             product.predicate = MappingPredicate.EQUALS;

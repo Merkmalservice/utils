@@ -104,7 +104,7 @@ public class UtilsTest {
                         false),
                 1);
 
-        Assertions.assertEquals(QudtUnit.NEWTON, QudtUnit.extractUnitFromIfcUnit(du1));
+        Assertions.assertEquals(QudtUnit.NEWTON, QudtUnit.mapIfcUnitToQudtUnit(du1));
 
         IfcDerivedUnit du2 = new IfcDerivedUnit("xyz", IfcUnitType.MOMENTOFINERTIAUNIT, false);
         du2.addDerivedUnitElement(
@@ -116,7 +116,7 @@ public class UtilsTest {
                         false),
                 4);
 
-        Assertions.assertEquals(QudtUnit.QUARTIC_METRE, QudtUnit.extractUnitFromIfcUnit(du2));
+        Assertions.assertEquals(QudtUnit.QUARTIC_METRE, QudtUnit.mapIfcUnitToQudtUnit(du2));
 
         IfcDerivedUnit du3 = new IfcDerivedUnit("xyz", IfcUnitType.PLANARFORCEUNIT, false);
         du3.addDerivedUnitElement(
@@ -144,7 +144,7 @@ public class UtilsTest {
                         false),
                 1);
 
-        Assertions.assertEquals(QudtUnit.NEWTON, QudtUnit.extractUnitFromIfcUnit(du3));
+        Assertions.assertEquals(QudtUnit.NEWTON, QudtUnit.mapIfcUnitToQudtUnit(du3));
 
         IfcDerivedUnit du4 = new IfcDerivedUnit("xyz", IfcUnitType.MASSDENSITYUNIT, false);
         du4.addDerivedUnitElement(
@@ -164,8 +164,7 @@ public class UtilsTest {
                         false),
                 1);
 
-        Assertions.assertEquals(
-                QudtUnit.KILOGRAMPERCUBICMETER, QudtUnit.extractUnitFromIfcUnit(du4));
+        Assertions.assertEquals(QudtUnit.KILOGRAMPERCUBICMETER, QudtUnit.mapIfcUnitToQudtUnit(du4));
 
         IfcDerivedUnit du5 = new IfcDerivedUnit("xyz", IfcUnitType.THERMALTRANSMITTANCEUNIT, false);
         du5.addDerivedUnitElement(
