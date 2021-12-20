@@ -106,8 +106,13 @@ public class OptionValue {
             return (THIS) this;
         }
 
-        public THIS value(String id, String graphqlType) {
+        public THIS idValue(String id, String graphqlType) {
             product.value = new MappingExecutionValue(id, graphqlType);
+            return (THIS) this;
+        }
+
+        public THIS idValue(String id) {
+            product.value = new MappingExecutionValue(id, "UnknownGrqaphQlType");
             return (THIS) this;
         }
 
