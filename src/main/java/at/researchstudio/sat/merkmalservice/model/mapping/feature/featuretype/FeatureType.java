@@ -28,10 +28,16 @@ public abstract class FeatureType {
 
     @JsonIgnore private String type;
 
+    protected String id;
+
     public FeatureType() {}
 
     public FeatureType(String type) {
         this.type = type;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getType() {

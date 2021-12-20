@@ -33,6 +33,14 @@ public class JacksonDeserializeTest {
     }
 
     @Test
+    public void testDeserializeMapping2_full() throws IOException {
+        String json =
+                Files.readString(inputFolder.resolve(Path.of("gql-result-mapping2-full.json")));
+        Mapping mapping =
+                new ObjectMapper().readValue(json, DataResult.class).getData().getMapping();
+    }
+
+    @Test
     public void testSerializeFeature() throws IOException {
         Feature f =
                 new Feature(

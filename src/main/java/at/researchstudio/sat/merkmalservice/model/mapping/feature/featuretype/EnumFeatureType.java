@@ -2,6 +2,7 @@ package at.researchstudio.sat.merkmalservice.model.mapping.feature.featuretype;
 
 import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.builder.SubBuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.mapping.MappingExecutionValue;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,80 +29,6 @@ public class EnumFeatureType extends FeatureType {
         return allowMultiple;
     }
 
-    public abstract static class OptionValue {
-        private transient String value;
-        private String description;
-
-        public OptionValue(String value, String description) {
-            this.value = value;
-            this.description = description;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public OptionValue(String description) {
-            this.description = description;
-        }
-    }
-
-    public static class MEStringValue extends OptionValue {
-        private String stringValue;
-
-        public MEStringValue(String stringValue, String description) {
-            super(stringValue, description);
-            this.stringValue = stringValue;
-        }
-
-        public String getStringValue() {
-            return stringValue;
-        }
-    }
-
-    public static class MEIntegerValue extends OptionValue {
-        private Integer integerValue;
-
-        public MEIntegerValue(Integer integerValue, String description) {
-            super(String.valueOf(integerValue), description);
-            this.integerValue = integerValue;
-        }
-
-        public Integer getIntegerValue() {
-            return integerValue;
-        }
-    }
-
-    public static class MEFloatValue extends OptionValue {
-        private Float floatValue;
-
-        public MEFloatValue(Float floatValue, String description) {
-            super(String.valueOf(floatValue), description);
-            this.floatValue = floatValue;
-        }
-
-        public Float getFloatValue() {
-            return floatValue;
-        }
-    }
-
-    public static class MEBooleanValue extends OptionValue {
-        private Boolean booleanValue;
-
-        public MEBooleanValue(Boolean value, String description) {
-            super(value.toString(), description);
-            this.booleanValue = value;
-        }
-
-        public Boolean getBooleanValue() {
-            return booleanValue;
-        }
-    }
-
     public static Builder<?> enumTypeBuilder() {
         return new Builder<>();
     }
@@ -124,6 +51,10 @@ public class EnumFeatureType extends FeatureType {
                     THIS extends MyBuilderScaffold<THIS, PARENT>,
                     PARENT extends BuilderScaffold<?, PARENT>>
             extends SubBuilderScaffold<EnumFeatureType, THIS, PARENT> {
+
+        private OptionValue.ListBuilder<THIS> optionValueListBuilder =
+                OptionValue.listBuilder((THIS) this);
+
         private EnumFeatureType product = new EnumFeatureType();
 
         MyBuilderScaffold(PARENT parent) {
@@ -133,35 +64,56 @@ public class EnumFeatureType extends FeatureType {
         MyBuilderScaffold() {}
 
         public EnumFeatureType build() {
+            prepareOptionValueList();
+            product.options.addAll(optionValueListBuilder.build());
             return product;
         }
 
         private THIS option(OptionValue optionValue) {
-            if (product.options == null) {
-                product.options = new ArrayList<>();
-            }
+            prepareOptionValueList();
             product.options.add(optionValue);
             return (THIS) this;
         }
 
-        public THIS option(String value, String description) {
-            return option(new MEStringValue(value, description));
+        public OptionValue.Builder<THIS> option() {
+            return optionValueListBuilder.newBuilder();
+        }
+
+        private void prepareOptionValueList() {
+            if (product.options == null) {
+                product.options = new ArrayList<>();
+            }
+        }
+
+        public THIS id(String id) {
+            this.product.id = id;
+            return (THIS) this;
+        }
+
+        public THIS option(MappingExecutionValue value) {
+            prepareOptionValueList();
+            product.options.add(new OptionValue(null, value, null));
+            return (THIS) this;
+        }
+
+        public THIS option(String value) {
+            return option(new MappingExecutionValue(value));
         }
 
         public THIS option(Integer value, String description) {
-            return option(new MEIntegerValue(value, description));
+            return option(new MappingExecutionValue(value));
         }
 
         public THIS option(Double value, String description) {
-            return option(new MEFloatValue(value.floatValue(), description));
+            return option(new MappingExecutionValue(value));
         }
 
         public THIS option(Float value, String description) {
-            return option(new MEFloatValue(value, description));
+            return option(new MappingExecutionValue(value.doubleValue()));
         }
 
         public THIS option(Boolean value, String description) {
-            return option(new MEBooleanValue(value, description));
+            return option(new MappingExecutionValue(value));
         }
 
         public THIS allowMultiple(boolean allowMultiple) {

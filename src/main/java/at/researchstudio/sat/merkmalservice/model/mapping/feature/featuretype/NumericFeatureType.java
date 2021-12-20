@@ -62,6 +62,11 @@ public class NumericFeatureType extends FeatureType {
             return product;
         }
 
+        public THIS id(String id) {
+            this.product.id = id;
+            return (THIS) this;
+        }
+
         public THIS quantityKind(String quantityKind) {
             this.product.quantityKind = quantityKind;
             return (THIS) this;
