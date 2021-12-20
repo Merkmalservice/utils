@@ -96,26 +96,6 @@ public class EnumFeatureType extends FeatureType {
             return (THIS) this;
         }
 
-        public THIS option(String value) {
-            return option(new MappingExecutionValue(value));
-        }
-
-        public THIS option(Integer value, String description) {
-            return option(new MappingExecutionValue(value));
-        }
-
-        public THIS option(Double value, String description) {
-            return option(new MappingExecutionValue(value));
-        }
-
-        public THIS option(Float value, String description) {
-            return option(new MappingExecutionValue(value.doubleValue()));
-        }
-
-        public THIS option(Boolean value, String description) {
-            return option(new MappingExecutionValue(value));
-        }
-
         public THIS allowMultiple(boolean allowMultiple) {
             product.allowMultiple = allowMultiple;
             return (THIS) this;

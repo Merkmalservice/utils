@@ -126,15 +126,24 @@ public class MappingExecutionValue {
         throw new IllegalStateException("No value found in MappingExecutionValue");
     }
 
-
-    @Override public String toString() {
-        return "MappingExecutionValue{" +
-                        "stringValue='" + stringValue + '\'' +
-                        ", integerValue=" + integerValue +
-                        ", booleanValue=" + booleanValue +
-                        ", floatValue=" + floatValue +
-                        ", idValue='" + idValue + '\'' +
-                        ", graphQLType='" + graphQLType + '\'' +
-                        '}';
+    @Override
+    public String toString() {
+        return "MappingExecutionValue{"
+                + "stringValue='"
+                + stringValue
+                + '\''
+                + ", integerValue="
+                + integerValue
+                + ", booleanValue="
+                + booleanValue
+                + ", floatValue="
+                + floatValue
+                + ", idValue='"
+                + idValue
+                + '\''
+                + ", graphQLType='"
+                + graphQLType
+                + '\''
+                + '}';
     }
 }
