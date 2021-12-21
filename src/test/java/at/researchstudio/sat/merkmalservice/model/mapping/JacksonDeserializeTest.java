@@ -41,6 +41,15 @@ public class JacksonDeserializeTest {
     }
 
     @Test
+    public void testDeserializeMapping_with_quantityKind() throws IOException {
+        String json =
+                Files.readString(
+                        inputFolder.resolve(Path.of("gql-result-mapping-with-quantitykind.json")));
+        Mapping mapping =
+                new ObjectMapper().readValue(json, DataResult.class).getData().getMapping();
+    }
+
+    @Test
     public void testSerializeFeature() throws IOException {
         Feature f =
                 new Feature(

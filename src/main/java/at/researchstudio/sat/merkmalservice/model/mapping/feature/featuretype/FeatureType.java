@@ -2,8 +2,6 @@ package at.researchstudio.sat.merkmalservice.model.mapping.feature.featuretype;
 
 import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.builder.SubBuilderScaffold;
-import at.researchstudio.sat.merkmalservice.vocab.qudt.QudtQuantityKind;
-import at.researchstudio.sat.merkmalservice.vocab.qudt.QudtUnit;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -86,8 +84,11 @@ public abstract class FeatureType {
             return this.enumFeatureTypeBuilder;
         }
 
-        public THIS numericType(QudtQuantityKind quantityKind, QudtUnit qudtUnit) {
-            this.product = new NumericFeatureType(quantityKind.toString(), qudtUnit.toString());
+        public THIS numericType(String qudtQuantityKindIri, String qudtUnitIri) {
+            this.product =
+                    new NumericFeatureType(
+                            new QuantityKind(qudtQuantityKindIri, null),
+                            new Unit(qudtUnitIri, null));
             return (THIS) this;
         }
 

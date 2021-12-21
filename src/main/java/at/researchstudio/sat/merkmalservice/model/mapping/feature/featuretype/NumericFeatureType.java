@@ -6,10 +6,10 @@ import at.researchstudio.sat.merkmalservice.vocab.qudt.QudtQuantityKind;
 import at.researchstudio.sat.merkmalservice.vocab.qudt.QudtUnit;
 
 public class NumericFeatureType extends FeatureType {
-    private String quantityKind;
-    private String unit;
+    private QuantityKind quantityKind;
+    private Unit unit;
 
-    public NumericFeatureType(String quantityKind, String unit) {
+    public NumericFeatureType(QuantityKind quantityKind, Unit unit) {
         super(Types.NumericValue.name());
         this.quantityKind = quantityKind;
         this.unit = unit;
@@ -19,11 +19,11 @@ public class NumericFeatureType extends FeatureType {
         super(Types.NumericValue.name());
     }
 
-    public String getQuantityKind() {
+    public QuantityKind getQuantityKind() {
         return quantityKind;
     }
 
-    public String getUnit() {
+    public Unit getUnit() {
         return unit;
     }
 
@@ -67,32 +67,40 @@ public class NumericFeatureType extends FeatureType {
             return (THIS) this;
         }
 
-        public THIS quantityKind(String quantityKind) {
+        public THIS quantityKind(QuantityKind quantityKind) {
             this.product.quantityKind = quantityKind;
             return (THIS) this;
         }
 
-        public THIS unit(String unit) {
+        public THIS quantityKind(String quantityKindIri) {
+            return quantityKind(quantityKindIri, null);
+        }
+
+        public THIS quantityKind(String quantityKindIri, String label) {
+            this.product.quantityKind = new QuantityKind(quantityKindIri, label);
+            return (THIS) this;
+        }
+
+        public THIS unit(Unit unit) {
             this.product.unit = unit;
             return (THIS) this;
+        }
+
+        public THIS unit(String unitIri, String label) {
+            this.product.unit = new Unit(unitIri, label);
+            return (THIS) this;
+        }
+
+        public THIS unit(String unitIri) {
+            return unit(unitIri, null);
         }
 
         public THIS unitless() {
             return unit(QudtUnit.UNITLESS);
         }
 
-        public THIS quantityKind(QudtQuantityKind quantityKind) {
-            this.product.quantityKind = quantityKind.toString();
-            return (THIS) this;
-        }
-
         public THIS dimensionless() {
             return quantityKind(QudtQuantityKind.DIMENSIONLESS);
-        }
-
-        public THIS unit(QudtUnit qudtUnit) {
-            this.product.unit = qudtUnit.toString();
-            return (THIS) this;
         }
     }
 }
