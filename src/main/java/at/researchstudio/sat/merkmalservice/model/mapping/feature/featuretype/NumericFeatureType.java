@@ -15,6 +15,10 @@ public class NumericFeatureType extends FeatureType {
         this.unit = unit;
     }
 
+    public NumericFeatureType(String quantityKindIri, String unitIri) {
+        this(new QuantityKind(quantityKindIri, null), new Unit(unitIri, null));
+    }
+
     public NumericFeatureType() {
         super(Types.NumericValue.name());
     }
