@@ -9,15 +9,22 @@ import java.util.function.Consumer;
 public class Standard {
     private String id;
     private String description;
+    private String name;
     private boolean isPublic;
     private Organization organization;
 
     public Standard() {}
 
-    public Standard(String id, String description, boolean isPublic, Organization organization) {
+    public Standard(
+            String id,
+            String name,
+            String description,
+            boolean isPublic,
+            Organization organization) {
         Objects.requireNonNull(id);
         Objects.requireNonNull(organization);
         this.id = id;
+        this.name = name;
         this.organization = organization;
         this.description = description;
         this.isPublic = isPublic;
@@ -29,6 +36,10 @@ public class Standard {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public boolean isPublic() {
@@ -101,6 +112,11 @@ public class Standard {
 
         public THIS id(String id) {
             product.id = id;
+            return (THIS) this;
+        }
+
+        public THIS name(String name) {
+            product.name = name;
             return (THIS) this;
         }
 

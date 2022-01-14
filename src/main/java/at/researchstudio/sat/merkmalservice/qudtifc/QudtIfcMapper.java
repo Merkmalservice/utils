@@ -238,25 +238,35 @@ public class QudtIfcMapper {
         if (unitFactors.isEmpty()) {
             throw new UnsupportedOperationException("TODO implement for unit: " + unit.getIri());
         }
-        unitFactors = Qudt.unscaleUnitFactors(unitFactors);
-        if (unitFactors.size() > 1) {
+        List<UnitFactor> unscaledUnitFactors = Qudt.unscaleUnitFactors(unitFactors);
+        if (unitFactors.size() > 1 || unitFactors.stream().findFirst().get().getExponent() != 1) {
             Map<IfcSIUnit, Integer> derivedUnitElements = new HashMap<>();
-            for (UnitFactor unitFactor : unitFactors) {
-                IfcSIUnit ifcSIUnit = makeIfcSIUnit(unitFactor.getUnit());
+            for (int i = 0; i < unitFactors.size(); i++) {
+                UnitFactor unitFactor = unitFactors.get(i);
+                IfcSIUnit ifcSIUnit =
+                        makeIfcSIUnit(unitFactor.getUnit(), unscaledUnitFactors.get(i).getUnit());
                 derivedUnitElements.put(ifcSIUnit, unitFactor.getExponent());
             }
             IfcUnitType type = getIfcUnitType(unit);
             return new IfcDerivedUnit(null, type, derivedUnitElements, false);
         } else {
-            IfcUnitType type = getIfcUnitType(unit);
-            return new IfcUnit(null, type, false);
+            return makeIfcSIUnit(
+                    unitFactors.stream().findFirst().get().getUnit(),
+                    unscaledUnitFactors.stream().findFirst().get().getUnit());
         }
     }
 
-    private static IfcSIUnit makeIfcSIUnit(Unit unit) {
+    private static IfcSIUnit makeIfcSIUnit(Unit unit, Unit unscaledUnit) {
         if (unit.getDimensionVector().isPresent()) {
-            IfcUnitType type = getIfcUnitType(unit);
-            IfcUnitMeasure measure = getIfcUnitMeasure(unit);
+            try {
+                IfcUnitType type = getIfcUnitType(unit);
+                IfcUnitMeasure measure = getIfcUnitMeasure(unit);
+                IfcUnitMeasurePrefix prefix = getIfcUnitMeasurePrefix(unit);
+                return new IfcSIUnit(null, type, measure, prefix, false);
+            } catch (UnsupportedOperationException e) {
+            }
+            IfcUnitType type = getIfcUnitType(unscaledUnit);
+            IfcUnitMeasure measure = getIfcUnitMeasure(unscaledUnit);
             IfcUnitMeasurePrefix prefix = getIfcUnitMeasurePrefix(unit);
             return new IfcSIUnit(null, type, measure, prefix, false);
         } else {
@@ -520,28 +530,24 @@ public class QudtIfcMapper {
     }*/
     private static final IfcSIUnit IFCMETER =
             new IfcSIUnit(
-                    "1",
+                    1,
                     IfcUnitType.LENGTHUNIT,
                     IfcUnitMeasure.METRE,
                     IfcUnitMeasurePrefix.NONE,
                     false);
     private static final IfcSIUnit IFCSECOND =
             new IfcSIUnit(
-                    "2",
+                    2,
                     IfcUnitType.TIMEUNIT,
                     IfcUnitMeasure.SECOND,
                     IfcUnitMeasurePrefix.NONE,
                     false);
     private static final IfcSIUnit IFCKILOGRAM =
             new IfcSIUnit(
-                    "3",
-                    IfcUnitType.MASSUNIT,
-                    IfcUnitMeasure.GRAM,
-                    IfcUnitMeasurePrefix.KILO,
-                    false);
+                    3, IfcUnitType.MASSUNIT, IfcUnitMeasure.GRAM, IfcUnitMeasurePrefix.KILO, false);
     private static final IfcSIUnit IFCKELVIN =
             new IfcSIUnit(
-                    "1",
+                    1,
                     IfcUnitType.THERMODYNAMICTEMPERATUREUNIT,
                     IfcUnitMeasure.KELVIN,
                     IfcUnitMeasurePrefix.NONE,

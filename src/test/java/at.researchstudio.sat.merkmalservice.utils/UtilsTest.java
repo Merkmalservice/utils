@@ -80,10 +80,10 @@ public class UtilsTest {
 
     @Test
     public final void TestQudtUnitTransformation() {
-        IfcDerivedUnit du1 = new IfcDerivedUnit("xyz", IfcUnitType.LINEARFORCEUNIT, false);
+        IfcDerivedUnit du1 = new IfcDerivedUnit(1, IfcUnitType.LINEARFORCEUNIT, false);
         du1.addDerivedUnitElement(
                 new IfcSIUnit(
-                        "1",
+                        2,
                         IfcUnitType.LENGTHUNIT,
                         IfcUnitMeasure.METRE,
                         IfcUnitMeasurePrefix.NONE,
@@ -91,7 +91,7 @@ public class UtilsTest {
                 1);
         du1.addDerivedUnitElement(
                 new IfcSIUnit(
-                        "2",
+                        3,
                         IfcUnitType.TIMEUNIT,
                         IfcUnitMeasure.SECOND,
                         IfcUnitMeasurePrefix.NONE,
@@ -99,7 +99,7 @@ public class UtilsTest {
                 -2);
         du1.addDerivedUnitElement(
                 new IfcSIUnit(
-                        "3",
+                        4,
                         IfcUnitType.MASSUNIT,
                         IfcUnitMeasure.GRAM,
                         IfcUnitMeasurePrefix.KILO,
@@ -108,10 +108,10 @@ public class UtilsTest {
 
         Assertions.assertEquals(Qudt.Units.N, QudtIfcMapper.mapIfcUnitToQudtUnit(du1));
 
-        IfcDerivedUnit du2 = new IfcDerivedUnit("xyz", IfcUnitType.MOMENTOFINERTIAUNIT, false);
+        IfcDerivedUnit du2 = new IfcDerivedUnit(5, IfcUnitType.MOMENTOFINERTIAUNIT, false);
         du2.addDerivedUnitElement(
                 new IfcSIUnit(
-                        "1",
+                        6,
                         IfcUnitType.LENGTHUNIT,
                         IfcUnitMeasure.METRE,
                         IfcUnitMeasurePrefix.NONE,
@@ -120,10 +120,10 @@ public class UtilsTest {
 
         Assertions.assertEquals(Qudt.Units.M4, QudtIfcMapper.mapIfcUnitToQudtUnit(du2));
 
-        IfcDerivedUnit du3 = new IfcDerivedUnit("xyz", IfcUnitType.PLANARFORCEUNIT, false);
+        IfcDerivedUnit du3 = new IfcDerivedUnit(7, IfcUnitType.PLANARFORCEUNIT, false);
         du3.addDerivedUnitElement(
                 new IfcSIUnit(
-                        "1",
+                        8,
                         IfcUnitType.LENGTHUNIT,
                         IfcUnitMeasure.METRE,
                         IfcUnitMeasurePrefix.NONE,
@@ -131,7 +131,7 @@ public class UtilsTest {
                 1);
         du3.addDerivedUnitElement(
                 new IfcSIUnit(
-                        "2",
+                        9,
                         IfcUnitType.TIMEUNIT,
                         IfcUnitMeasure.SECOND,
                         IfcUnitMeasurePrefix.NONE,
@@ -139,7 +139,7 @@ public class UtilsTest {
                 -2);
         du3.addDerivedUnitElement(
                 new IfcSIUnit(
-                        "3",
+                        10,
                         IfcUnitType.MASSUNIT,
                         IfcUnitMeasure.GRAM,
                         IfcUnitMeasurePrefix.KILO,
@@ -147,7 +147,7 @@ public class UtilsTest {
                 1);
         du3.addDerivedUnitElement(
                 new IfcSIUnit(
-                        "4",
+                        11,
                         IfcUnitType.LENGTHUNIT,
                         IfcUnitMeasure.METRE,
                         IfcUnitMeasurePrefix.NONE,
@@ -155,10 +155,10 @@ public class UtilsTest {
                 -2);
         Assertions.assertEquals(Qudt.Units.N__PER__M2, QudtIfcMapper.mapIfcUnitToQudtUnit(du3));
 
-        IfcDerivedUnit du4 = new IfcDerivedUnit("xyz", IfcUnitType.MASSDENSITYUNIT, false);
+        IfcDerivedUnit du4 = new IfcDerivedUnit(12, IfcUnitType.MASSDENSITYUNIT, false);
         du4.addDerivedUnitElement(
                 new IfcSIUnit(
-                        "1",
+                        13,
                         IfcUnitType.LENGTHUNIT,
                         IfcUnitMeasure.METRE,
                         IfcUnitMeasurePrefix.NONE,
@@ -166,7 +166,7 @@ public class UtilsTest {
                 -3);
         du4.addDerivedUnitElement(
                 new IfcSIUnit(
-                        "3",
+                        3,
                         IfcUnitType.MASSUNIT,
                         IfcUnitMeasure.GRAM,
                         IfcUnitMeasurePrefix.KILO,
@@ -176,10 +176,10 @@ public class UtilsTest {
         Assertions.assertEquals(
                 QudtUnit.KILOGRAMPERCUBICMETER, QudtIfcMapper.mapIfcUnitToQudtUnit(du4));
 
-        IfcDerivedUnit du5 = new IfcDerivedUnit("xyz", IfcUnitType.THERMALTRANSMITTANCEUNIT, false);
+        IfcDerivedUnit du5 = new IfcDerivedUnit(15, IfcUnitType.THERMALTRANSMITTANCEUNIT, false);
         du5.addDerivedUnitElement(
                 new IfcSIUnit(
-                        "2",
+                        2,
                         IfcUnitType.TIMEUNIT,
                         IfcUnitMeasure.SECOND,
                         IfcUnitMeasurePrefix.NONE,
@@ -187,7 +187,7 @@ public class UtilsTest {
                 -3);
         du5.addDerivedUnitElement(
                 new IfcSIUnit(
-                        "1",
+                        1,
                         IfcUnitType.THERMODYNAMICTEMPERATUREUNIT,
                         IfcUnitMeasure.KELVIN,
                         IfcUnitMeasurePrefix.NONE,
@@ -195,7 +195,7 @@ public class UtilsTest {
                 -1);
         du5.addDerivedUnitElement(
                 new IfcSIUnit(
-                        "3",
+                        3,
                         IfcUnitType.MASSUNIT,
                         IfcUnitMeasure.GRAM,
                         IfcUnitMeasurePrefix.KILO,
@@ -204,10 +204,10 @@ public class UtilsTest {
 
         // Assertions.assertEquals(null, QudtUnit.extractUnitFromIfcUnit(du5)); //TODO FIX TEST
 
-        IfcDerivedUnit du6 = new IfcDerivedUnit("xyz", IfcUnitType.VOLUMETRICFLOWRATEUNIT, false);
+        IfcDerivedUnit du6 = new IfcDerivedUnit(19, IfcUnitType.VOLUMETRICFLOWRATEUNIT, false);
         du6.addDerivedUnitElement(
                 new IfcSIUnit(
-                        "2",
+                        2,
                         IfcUnitType.TIMEUNIT,
                         IfcUnitMeasure.SECOND,
                         IfcUnitMeasurePrefix.NONE,
@@ -215,7 +215,7 @@ public class UtilsTest {
                 3);
         du6.addDerivedUnitElement(
                 new IfcSIUnit(
-                        "1",
+                        1,
                         IfcUnitType.LENGTHUNIT,
                         IfcUnitMeasure.METRE,
                         IfcUnitMeasurePrefix.NONE,

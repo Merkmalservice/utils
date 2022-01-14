@@ -15,7 +15,7 @@ public class IfcSIUnit extends IfcUnit {
     private final IfcUnitMeasurePrefix prefix;
 
     public IfcSIUnit(
-            String id,
+            Integer id,
             IfcUnitType type,
             IfcUnitMeasure measure,
             IfcUnitMeasurePrefix prefix,
@@ -26,7 +26,7 @@ public class IfcSIUnit extends IfcUnit {
     }
 
     public IfcSIUnit(
-            String id, String type, String measure, String prefix, boolean projectDefault) {
+            Integer id, String type, String measure, String prefix, boolean projectDefault) {
         super(id, type, projectDefault);
 
         IfcUnitMeasure tempMeasure = IfcUnitMeasure.UNKNOWN;

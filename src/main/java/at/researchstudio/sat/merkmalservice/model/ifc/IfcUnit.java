@@ -10,16 +10,16 @@ public class IfcUnit {
             LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     private final IfcUnitType type;
-    private final String id;
+    private Integer id;
     private final boolean projectDefault;
 
-    public IfcUnit(String id, IfcUnitType type, boolean projectDefault) {
+    public IfcUnit(Integer id, IfcUnitType type, boolean projectDefault) {
         this.id = id;
         this.type = type;
         this.projectDefault = projectDefault;
     }
 
-    public IfcUnit(String id, String type, boolean projectDefault) {
+    public IfcUnit(Integer id, String type, boolean projectDefault) {
         IfcUnitType tempType = IfcUnitType.UNKNOWN;
         try {
             tempType = IfcUnitType.fromString(type);
@@ -36,8 +36,12 @@ public class IfcUnit {
         return type;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public boolean isProjectDefault() {

@@ -12,8 +12,10 @@ public class ConvertActionGroup extends ActionGroup<ConvertAction> {
 
     public ConvertActionGroup() {}
 
-    public ConvertActionGroup(String id, List<ConvertAction> actions) {
+    public ConvertActionGroup(
+            String id, List<ConvertAction> actions, MappingExecutionValue addToPropertySet) {
         super(id, actions);
+        this.addToPropertySet = addToPropertySet;
     }
 
     public MappingExecutionValue getAddToPropertySet() {
@@ -86,9 +88,14 @@ public class ConvertActionGroup extends ActionGroup<ConvertAction> {
             return (THIS) this;
         }
 
+        public ConvertAction.Builder<THIS> convertAction() {
+            return convertActionListBuilder.newBuilder();
+        }
+
         @Override
         public ConvertActionGroup build() {
-            return new ConvertActionGroup(id, this.convertActionListBuilder.build());
+            return new ConvertActionGroup(
+                    id, this.convertActionListBuilder.build(), addToPropertySet);
         }
     }
 }

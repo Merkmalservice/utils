@@ -10,27 +10,28 @@ public class IfcDerivedUnit extends IfcUnit {
 
     private String userDefinedLabel;
 
-    public IfcDerivedUnit(String id, IfcUnitType type, boolean projectDefault) {
+    public IfcDerivedUnit(Integer id, IfcUnitType type, boolean projectDefault) {
         super(id, type, projectDefault);
     }
 
-    public IfcDerivedUnit(String id, String type, boolean projectDefault) {
+    public IfcDerivedUnit(Integer id, String type, boolean projectDefault) {
         super(id, type, projectDefault);
     }
 
-    public IfcDerivedUnit(String id, String type, String userDefinedLabel, boolean projectDefault) {
+    public IfcDerivedUnit(
+            Integer id, String type, String userDefinedLabel, boolean projectDefault) {
         this(id, type, projectDefault);
         this.userDefinedLabel = userDefinedLabel;
     }
 
     public IfcDerivedUnit(
-            String id, IfcUnitType type, String userDefinedLabel, boolean projectDefault) {
+            Integer id, IfcUnitType type, String userDefinedLabel, boolean projectDefault) {
         this(id, type, projectDefault);
         this.userDefinedLabel = userDefinedLabel;
     }
 
     public IfcDerivedUnit(
-            String id,
+            Integer id,
             IfcUnitType type,
             Map<IfcSIUnit, Integer> derivedUnitElements,
             boolean projectDefault) {
@@ -39,7 +40,7 @@ public class IfcDerivedUnit extends IfcUnit {
     }
 
     public IfcDerivedUnit(
-            String id,
+            Integer id,
             IfcUnitType type,
             String userDefinedLabel,
             Map<IfcSIUnit, Integer> derivedUnitElements,
