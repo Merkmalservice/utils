@@ -1,0 +1,94 @@
+PREFIX qudt: <http://qudt.org/schema/qudt/>
+PREFIX unit: <http://qudt.org/vocab/unit/>
+PREFIX kind: <http://qudt.org/vocab/quantitykind/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+# Bind
+# ?u1 ?e1 ... ?u5 ?e5 (must be either untyped or xsd:integer!!)
+# to get the derived unit as ?unit that has exactly those (transitive) factor units
+SELECT ?unit
+     ( sum(?matchedUnit1) = ?requestedUnit1 AS ?check1 )
+     ( sum(?matchedUnit2) = ?requestedUnit2 AS ?check2 )
+     ( sum(?matchedUnit3) = ?requestedUnit3 AS ?check3 )
+     ( sum(?matchedUnit4) = ?requestedUnit4 AS ?check4 )
+     ( sum(?matchedUnit5) = ?requestedUnit5 AS ?check5 )
+     ( sum(?matchedUnit6) = ?requestedUnit6 AS ?check6 )
+     ( sum(?matchedUnit7) = ?requestedUnit7 AS ?check7 )
+     ( sum(?noMatch) AS ?sumNoMatch )
+#SELECT *
+
+ WHERE
+{
+        #VALUES ( ?u1 ?e1 ?u2 ?e2 ?u3 ?e3 ?u4 ?e4) { ( unit:M 1 unit:KiloGM 1 unit:SEC -2 unit:M -2)}
+        VALUES ( ?u1 ?e1 ?u2 ?e2 ?u3 ?e3 ?u4 ?e4 ?u5 ?e5) { ( unit:M 1 unit:M 1 unit:KiloGM 1 unit:SEC -2 unit:M -2)}
+        #VALUES ( ?u1 ?e1 ?u2 ?e2 ) { ( unit:M -2 unit:KiloGM 1)}
+        {
+            SELECT
+                ?unit
+                (GROUP_CONCAT(CONCAT("<",STR(?midUnit), ",", STR(?midExponent),">"); separator= ";") as ?midFactors)
+                (GROUP_CONCAT(?midExponent; separator= ";") as ?exponents)
+                ?endUnit
+            WHERE
+            {
+                ?unit qudt:factorUnit/(qudt:unit/qudt:factorUnit)* ?midFactor .
+                ?midFactor (qudt:unit/qudt:factorUnit)? ?endFactor .
+                ?midFactor
+                    qudt:unit ?midUnit ;
+                    qudt:exponent ?midExponent .
+                ?endFactor
+                    qudt:unit ?endUnit ;
+                    qudt:exponent ?endExponent .
+            }
+            GROUP BY ?unit ?endUnit ?endExponent ?endFactor
+        }
+        BIND(REPLACE(?exponents,"(-?\\d)(;(-?\\d))?(;(-?\\d))?(;(-?\\d))?(;(-?\\d))?", "$1") AS ?es1)
+        BIND(REPLACE(?exponents,"(-?\\d)(;(-?\\d))?(;(-?\\d))?(;(-?\\d))?(;(-?\\d))?", "$3") AS ?es2)
+        BIND(REPLACE(?exponents,"(-?\\d)(;(-?\\d))?(;(-?\\d))?(;(-?\\d))?(;(-?\\d))?", "$5") AS ?es3)
+        BIND(REPLACE(?exponents,"(-?\\d)(;(-?\\d))?(;(-?\\d))?(;(-?\\d))?(;(-?\\d))?", "$7") AS ?es4)
+        BIND(REPLACE(?exponents,"(-?\\d)(;(-?\\d))?(;(-?\\d))?(;(-?\\d))?(;(-?\\d))?", "$9") AS ?es5)
+        BIND(IF(?es1 = "", 1, STRDT(?es1, xsd:integer)) AS ?en1)
+        BIND(IF(?es2 = "", 1, STRDT(?es2, xsd:integer)) AS ?en2)
+        BIND(IF(?es3 = "", 1, STRDT(?es3, xsd:integer)) AS ?en3)
+        BIND(IF(?es4 = "", 1, STRDT(?es4, xsd:integer)) AS ?en4)
+        BIND(IF(?es5 = "", 1, STRDT(?es5, xsd:integer)) AS ?en5)
+        BIND(?en1 * ?en2 * ?en3 * ?en4 * ?en5 AS ?exponent)
+        BIND(IF ( BOUND(?u1) && BOUND(?e1), 1, 0) AS ?requestedUnit1 )
+        BIND(IF ( BOUND(?u2) && BOUND(?e2), 1, 0) AS ?requestedUnit2 )
+        BIND(IF ( BOUND(?u3) && BOUND(?e3), 1, 0) AS ?requestedUnit3 )
+        BIND(IF ( BOUND(?u4) && BOUND(?e4), 1, 0) AS ?requestedUnit4 )
+        BIND(IF ( BOUND(?u5) && BOUND(?e5), 1, 0) AS ?requestedUnit5 )
+        BIND(IF ( BOUND(?u6) && BOUND(?e6), 1, 0) AS ?requestedUnit6 )
+        BIND(IF ( BOUND(?u7) && BOUND(?e7), 1, 0) AS ?requestedUnit7 )
+        BIND(IF ( ?requestedUnit1 = 1 && ?u1 = ?endUnit && ?e1 = ?exponent, 1, 0) AS ?matchedUnit1 )
+        BIND(IF ( ?requestedUnit2 = 1 && ?u2 = ?endUnit && ?e2 = ?exponent, 1, 0) AS ?matchedUnit2 )
+        BIND(IF ( ?requestedUnit3 = 1 && ?u3 = ?endUnit && ?e3 = ?exponent, 1, 0) AS ?matchedUnit3 )
+        BIND(IF ( ?requestedUnit4 = 1 && ?u4 = ?endUnit && ?e4 = ?exponent, 1, 0) AS ?matchedUnit4 )
+        BIND(IF ( ?requestedUnit5 = 1 && ?u5 = ?endUnit && ?e5 = ?exponent, 1, 0) AS ?matchedUnit5 )
+        BIND(IF ( ?requestedUnit6 = 1 && ?u6 = ?endUnit && ?e6 = ?exponent, 1, 0) AS ?matchedUnit6 )
+        BIND(IF ( ?requestedUnit7 = 1 && ?u7 = ?endUnit && ?e7 = ?exponent, 1, 0) AS ?matchedUnit7 )
+        BIND(
+            IF((?matchedUnit1
+            + ?matchedUnit2
+            + ?matchedUnit3
+            + ?matchedUnit4
+            + ?matchedUnit5
+            + ?matchedUnit6
+            + ?matchedUnit7) = 0, 1, 0) as ?noMatch)
+        FILTER NOT EXISTS {
+            ?endUnit qudt:factorUnit/(qudt:unit/qudt:factorUnit)*/qudt:unit ?unwantedUnit .
+            FILTER(
+                         ( ?requestedUnit1 = 1 && ?u1 = ?unwantedUnit )
+                     ||  ( ?requestedUnit2 = 1 && ?u2 = ?unwantedUnit )
+                     ||  ( ?requestedUnit3 = 1 && ?u3 = ?unwantedUnit )
+                     ||  ( ?requestedUnit4 = 1 && ?u4 = ?unwantedUnit )
+                     ||  ( ?requestedUnit5 = 1 && ?u5 = ?unwantedUnit )
+                     ||  ( ?requestedUnit6 = 1 && ?u6 = ?unwantedUnit )
+                    ||  ( ?requestedUnit7 = 1 && ?u7 = ?unwantedUnit )
+          )
+        }
+        #FILTER (?unit IN ( unit:N-M-PER-M2, unit:X-PER-HZ ) )
+}
+GROUP BY ?unit ?requestedUnit1 ?requestedUnit2 ?requestedUnit3 ?requestedUnit4 ?requestedUnit5 ?requestedUnit6 ?requestedUnit7
+HAVING (?check1 && ?check2 && ?check3 && ?check4 && ?check5 && ?check6 && ?check7 )
+ORDER BY ?unit

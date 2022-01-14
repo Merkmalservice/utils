@@ -1,0 +1,49 @@
+PREFIX qudt: <http://qudt.org/schema/qudt/>
+PREFIX unit: <http://qudt.org/vocab/unit/>
+PREFIX prefix: <http://qudt.org/vocab/prefix/>
+PREFIX kind: <http://qudt.org/vocab/quantitykind/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+#CONSTRUCT {
+#    ?derivedUnit qudt:factorUnit [
+#        qudt:unit ?baseUnit ;
+#        qudt:exponent ?exponent
+#    ] .
+#}
+SELECT * WHERE
+#select count(*) where
+{
+    {
+        {
+            ?derivedUnit a qudt:Unit ;
+                BIND(REPLACE(STR(?derivedUnit), "^.+/", "") as ?derivedUnitLocalName)
+            FILTER(REPLACE(?derivedUnitLocalName, "(PER|2|3|4|5|6)\\b", "") != ?derivedUnitLocalName)
+        }
+        {
+            ?baseUnit a qudt:Unit ;
+                    BIND(REPLACE(STR(?baseUnit), "^.+/", "") as ?baseUnitLocalName)
+                FILTER(!CONTAINS(?baseUnitLocalName, "-"))
+                FILTER(REPLACE(?baseUnitLocalName, "(2|3|4|5|6)\\b", "") = ?baseUnitLocalName)
+        }
+        VALUES (?matchedSuffix) { (1) (2) (3) (4) (5) (6) ("") }
+        # replace occurrence with char not found in a localname. we use '@'
+        BIND(REPLACE(   ?derivedUnitLocalName,
+                        CONCAT("\\b",?baseUnitLocalName, STR(?matchedSuffix),"\\b"),
+                        "@")
+             AS ?tag)
+        # only keep derived units that contain at least one match
+        FILTER (?tag != ?derivedUnitLocalName )
+        # find out if our match is in the nominator or denominator (or both)
+        BIND(REPLACE(REPLACE(?tag, "\\bPER\\b", "/"), "[^@/]", "") as ?fracTagTmp)
+        BIND(IF(?fracTagTmp = "@", "@/", ?fracTagTmp) as ?fracTag)
+    }
+    # match in denominator and nominator separately
+    VALUES (?matchFracTag ?expFactor)  { ( "@/" 1 ) ( "/@" -1 ) }
+    FILTER (CONTAINS(?fracTag, ?matchFracTag))
+    # finally: calculate the exponent
+    BIND (?expFactor * IF(?matchedSuffix = "", 1, ?matchedSuffix) as ?exponent)
+}
+order by ?derivedUnit ?baseUnit
+
+
+

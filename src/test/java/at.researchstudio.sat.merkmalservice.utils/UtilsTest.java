@@ -3,6 +3,8 @@ package at.researchstudio.sat.merkmalservice.utils;
 import at.researchstudio.sat.merkmalservice.model.*;
 import at.researchstudio.sat.merkmalservice.model.ifc.IfcDerivedUnit;
 import at.researchstudio.sat.merkmalservice.model.ifc.IfcSIUnit;
+import at.researchstudio.sat.merkmalservice.model.qudt.Qudt;
+import at.researchstudio.sat.merkmalservice.qudtifc.QudtIfcMapper;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasure;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasurePrefix;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitType;
@@ -104,7 +106,7 @@ public class UtilsTest {
                         false),
                 1);
 
-        Assertions.assertEquals(QudtUnit.NEWTON, QudtUnit.mapIfcUnitToQudtUnit(du1));
+        Assertions.assertEquals(Qudt.Units.N, QudtIfcMapper.mapIfcUnitToQudtUnit(du1));
 
         IfcDerivedUnit du2 = new IfcDerivedUnit("xyz", IfcUnitType.MOMENTOFINERTIAUNIT, false);
         du2.addDerivedUnitElement(
@@ -116,7 +118,7 @@ public class UtilsTest {
                         false),
                 4);
 
-        Assertions.assertEquals(QudtUnit.QUARTIC_METRE, QudtUnit.mapIfcUnitToQudtUnit(du2));
+        Assertions.assertEquals(Qudt.Units.M4, QudtIfcMapper.mapIfcUnitToQudtUnit(du2));
 
         IfcDerivedUnit du3 = new IfcDerivedUnit("xyz", IfcUnitType.PLANARFORCEUNIT, false);
         du3.addDerivedUnitElement(
@@ -143,8 +145,15 @@ public class UtilsTest {
                         IfcUnitMeasurePrefix.KILO,
                         false),
                 1);
-
-        Assertions.assertEquals(QudtUnit.NEWTON, QudtUnit.mapIfcUnitToQudtUnit(du3));
+        du3.addDerivedUnitElement(
+                new IfcSIUnit(
+                        "4",
+                        IfcUnitType.LENGTHUNIT,
+                        IfcUnitMeasure.METRE,
+                        IfcUnitMeasurePrefix.NONE,
+                        false),
+                -2);
+        Assertions.assertEquals(Qudt.Units.N__PER__M2, QudtIfcMapper.mapIfcUnitToQudtUnit(du3));
 
         IfcDerivedUnit du4 = new IfcDerivedUnit("xyz", IfcUnitType.MASSDENSITYUNIT, false);
         du4.addDerivedUnitElement(
@@ -164,7 +173,8 @@ public class UtilsTest {
                         false),
                 1);
 
-        Assertions.assertEquals(QudtUnit.KILOGRAMPERCUBICMETER, QudtUnit.mapIfcUnitToQudtUnit(du4));
+        Assertions.assertEquals(
+                QudtUnit.KILOGRAMPERCUBICMETER, QudtIfcMapper.mapIfcUnitToQudtUnit(du4));
 
         IfcDerivedUnit du5 = new IfcDerivedUnit("xyz", IfcUnitType.THERMALTRANSMITTANCEUNIT, false);
         du5.addDerivedUnitElement(

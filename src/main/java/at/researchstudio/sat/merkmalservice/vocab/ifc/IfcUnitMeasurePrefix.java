@@ -3,11 +3,22 @@ package at.researchstudio.sat.merkmalservice.vocab.ifc;
 import java.util.Objects;
 
 public enum IfcUnitMeasurePrefix {
+    EXA("EXA"),
+    PETA("PETA"),
+    TERA("TERA"),
+    GIGA("GIGA"),
     MEGA("MEGA"),
     KILO("KILO"),
+    HECTO("HECTO"),
+    DECA("DECA"),
     DECI("DECI"),
     CENTI("CENTI"),
-    MILLI("MIILLI"),
+    MILLI("MILLI"),
+    MICRO("MICRO"),
+    NANO("NANO"),
+    PICO("PICO"),
+    FEMTO("FEMTO"),
+    ATTO("ATTO"),
     NONE();
 
     // declaring private variable for getting values

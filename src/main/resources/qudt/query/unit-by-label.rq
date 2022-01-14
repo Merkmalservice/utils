@@ -1,0 +1,37 @@
+PREFIX qudt: <http://qudt.org/schema/qudt/>
+PREFIX unit: <http://qudt.org/vocab/unit/>
+PREFIX kind: <http://qudt.org/vocab/quantitykind/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+# bind ?unitLabel, get the unit
+SELECT * where
+{
+    #VALUES (?unitLabel ) { ("Meter") }
+
+    ?unit a qudt:Unit;
+       rdfs:label ?actualUnitLabel ;
+
+    FILTER(UCASE(STR(?actualUnitLabel)) = UCASE(REPLACE(?unitLabel, "_", " ")))
+
+    optional {
+       ?unit qudt:conversionMultiplier ?conversionMultiplier
+    }
+    optional {
+        ?unit qudt:prefix ?prefix .
+        ?prefix
+            a qudt:Prefix ;
+            rdfs:label ?actualPrefixLabel .
+    }
+    optional {
+        ?unit qudt:isScalingOf ?scalingOf
+    }
+    optional {
+        ?unit qudt:hasQuantityKind ?quantityKind
+    }
+    optional {
+           ?unit qudt:conversionOffset ?conversionOffset
+        }
+    optional {
+       ?unit qudt:symbol ?symbol
+    }
+}

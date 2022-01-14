@@ -1,0 +1,47 @@
+PREFIX qudt: <http://qudt.org/schema/qudt/>
+PREFIX unit: <http://qudt.org/vocab/unit/>
+PREFIX kind: <http://qudt.org/vocab/quantitykind/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+# Bind
+# ?baseUnit1 ?exponent1 (must be either untyped or xsd:integer!!)
+# to get the derived unit as ?unit
+SELECT * WHERE
+{
+    {
+        #VALUES (?baseUnit1 ?exponent1 ) { (unit:M "3"^^xsd:integer ) }
+        #VALUES (?baseUnit1 ?exponent1 ) { (unit:M 3 ) }
+        ?unit a qudt:Unit ;
+           rdfs:label ?label ;
+           qudt:factorUnit ?factorUnit1 .
+        ?factorUnit1
+            qudt:unit ?baseUnit1 ;
+            qudt:exponent ?exponent1 .
+        ?baseUnit1 a qudt:Unit .
+
+        #make sure we have no other factor units
+        OPTIONAL {
+            ?unit qudt:factorUnit ?factorUnitX .
+            FILTER(?factorUnitX != ?factorUnit1)
+        }
+        FILTER( !BOUND(?factorUnitX) )
+    }
+    #FILTER(?baseUnit1 = unit:M && ?exponent1 = 3 )
+
+    OPTIONAL {
+        ?unit qudt:prefix ?prefix
+    }
+    OPTIONAL {
+       ?unit qudt:conversionMultiplier ?conversionMultiplier
+    }
+    OPTIONAL {
+        ?unit qudt:hasQuantityKind ?quantityKind
+    }
+    OPTIONAL {
+        ?unit qudt:conversionOffset ?conversionOffset
+    }
+    OPTIONAL {
+        ?unit qudt:symbol ?symbol
+    }
+}

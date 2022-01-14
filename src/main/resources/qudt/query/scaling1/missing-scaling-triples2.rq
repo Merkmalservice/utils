@@ -1,0 +1,45 @@
+PREFIX qudt: <http://qudt.org/schema/qudt/>
+PREFIX unit: <http://qudt.org/vocab/unit/>
+PREFIX kind: <http://qudt.org/vocab/quantitykind/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT * where
+{
+
+    {
+        SELECT * where {
+            ?prefix a qudt:Prefix ;
+                    rdfs:label ?prefixLabel .
+
+            ?scaledUnit a qudt:Unit ;
+                qudt:conversionMultiplier ?cm.
+                BIND(REPLACE(STR(?scaledUnit), "^.+/", "") as ?scaledUnitLocalName)
+                FILTER(STRSTARTS(?scaledUnitLocalName, STR(?prefixLabel)))
+                FILTER(?cm != 1.0)
+        }
+    }
+
+    {
+        SELECT * where {
+
+            ?baseUnit a qudt:Unit ;
+                qudt:conversionMultiplier 1.0 .
+                BIND(REPLACE(STR(?baseUnit), "^.+/", "") as ?baseUnitLocalName)
+                FILTER NOT EXISTS {
+                    ?prefix a qudt:Prefix ;
+                                    rdfs:label ?prefixLabel .
+                    FILTER(STRSTARTS(?baseUnitLocalName, STR(?prefixLabel)))
+                }
+
+        }
+    }
+
+
+
+    FILTER(?scaledUnitLocalName = CONCAT(STR(?prefixLabel), ?baseUnitLocalName))
+    #FILTER NOT EXISTS {
+    #    ?scaledUnit qudt:isScalingOf ?baseUnit .
+    #    ?scaledUnit qudt:prefix ?prefix .
+    #}
+} order by ?baseUnit ?prefix
+

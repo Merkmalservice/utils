@@ -1,0 +1,43 @@
+PREFIX qudt: <http://qudt.org/schema/qudt/>
+PREFIX unit: <http://qudt.org/vocab/unit/>
+PREFIX kind: <http://qudt.org/vocab/quantitykind/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+# bind ?baseUnitLabel and ?prefixLabel, get the scaled unit
+SELECT * where
+{
+    #VALUES (?prefixLabel ?baseUnitLabel ) { ("Pico" "Meter") }
+
+    ?unit a qudt:Unit;
+       rdfs:label ?label ;
+       qudt:isScalingOf ?scalingOf ;
+       qudt:prefix ?prefix ;
+       qudt:isScalingOf ?scalingOf .
+
+    ?scalingOf a qudt:Unit ;
+        rdfs:label ?actualBaseUnitLabel .
+
+    ?prefix a qudt:Prefix ;
+        rdfs:label ?actualPrefixLabel .
+
+    FILTER(UCASE(STR(?actualBaseUnitLabel)) = REPLACE(UCASE(?baseUnitLabel),"_", " "))
+    FILTER(UCASE(STR(?actualPrefixLabel)) = UCASE(?prefixLabel))
+    optional {
+       ?unit qudt:conversionMultiplier ?conversionMultiplier
+    }
+    optional {
+        ?unit qudt:hasQuantityKind ?quantityKind
+    }
+    optional {
+           ?unit qudt:conversionOffset ?conversionOffset
+        }
+    optional {
+       ?unit qudt:symbol ?symbol
+    }
+    optional {
+        ?unit qudt:isScalingOf ?scalingOf
+    }
+    optional {
+            ?unit qudt:hasDimensionVector ?dimensionVector
+    }
+}

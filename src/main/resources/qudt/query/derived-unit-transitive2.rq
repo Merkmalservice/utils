@@ -1,0 +1,66 @@
+PREFIX qudt: <http://qudt.org/schema/qudt/>
+PREFIX unit: <http://qudt.org/vocab/unit/>
+PREFIX kind: <http://qudt.org/vocab/quantitykind/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+# Bind
+# ?u1 ?e1 ... ?u5 ?e5 (must be either untyped or xsd:integer!!)
+# to get the derived unit as ?unit that has exactly those (transitive) factor units
+SELECT * WHERE
+{
+    {
+    SELECT ?unit (COUNT (*) AS ?cnt)
+    {
+        VALUES ( ?u1 ?e1 ?u2 ?e2 ) { ( unit:M 1 unit:KiloGM 1 )}
+            {
+                SELECT ?unit (GROUP_CONCAT(?midExponent; separator= ";") as ?exponents) ?endUnit ?endExponent
+                WHERE
+                {
+                    ?unit qudt:factorUnit/(qudt:unit/qudt:factorUnit)* ?midFactor .
+                    ?midFactor (qudt:unit/qudt:factorUnit)*  ?endFactor .
+                    ?midFactor
+                        qudt:exponent ?midExponent .
+                    ?endFactor
+                        qudt:unit ?endUnit ;
+                        qudt:exponent ?endExponent .
+               } GROUP BY ?unit ?endUnit ?endExponent
+            }
+            FILTER(
+                (?u1 = ?endUnit && ?e1 = ?endExponent)
+                || (?u2 = ?endUnit && ?e2 = ?endExponent)
+            )
+            BIND(REPLACE(?exponents,"(-?\\d)(;(-?\\d))?(;(-?\\d))?(;(-?\\d))?(;(-?\\d))?", "$1") AS ?es1)
+            BIND(REPLACE(?exponents,"(-?\\d)(;(-?\\d))?(;(-?\\d))?(;(-?\\d))?(;(-?\\d))?", "$3") AS ?es2)
+            BIND(REPLACE(?exponents,"(-?\\d)(;(-?\\d))?(;(-?\\d))?(;(-?\\d))?(;(-?\\d))?", "$5") AS ?es3)
+            BIND(REPLACE(?exponents,"(-?\\d)(;(-?\\d))?(;(-?\\d))?(;(-?\\d))?(;(-?\\d))?", "$7") AS ?es4)
+            BIND(REPLACE(?exponents,"(-?\\d)(;(-?\\d))?(;(-?\\d))?(;(-?\\d))?(;(-?\\d))?", "$9") AS ?es5)
+            BIND(IF(?es1 = "", 1, STRDT(?es1, xsd:integer)) AS ?en1)
+            BIND(IF(?es2 = "", 1, STRDT(?es2, xsd:integer)) AS ?en2)
+            BIND(IF(?es3 = "", 1, STRDT(?es3, xsd:integer)) AS ?en3)
+            BIND(IF(?es4 = "", 1, STRDT(?es4, xsd:integer)) AS ?en4)
+            BIND(IF(?es5 = "", 1, STRDT(?es5, xsd:integer)) AS ?en5)
+            BIND(?en1 * ?en2 * ?en3 * ?en4 * ?en5 AS ?exponent)
+
+    } GROUP BY ?unit
+      HAVING(count(*) = 2)
+    }
+    FILTER NOT EXISTS {
+            {
+                SELECT ?unit (GROUP_CONCAT(?midExponent; separator= ";") as ?exponents) ?endUnitX ?endExponentX
+                WHERE
+                {
+                    ?unit qudt:factorUnit/(qudt:unit/qudt:factorUnit)* ?midFactor .
+                    ?midFactor (qudt:unit/qudt:factorUnit)*  ?endFactor .
+                    ?midFactor
+                        qudt:exponent ?midExponent .
+                    ?endFactor
+                        qudt:unit ?endUnit ;
+                        qudt:exponent ?endExponent .
+               } GROUP BY ?unit ?endUnit ?endExponent
+        }
+    }
+
+}
+    order by ?unit
+

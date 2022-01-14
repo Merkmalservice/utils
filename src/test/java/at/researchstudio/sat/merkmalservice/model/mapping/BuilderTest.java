@@ -6,7 +6,7 @@ import at.researchstudio.sat.merkmalservice.model.mapping.feature.Feature;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-public class BuilderTests {
+public class BuilderTest {
     @Test
     public void testFeatureBuilder() {
         Feature feature = Feature.builder().booleanType().name("boolFeature").build();
