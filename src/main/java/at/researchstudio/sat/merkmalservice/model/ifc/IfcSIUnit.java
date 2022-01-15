@@ -3,10 +3,11 @@ package at.researchstudio.sat.merkmalservice.model.ifc;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasure;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasurePrefix;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitType;
-import java.lang.invoke.MethodHandles;
-import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.lang.invoke.MethodHandles;
+import java.util.Objects;
 
 public class IfcSIUnit extends IfcUnit {
     private static final Logger logger =
@@ -73,6 +74,6 @@ public class IfcSIUnit extends IfcUnit {
 
     @Override
     public String toString() {
-        return "IfcSIUnit{" + "measure=" + measure + ", prefix=" + prefix + '}';
+        return "IfcSIUnit{" + prefix + " " + measure + '}';
     }
 }

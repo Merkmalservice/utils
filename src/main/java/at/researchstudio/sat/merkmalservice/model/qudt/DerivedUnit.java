@@ -93,13 +93,18 @@ class DerivedUnit {
         FactorUnitSelection selection = new FactorUnitSelection(selectors, new ArrayList<>());
         List<FactorUnitSelection> possibleSelections = List.of(selection);
         for (FactorUnit child : children) {
-            possibleSelections = child.match(possibleSelections);
+            possibleSelections = pruneMatchResults(child.match(possibleSelections), child);
             if (possibleSelections.isEmpty()) {
                 return false;
             }
         }
         return !possibleSelections.isEmpty()
                 && possibleSelections.stream().anyMatch(FactorUnitSelection::allBound);
+    }
+
+    private List<FactorUnitSelection> pruneMatchResults(
+            List<FactorUnitSelection> ret, FactorUnit factorUnit) {
+        return ret.stream().filter(factorUnit::isMatched).collect(Collectors.toList());
     }
 
     public IRI getUnitIri() {

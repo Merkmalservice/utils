@@ -171,10 +171,10 @@ public class Qudt {
      *
      * @param factorUnits a map containing unit -> exponent entries.
      */
-    public static Set<Unit> derivedUnit(Map<Unit, Integer> factorUnits) {
+    public static Set<Unit> derivedUnit(List<Map.Entry<Unit, Integer>> factorUnits) {
         Object[] arr = new Object[factorUnits.size() * 2];
         return derivedUnitFromFactors(
-                factorUnits.entrySet().stream()
+                factorUnits.stream()
                         .flatMap(e -> Stream.of(e.getKey(), e.getValue()))
                         .collect(Collectors.toList())
                         .toArray(arr));
@@ -186,7 +186,7 @@ public class Qudt {
      *
      * @param factorUnits
      */
-    static Set<Unit> derivedUnitFromFactors(Object... factorUnits) {
+    static Set<Unit> derivedUnitFromFactors(final Object... factorUnits) {
         if (factorUnits.length % 2 != 0) {
             throw new IllegalArgumentException("An even number of arguments is required");
         }
@@ -194,17 +194,75 @@ public class Qudt {
             throw new IllegalArgumentException(
                     "No more than 14 arguments (7 factor units) supported");
         }
-        List<DerivedUnit> matchingUnits =
+        List<Unit> matchingUnits =
                 derivedUnits.values().stream()
                         .filter(d -> d.matches(factorUnits))
+                        .map(d -> unit(d.getUnitIri()))
                         .collect(Collectors.toList());
+        if (matchingUnits.isEmpty()) {
+            // try unscaling (except for GM - unscales to KiloGM), and try again
+            Object[] scaledFactorUnits = new Object[factorUnits.length];
+            double multiplier = 1;
+            for (int i = 0; i < factorUnits.length; i++) {
+                if (i % 2 == 0) {
+                    Map.Entry<Unit, Double> scaled = scaleToBaseUnit((Unit) factorUnits[i]);
+                    multiplier /= scaled.getValue();
+                    scaledFactorUnits[i] = scaled.getKey();
+                } else {
+                    scaledFactorUnits[i] = factorUnits[i];
+                }
+            }
+            final double unitMulitiplier = multiplier;
+            Optional<Prefix> scalingPrefix =
+                    prefixes.values().stream()
+                            .filter(p -> p.getMultiplier() == unitMulitiplier)
+                            .findFirst();
+            if (scalingPrefix.isPresent()) {
+                matchingUnits =
+                        derivedUnits.values().stream()
+                                .filter(d -> d.matches(scaledFactorUnits))
+                                .map(u -> scale(unit(u.getUnitIri()), scalingPrefix.get()))
+                                .collect(Collectors.toList());
+            }
+        }
         if (matchingUnits.isEmpty()) {
             throw new NotFoundException(
                     "No derived unit found for factors " + Arrays.toString(factorUnits));
         }
-        return matchingUnits.stream()
-                .map(d -> unit(d.getUnitIri()))
-                .collect(Collectors.toUnmodifiableSet());
+        return new HashSet<>(matchingUnits);
+    }
+
+    private static Unit scale(Unit unit, Prefix prefix) {
+        Optional<Unit> scaled =
+                units.values().stream()
+                        .filter(
+                                u ->
+                                        unit.getIri().equals(u.getScalingOf().orElse(null))
+                                                && prefix.getIri()
+                                                        .equals(u.getPrefix().orElse(null)))
+                        .findFirst();
+        return scaled.orElseThrow(
+                () ->
+                        new NotFoundException(
+                                String.format(
+                                        "Qudt does not contain the unit %s, scaled with prefix %s",
+                                        unit, prefix)));
+    }
+
+    // returns the base unit and the factor we had to scale by
+    private static Map.Entry<Unit, Double> scaleToBaseUnit(Unit unit) {
+        if (unit.getScalingOf().isPresent() && unit.getPrefix().isPresent()) {
+            Unit base = unit(unit.getScalingOf().get());
+            Prefix prefx = prefix(unit.getPrefix().get());
+            if (Units.GM.getIri().equals(base.getIri())) {
+                return Map.entry(Units.KiloGM, prefx.getMultiplier() * 1000);
+            }
+            return Map.entry(base, prefx.getMultiplier());
+        }
+        if (Units.GM.getIri().equals(unit.getIri())) {
+            return Map.entry(Units.KiloGM, 1000d);
+        }
+        return Map.entry(unit, 1d);
     }
 
     public static Set<Unit> derivedUnit(Unit baseUnit, int exponent) {

@@ -1,12 +1,13 @@
 package at.researchstudio.sat.merkmalservice.model.ifc;
 
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitType;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.joining;
 
 public class IfcDerivedUnit extends IfcUnit {
-    private Map<IfcSIUnit, Integer> derivedUnitElements;
+    private List<IfcDerivedUnitElement> derivedUnitElements = new ArrayList<>();
 
     private String userDefinedLabel;
 
@@ -32,11 +33,29 @@ public class IfcDerivedUnit extends IfcUnit {
 
     public IfcDerivedUnit(
             Integer id,
+            String type,
+            List<IfcDerivedUnitElement> derivedUnitElements,
+            boolean projectDefault,
+            String userDefinedLabel) {
+        super(id, type, projectDefault);
+        this.derivedUnitElements = derivedUnitElements;
+        this.userDefinedLabel = userDefinedLabel;
+    }
+
+    public IfcDerivedUnit(
+            Integer id,
             IfcUnitType type,
             Map<IfcSIUnit, Integer> derivedUnitElements,
             boolean projectDefault) {
         this(id, type, projectDefault);
-        this.derivedUnitElements = derivedUnitElements;
+        this.derivedUnitElements = elementsFromMap(derivedUnitElements);
+    }
+
+    private List<IfcDerivedUnitElement> elementsFromMap(
+            Map<IfcSIUnit, Integer> derivedUnitElements) {
+        return derivedUnitElements.entrySet().stream()
+                .map(e -> new IfcDerivedUnitElement(e.getKey(), e.getValue()))
+                .collect(Collectors.toList());
     }
 
     public IfcDerivedUnit(
@@ -46,10 +65,10 @@ public class IfcDerivedUnit extends IfcUnit {
             Map<IfcSIUnit, Integer> derivedUnitElements,
             boolean projectDefault) {
         this(id, type, userDefinedLabel, projectDefault);
-        this.derivedUnitElements = derivedUnitElements;
+        this.derivedUnitElements = elementsFromMap(derivedUnitElements);
     }
 
-    public Map<IfcSIUnit, Integer> getDerivedUnitElements() {
+    public List<IfcDerivedUnitElement> getDerivedUnitElements() {
         return derivedUnitElements;
     }
 
@@ -61,11 +80,12 @@ public class IfcDerivedUnit extends IfcUnit {
         this.userDefinedLabel = userDefinedLabel;
     }
 
-    public void addDerivedUnitElement(IfcSIUnit unitElement, int exponent) {
-        if (derivedUnitElements == null) {
-            derivedUnitElements = new HashMap<>();
-        }
-        derivedUnitElements.put(unitElement, exponent);
+    public void addDerivedUnitElement(IfcSIUnit unit, int exponent) {
+        derivedUnitElements.add(new IfcDerivedUnitElement(unit, exponent));
+    }
+
+    public void addDerivedUnitElement(IfcDerivedUnitElement element) {
+        derivedUnitElements.add(element);
     }
 
     @Override
@@ -85,11 +105,8 @@ public class IfcDerivedUnit extends IfcUnit {
     @Override
     public String toString() {
         return "IfcDerivedUnit{"
-                + "derivedUnitElements="
-                + derivedUnitElements
-                + ", userDefinedLabel='"
-                + userDefinedLabel
-                + '\''
+                        + userDefinedLabel != null ? "'" + userDefinedLabel + "'" : ""
+                + derivedUnitElements.stream().map(Object::toString).collect(joining(", "))
                 + '}';
     }
 }

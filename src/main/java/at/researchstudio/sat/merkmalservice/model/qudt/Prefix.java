@@ -83,4 +83,9 @@ public class Prefix {
     public int hashCode() {
         return Objects.hash(iri, multiplier, symbol, ucumCode, labels);
     }
+
+    @Override
+    public String toString() {
+        return "prefix:" + iri.toString().replaceAll(".+/", "");
+    }
 }

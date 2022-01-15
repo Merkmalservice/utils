@@ -1,20 +1,22 @@
 package at.researchstudio.sat.merkmalservice.qudtifc;
 
-import static java.util.stream.Collectors.toMap;
-import static java.util.stream.Collectors.toSet;
-
 import at.researchstudio.sat.merkmalservice.model.ifc.IfcDerivedUnit;
+import at.researchstudio.sat.merkmalservice.model.ifc.IfcDerivedUnitElement;
 import at.researchstudio.sat.merkmalservice.model.ifc.IfcSIUnit;
 import at.researchstudio.sat.merkmalservice.model.ifc.IfcUnit;
 import at.researchstudio.sat.merkmalservice.model.qudt.*;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasure;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasurePrefix;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitType;
-import java.lang.invoke.MethodHandles;
-import java.util.*;
 import org.eclipse.rdf4j.model.IRI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.lang.invoke.MethodHandles;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toSet;
 
 public class QudtIfcMapper {
     private static final Logger logger =
@@ -333,16 +335,17 @@ public class QudtIfcMapper {
                             ((IfcSIUnit) ifcUnit).getPrefix(), ((IfcSIUnit) ifcUnit).getMeasure()));
         } else if (ifcUnit instanceof IfcDerivedUnit) {
             IfcDerivedUnit derivedUnit = (IfcDerivedUnit) ifcUnit;
-            Map<IfcSIUnit, Integer> derivedUnitElements = derivedUnit.getDerivedUnitElements();
-            Map<Unit, Integer> convertedFactorUnits =
-                    derivedUnitElements.entrySet().stream()
-                            .collect(
-                                    toMap(
-                                            e ->
-                                                    extractUnitFromPrefixAndMeasure(
-                                                            e.getKey().getPrefix(),
-                                                            e.getKey().getMeasure()),
-                                            e -> e.getValue()));
+            List<IfcDerivedUnitElement> derivedUnitElements = derivedUnit.getDerivedUnitElements();
+            List<Map.Entry<Unit, Integer>> convertedFactorUnits =
+                    derivedUnitElements.stream()
+                            .map(
+                                    e ->
+                                            Map.entry(
+                                                    mapIfcUnitToQudtUnit(e.getIfcUnit()).stream()
+                                                            .findFirst()
+                                                            .get(),
+                                                    e.getExponent()))
+                            .collect(Collectors.toList());
             return Qudt.derivedUnit(convertedFactorUnits);
         }
         throw new IllegalArgumentException("No QudtUnit for IfcUnit<" + ifcUnit + ">");

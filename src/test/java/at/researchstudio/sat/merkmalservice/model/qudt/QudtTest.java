@@ -69,12 +69,14 @@ public class QudtTest {
 
     @Test
     public void testDerivedUnitFromMap() {
-        assertTrue(Qudt.derivedUnit(Map.of(Qudt.Units.M, -3)).contains(Qudt.Units.PER__M3));
         assertTrue(
-                Qudt.derivedUnit(Map.of(Qudt.Units.MilliA, 1, Qudt.Units.IN, -1))
+                Qudt.derivedUnit(List.of(Map.entry(Qudt.Units.M, -3)))
+                        .contains(Qudt.Units.PER__M3));
+        assertTrue(
+                Qudt.derivedUnit(Qudt.Units.MilliA, 1, Qudt.Units.IN, -1)
                         .contains(Qudt.Units.MilliA__PER__IN));
         assertTrue(
-                Qudt.derivedUnit(Map.of(Qudt.Units.MOL, 1, Qudt.Units.M, -2, Qudt.Units.SEC, -1))
+                Qudt.derivedUnit(Qudt.Units.MOL, 1, Qudt.Units.M, -2, Qudt.Units.SEC, -1)
                         .contains(Qudt.Units.MOL__PER__M2__SEC));
     }
 

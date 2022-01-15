@@ -1,10 +1,12 @@
 package at.researchstudio.sat.merkmalservice.model.qudt;
 
+import org.eclipse.rdf4j.model.IRI;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import org.eclipse.rdf4j.model.IRI;
 
 class FactorUnit {
     final IRI derivedUnitIri;
@@ -59,21 +61,27 @@ class FactorUnit {
         return unitIri;
     }
 
-    public List<FactorUnit> getChildren() {
-        return children;
-    }
-
     public List<FactorUnitSelection> match(List<FactorUnitSelection> possibleSelections) {
         return match(possibleSelections, 1);
+    }
+
+    public List<FactorUnit> getChildren() {
+        if (children == null || children.isEmpty()) {
+            return Collections.emptyList();
+        } else {
+            return children;
+        }
+    }
+
+    public boolean hasChildren() {
+        return !getChildren().isEmpty();
     }
 
     private List<FactorUnitSelection> match(
             List<FactorUnitSelection> selection, int cumulativeExponent) {
         List<FactorUnitSelection> mySelection = new ArrayList<>(selection);
-        if (children != null) {
-            for (FactorUnit child : children) {
-                mySelection = child.match(mySelection, getExponentCumulated(cumulativeExponent));
-            }
+        for (FactorUnit child : getChildren()) {
+            mySelection = child.match(mySelection, getExponentCumulated(cumulativeExponent));
         }
         List<FactorUnitSelection> ret = new ArrayList<>();
         for (FactorUnitSelection factorUnitSelection : mySelection) {
@@ -88,31 +96,23 @@ class FactorUnit {
             // also regard the selection without the match as a possible partial solution
             ret.add(factorUnitSelection);
         }
-        if (parent == null) {
-            // toplevel
-            return pruneMatchResults(ret);
-        }
         // lower level
         return ret;
     }
 
-    private List<FactorUnitSelection> pruneMatchResults(List<FactorUnitSelection> ret) {
-        return ret.stream().filter(this::isMatched).collect(Collectors.toList());
-    }
-
-    private boolean isMatched(FactorUnitSelection selection) {
+    boolean isMatched(FactorUnitSelection selection) {
         if (selection.isMarked(this)) {
             return true;
         }
-        if (children != null) {
-            for (FactorUnit child : children) {
-                if (!child.isMatched(selection)) {
-                    return false;
-                }
-            }
-            return true;
+        if (!hasChildren()) {
+            return false;
         }
-        return false;
+        for (FactorUnit child : getChildren()) {
+            if (!child.isMatched(selection)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -123,7 +123,7 @@ class FactorUnit {
                 + ", exp="
                 + exponent
                 + ", children: "
-                + (children == null ? 0 : children.size())
+                + (getChildren().size())
                 + '}';
     }
 
@@ -147,19 +147,19 @@ class FactorUnit {
     }
 
     public List<FactorUnit> getLeafFactorUnits() {
-        if (this.children == null || this.children.isEmpty()) {
+        if (!hasChildren()) {
             return List.of(this);
         }
-        return children.stream()
+        return getChildren().stream()
                 .flatMap(c -> c.getLeafFactorUnits().stream())
                 .collect(Collectors.toList());
     }
 
     public List<FactorUnit> getLeafFactorUnitsWithCumulativeExponents() {
-        if (this.children == null || this.children.isEmpty()) {
+        if (!hasChildren()) {
             return List.of(this);
         }
-        return children.stream()
+        return getChildren().stream()
                 .flatMap(c -> c.getLeafFactorUnits().stream())
                 .map(f -> f.withExponentMultiplied(this.getExponent()))
                 .collect(Collectors.toList());
@@ -167,10 +167,8 @@ class FactorUnit {
 
     private FactorUnit withExponentMultiplied(int by) {
         FactorUnit ret = new FactorUnit(derivedUnitIri, unitIri, this.exponent * by);
-        if (this.children != null) {
-            for (FactorUnit child : children) {
-                ret.addChild(child);
-            }
+        for (FactorUnit child : getChildren()) {
+            ret.addChild(child);
         }
         return ret;
     }
