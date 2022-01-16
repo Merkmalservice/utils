@@ -1,5 +1,7 @@
 package at.researchstudio.sat.merkmalservice.qudtifc;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 import at.researchstudio.sat.merkmalservice.model.ifc.IfcDerivedUnit;
 import at.researchstudio.sat.merkmalservice.model.ifc.IfcSIUnit;
 import at.researchstudio.sat.merkmalservice.model.ifc.IfcUnit;
@@ -9,13 +11,10 @@ import at.researchstudio.sat.merkmalservice.model.qudt.exception.NotFoundExcepti
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasure;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasurePrefix;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitType;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import java.util.Map;
 import java.util.Set;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class QudtIfcMapperTest {
     private static final IfcSIUnit kg =
@@ -38,45 +37,75 @@ public class QudtIfcMapperTest {
                     IfcUnitMeasure.METRE,
                     IfcUnitMeasurePrefix.NONE,
                     false);
+    private static final IfcSIUnit km =
+            new IfcSIUnit(
+                    3,
+                    IfcUnitType.LENGTHUNIT,
+                    IfcUnitMeasure.METRE,
+                    IfcUnitMeasurePrefix.KILO,
+                    false);
+    private static final IfcSIUnit mm =
+            new IfcSIUnit(
+                    3,
+                    IfcUnitType.LENGTHUNIT,
+                    IfcUnitMeasure.METRE,
+                    IfcUnitMeasurePrefix.MILLI,
+                    false);
     private static final IfcSIUnit cm =
-                    new IfcSIUnit(
-                                    3,
-                                    IfcUnitType.LENGTHUNIT,
-                                    IfcUnitMeasure.METRE,
-                                    IfcUnitMeasurePrefix.CENTI,
-                                    false);
+            new IfcSIUnit(
+                    3,
+                    IfcUnitType.LENGTHUNIT,
+                    IfcUnitMeasure.METRE,
+                    IfcUnitMeasurePrefix.CENTI,
+                    false);
 
     @Test
     public void testBasicFunctionality() {
         IfcUnit unit = QudtIfcMapper.mapQudtUnitToIfcUnit(Qudt.Units.M);
         assertEquals(IfcUnitType.LENGTHUNIT, unit.getType());
+        assertEquals(IfcUnitMeasure.METRE, ((IfcSIUnit) unit).getMeasure());
+        assertEquals(IfcUnitMeasurePrefix.NONE, ((IfcSIUnit) unit).getPrefix());
     }
 
     @Test
     public void testEnergy() {
-        IfcDerivedUnit joule =
-                new IfcDerivedUnit(100, IfcUnitType.ENERGYUNIT, Map.of(kg, 1, sec, -2, m, 2), false);
-        Set<Unit> mappedUnits = QudtIfcMapper.mapIfcUnitToQudtUnit(joule);
-        assertTrue(mappedUnits.contains(Qudt.Units.J));
-        IfcDerivedUnit mJoule =
-                new IfcDerivedUnit(100, IfcUnitType.ENERGYUNIT, Map.of(g, 1, sec, -2, m, 2), false);
-        mappedUnits = QudtIfcMapper.mapIfcUnitToQudtUnit(mJoule);
-        assertTrue(mappedUnits.contains(Qudt.Units.MilliJ));
+        IfcDerivedUnit du;
+        Set<Unit> mappedUnits;
+
+        du =
+                new IfcDerivedUnit(
+                        100, IfcUnitType.ENERGYUNIT, Map.of(kg, 1, sec, -2, m, 1, km, 1), false);
+        mappedUnits = QudtIfcMapper.mapIfcUnitToQudtUnit(du);
+        assertTrue(mappedUnits.contains(Qudt.Units.KiloN__M));
+        assertTrue(mappedUnits.contains(Qudt.Units.KiloJ));
+
+        du = new IfcDerivedUnit(100, IfcUnitType.ENERGYUNIT, Map.of(g, 1, sec, -2, m, 2), false);
+        mappedUnits = QudtIfcMapper.mapIfcUnitToQudtUnit(du);
         assertTrue(mappedUnits.contains(Qudt.Units.MilliN__M));
+        assertTrue(mappedUnits.contains(Qudt.Units.MilliJ));
+
+        du = new IfcDerivedUnit(100, IfcUnitType.ENERGYUNIT, Map.of(kg, 1, sec, -2, m, 2), false);
+        mappedUnits = QudtIfcMapper.mapIfcUnitToQudtUnit(du);
+        assertTrue(mappedUnits.contains(Qudt.Units.J));
+        assertTrue(mappedUnits.contains(Qudt.Units.N__M));
+
+        du = new IfcDerivedUnit(100, IfcUnitType.ENERGYUNIT, Map.of(kg, 1, sec, -2, m, 2), false);
+        mappedUnits = QudtIfcMapper.mapIfcUnitToQudtUnit(du);
+        assertTrue(mappedUnits.contains(Qudt.Units.N__M));
+        assertTrue(mappedUnits.contains(Qudt.Units.J));
     }
 
     @Test
     public void testMassDensity() {
         IfcDerivedUnit kgPerM3 =
-                        new IfcDerivedUnit(101, IfcUnitType.MASSDENSITYUNIT, Map.of(kg, 1, m, -3), false);
+                new IfcDerivedUnit(101, IfcUnitType.MASSDENSITYUNIT, Map.of(kg, 1, m, -3), false);
         Set<Unit> mappedUnits = QudtIfcMapper.mapIfcUnitToQudtUnit(kgPerM3);
         assertTrue(mappedUnits.contains(Qudt.Units.KiloGM__PER__M3));
         IfcDerivedUnit gPerCm3 =
-                        new IfcDerivedUnit(101, IfcUnitType.MASSDENSITYUNIT, Map.of(kg, 1, cm, -3), false);
+                new IfcDerivedUnit(101, IfcUnitType.MASSDENSITYUNIT, Map.of(kg, 1, cm, -3), false);
         mappedUnits = QudtIfcMapper.mapIfcUnitToQudtUnit(gPerCm3);
-        assertTrue(mappedUnits.contains(Qudt.Units.GM__PER__CentiM3));
+        assertTrue(mappedUnits.contains(Qudt.Units.KiloGM__PER__CentiM3));
     }
-
 
     @Test
     public final void TestQudtUnitTransformation() {

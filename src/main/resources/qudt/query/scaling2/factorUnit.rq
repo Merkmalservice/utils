@@ -10,8 +10,6 @@ CONSTRUCT {
         qudt:unit ?baseUnit ;
         qudt:exponent ?exponent
     ] .
-    ?baseUnit a ?missingUnitType ;
-        rdfs:comment ?comment .
 }
 #SELECT * WHERE
 #select count(*) where
@@ -53,15 +51,11 @@ CONSTRUCT {
             BIND(IRI(CONCAT("http://qudt.org/vocab/unit/", ?baseUnitLocalNameExtracted)) as ?baseUnit)
         }
     }
-
-    OPTIONAL {
-        ?baseUnit a qudt:Unit .
-        BIND(true as ?baseUnitExists)
-    }
-    OPTIONAL {
-        BIND ("This unit was added while generating qudt:factorUnit information as a missing factor unit"@en as ?comment)
-        BIND (qudt:Unit as ?missingUnitType)
-        FILTER(!BOUND(?baseUnitExists))
+    FILTER NOT EXISTS {
+        ?derivedUnit qudt:factorUnit [
+                qudt:unit ?baseUnit ;
+                qudt:exponent ?exponent
+            ] .
     }
 }
 order by ?derivedUnit ?baseUnit

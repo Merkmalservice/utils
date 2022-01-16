@@ -1,52 +1,20 @@
 package at.researchstudio.sat.merkmalservice.model.qudt;
 
-import org.eclipse.rdf4j.model.IRI;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
-class FactorUnit {
-    final IRI derivedUnitIri;
+public class FactorUnit {
     final int exponent;
-    final IRI unitIri;
-    List<FactorUnit> children;
-    FactorUnit parent;
+    final Unit unit;
 
-    public FactorUnit(IRI derivedUnitIri, IRI unitIri, int exponent) {
-        this(derivedUnitIri, unitIri, exponent, null);
-    }
-
-    public FactorUnit(IRI derivedUnitIri, IRI unitIri, int exponent, FactorUnit parent) {
-        Objects.requireNonNull(derivedUnitIri);
-        Objects.requireNonNull(unitIri);
+    public FactorUnit(Unit unit, int exponent) {
+        Objects.requireNonNull(unit);
         this.exponent = exponent;
-        this.unitIri = unitIri;
-        this.parent = parent;
-        this.derivedUnitIri = derivedUnitIri;
+        this.unit = unit;
     }
 
-    public FactorUnit toChildOf(FactorUnit parent) {
-        FactorUnit asChild = new FactorUnit(this.derivedUnitIri, this.unitIri, exponent, parent);
-        if (this.children != null) {
-            for (FactorUnit child : children) {
-                asChild.addChild(child);
-            }
-        }
-        return asChild;
-    }
-
-    public boolean addChild(FactorUnit child) {
-        if (!child.derivedUnitIri.equals(this.unitIri)) {
-            return false;
-        }
-        if (this.children == null) {
-            this.children = new ArrayList<>();
-        }
-        this.children.add(child.toChildOf(this));
-        return true;
+    public String getKind() {
+        return unit.getIri() + " " + Integer.signum(exponent);
     }
 
     public int getExponent() {
@@ -57,37 +25,42 @@ class FactorUnit {
         return exponent * cumulatedExponent;
     }
 
-    public IRI getUnitIri() {
-        return unitIri;
+    public Unit getUnit() {
+        return unit;
     }
 
-    public List<FactorUnitSelection> match(List<FactorUnitSelection> possibleSelections) {
-        return match(possibleSelections, 1);
-    }
-
-    public List<FactorUnit> getChildren() {
-        if (children == null || children.isEmpty()) {
-            return Collections.emptyList();
-        } else {
-            return children;
+    public static FactorUnit combine(FactorUnit left, FactorUnit right) {
+        if (!left.getKind().equals(right.getKind())) {
+            throw new IllegalArgumentException(
+                    "Cannot combine UnitFactors of different kind (left: "
+                            + left.getKind()
+                            + ", right: "
+                            + right.getKind()
+                            + ")");
         }
+        return new FactorUnit(left.getUnit(), left.getExponent() + right.getExponent());
     }
 
-    public boolean hasChildren() {
-        return !getChildren().isEmpty();
-    }
-
-    private List<FactorUnitSelection> match(
-            List<FactorUnitSelection> selection, int cumulativeExponent) {
-        List<FactorUnitSelection> mySelection = new ArrayList<>(selection);
-        for (FactorUnit child : getChildren()) {
-            mySelection = child.match(mySelection, getExponentCumulated(cumulativeExponent));
-        }
-        List<FactorUnitSelection> ret = new ArrayList<>();
+    Set<FactorUnitSelection> match(
+            Set<FactorUnitSelection> selection,
+            int cumulativeExponent,
+            Deque<Unit> matchedPath,
+            ScaleFactor scaleFactor) {
+        Set<FactorUnitSelection> mySelection = new HashSet<>(selection);
+        // descend into unit
+        mySelection =
+                this.unit.match(
+                        mySelection,
+                        getExponentCumulated(cumulativeExponent),
+                        matchedPath,
+                        scaleFactor);
+        // now match this one
+        Set<FactorUnitSelection> ret = new HashSet<>();
         for (FactorUnitSelection factorUnitSelection : mySelection) {
             // add one solution where this node is matched
             FactorUnitSelection processedSelection =
-                    factorUnitSelection.forMatch(this, cumulativeExponent);
+                    factorUnitSelection.forMatch(
+                            this, cumulativeExponent, matchedPath, scaleFactor);
             if (!processedSelection.equals(factorUnitSelection)) {
                 // if there was a match, (i.e, we modified the selection),
                 // it's a new partial solution - return it
@@ -100,31 +73,17 @@ class FactorUnit {
         return ret;
     }
 
-    boolean isMatched(FactorUnitSelection selection) {
-        if (selection.isMarked(this)) {
+    boolean isMatched(FactorUnitSelection selection, Deque<Unit> checkedPath) {
+
+        if (selection.isSelected(this, checkedPath)) {
             return true;
         }
-        if (!hasChildren()) {
-            return false;
-        }
-        for (FactorUnit child : getChildren()) {
-            if (!child.isMatched(selection)) {
-                return false;
-            }
-        }
-        return true;
+        return unit.isMatched(selection, checkedPath);
     }
 
     @Override
     public String toString() {
-        return "FactorUnit{"
-                + "unitIri="
-                + unitIri
-                + ", exp="
-                + exponent
-                + ", children: "
-                + (getChildren().size())
-                + '}';
+        return "FU{" + unit + "^" + exponent + "}";
     }
 
     @Override
@@ -132,50 +91,26 @@ class FactorUnit {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FactorUnit that = (FactorUnit) o;
-        return exponent == that.exponent
-                && derivedUnitIri.equals(that.derivedUnitIri)
-                && unitIri.equals(that.unitIri);
+        return exponent == that.exponent && unit.equals(that.unit);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(derivedUnitIri, exponent, unitIri);
-    }
-
-    public IRI getDerivedUnitIri() {
-        return derivedUnitIri;
-    }
-
-    public List<FactorUnit> getLeafFactorUnits() {
-        if (!hasChildren()) {
-            return List.of(this);
-        }
-        return getChildren().stream()
-                .flatMap(c -> c.getLeafFactorUnits().stream())
-                .collect(Collectors.toList());
+        return Objects.hash(exponent, unit);
     }
 
     public List<FactorUnit> getLeafFactorUnitsWithCumulativeExponents() {
-        if (!hasChildren()) {
-            return List.of(this);
+        List<FactorUnit> leafFactorUnits = this.unit.getLeafFactorUnitsWithCumulativeExponents();
+        if (!leafFactorUnits.isEmpty()) {
+            return leafFactorUnits.stream()
+                    .map(f -> f.withExponentMultiplied(this.getExponent()))
+                    .collect(Collectors.toList());
         }
-        return getChildren().stream()
-                .flatMap(c -> c.getLeafFactorUnits().stream())
-                .map(f -> f.withExponentMultiplied(this.getExponent()))
-                .collect(Collectors.toList());
+        return List.of(this);
     }
 
     private FactorUnit withExponentMultiplied(int by) {
-        FactorUnit ret = new FactorUnit(derivedUnitIri, unitIri, this.exponent * by);
-        for (FactorUnit child : getChildren()) {
-            ret.addChild(child);
-        }
+        FactorUnit ret = new FactorUnit(unit, this.exponent * by);
         return ret;
-    }
-
-    public void addDerivedUnitAsChildren(DerivedUnit derivedUnit) {
-        for (FactorUnit child : derivedUnit.getDirectFactorUnits()) {
-            addChild(child);
-        }
     }
 }

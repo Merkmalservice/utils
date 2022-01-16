@@ -3,11 +3,10 @@ package at.researchstudio.sat.merkmalservice.model.ifc;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasure;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasurePrefix;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.invoke.MethodHandles;
 import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IfcSIUnit extends IfcUnit {
     private static final Logger logger =
@@ -60,20 +59,21 @@ public class IfcSIUnit extends IfcUnit {
     }
 
     @Override
+    public String toString() {
+        return "IfcSIUnit{" + prefix + " " + measure + '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         IfcSIUnit ifcSIUnit = (IfcSIUnit) o;
         return measure == ifcSIUnit.measure && prefix == ifcSIUnit.prefix;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(measure, prefix);
-    }
-
-    @Override
-    public String toString() {
-        return "IfcSIUnit{" + prefix + " " + measure + '}';
+        return Objects.hash(super.hashCode(), measure, prefix);
     }
 }

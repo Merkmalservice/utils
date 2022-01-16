@@ -2,6 +2,7 @@ package at.researchstudio.sat.merkmalservice.model.ifc;
 
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitType;
 import java.lang.invoke.MethodHandles;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,5 +52,20 @@ public class IfcUnit {
     @Override
     public String toString() {
         return "IfcUnit{" + "type=" + type + ", id='" + id + '\'' + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        IfcUnit ifcUnit = (IfcUnit) o;
+        return projectDefault == ifcUnit.projectDefault
+                && type == ifcUnit.type
+                && Objects.equals(id, ifcUnit.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, id, projectDefault);
     }
 }

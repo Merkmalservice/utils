@@ -1,5 +1,7 @@
 package at.researchstudio.sat.merkmalservice.qudtifc;
 
+import static java.util.stream.Collectors.toSet;
+
 import at.researchstudio.sat.merkmalservice.model.ifc.IfcDerivedUnit;
 import at.researchstudio.sat.merkmalservice.model.ifc.IfcDerivedUnitElement;
 import at.researchstudio.sat.merkmalservice.model.ifc.IfcSIUnit;
@@ -8,15 +10,12 @@ import at.researchstudio.sat.merkmalservice.model.qudt.*;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasure;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasurePrefix;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitType;
-import org.eclipse.rdf4j.model.IRI;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.invoke.MethodHandles;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toSet;
+import org.eclipse.rdf4j.model.IRI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class QudtIfcMapper {
     private static final Logger logger =
@@ -212,8 +211,8 @@ public class QudtIfcMapper {
                             ifcUnitTypeToQuantityKinds.put(ifcUnitType, quantityKinds);
                         });
 
-        if (unit.getDimensionVector().isPresent()) {
-            IRI dimVector = unit.getDimensionVector().get();
+        if (unit.getDimensionVectorIri().isPresent()) {
+            IRI dimVector = unit.getDimensionVectorIri().get();
             Set<IRI> dimVectors = ifcUnitTypeToDimensionVectors.get(ifcUnitType);
             if (dimVectors == null) {
                 dimVectors = new HashSet<>();
@@ -236,15 +235,15 @@ public class QudtIfcMapper {
     }
 
     public static IfcUnit mapQudtUnitToIfcUnit(Unit unit) {
-        List<UnitFactor> unitFactors = Qudt.unitFactors(unit);
-        if (unitFactors.isEmpty()) {
-            throw new UnsupportedOperationException("TODO implement for unit: " + unit.getIri());
+        List<FactorUnit> factorUnits = Qudt.factorUnits(unit);
+        if (factorUnits.isEmpty()) {
+            return makeIfcSIUnit(unit, Qudt.unscale(unit));
         }
-        List<UnitFactor> unscaledUnitFactors = Qudt.unscaleUnitFactors(unitFactors);
-        if (unitFactors.size() > 1 || unitFactors.stream().findFirst().get().getExponent() != 1) {
+        List<FactorUnit> unscaledUnitFactors = Qudt.unscaleFactorUnits(factorUnits);
+        if (factorUnits.size() > 1 || factorUnits.stream().findFirst().get().getExponent() != 1) {
             Map<IfcSIUnit, Integer> derivedUnitElements = new HashMap<>();
-            for (int i = 0; i < unitFactors.size(); i++) {
-                UnitFactor unitFactor = unitFactors.get(i);
+            for (int i = 0; i < factorUnits.size(); i++) {
+                FactorUnit unitFactor = factorUnits.get(i);
                 IfcSIUnit ifcSIUnit =
                         makeIfcSIUnit(unitFactor.getUnit(), unscaledUnitFactors.get(i).getUnit());
                 derivedUnitElements.put(ifcSIUnit, unitFactor.getExponent());
@@ -253,13 +252,13 @@ public class QudtIfcMapper {
             return new IfcDerivedUnit(null, type, derivedUnitElements, false);
         } else {
             return makeIfcSIUnit(
-                    unitFactors.stream().findFirst().get().getUnit(),
+                    factorUnits.stream().findFirst().get().getUnit(),
                     unscaledUnitFactors.stream().findFirst().get().getUnit());
         }
     }
 
     private static IfcSIUnit makeIfcSIUnit(Unit unit, Unit unscaledUnit) {
-        if (unit.getDimensionVector().isPresent()) {
+        if (unit.getDimensionVectorIri().isPresent()) {
             try {
                 IfcUnitType type = getIfcUnitType(unit);
                 IfcUnitMeasure measure = getIfcUnitMeasure(unit);
@@ -286,9 +285,9 @@ public class QudtIfcMapper {
     }
 
     private static IfcUnitMeasurePrefix getIfcUnitMeasurePrefix(Unit unit) {
-        if (unit.getPrefix().isPresent()) {
+        if (unit.getPrefixIri().isPresent()) {
             IfcUnitMeasurePrefix prefix =
-                    prefixToIfcUnitMeasurePrefix.get(Qudt.prefix(unit.getPrefix().get()));
+                    prefixToIfcUnitMeasurePrefix.get(Qudt.prefix(unit.getPrefixIri().get()));
             if (prefix == null) {
                 throw new UnsupportedOperationException(
                         "TODO: handle unit " + unit + ": no IfcUnitMeasurePrefix mapped");
@@ -299,10 +298,10 @@ public class QudtIfcMapper {
     }
 
     public static IfcUnitType getIfcUnitType(Unit unit) {
-        Set<IfcUnitType> types = dimensionVectorToIfcUnitTypes.get(unit.getDimensionVector());
-        if (types == null && !unit.getQuantityKinds().isEmpty()) {
+        Set<IfcUnitType> types = dimensionVectorToIfcUnitTypes.get(unit.getDimensionVectorIri());
+        if (types == null && !unit.getQuantityKindIris().isEmpty()) {
             types =
-                    unit.getQuantityKinds().stream()
+                    unit.getQuantityKindIris().stream()
                             .flatMap(
                                     qk ->
                                             quantityKindToIfcUnitTypes

@@ -1,10 +1,13 @@
 package at.researchstudio.sat.merkmalservice.model.ifc;
 
-import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitType;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import static java.util.stream.Collectors.joining;
+
+import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitType;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class IfcDerivedUnit extends IfcUnit {
     private List<IfcDerivedUnitElement> derivedUnitElements = new ArrayList<>();
@@ -104,9 +107,10 @@ public class IfcDerivedUnit extends IfcUnit {
 
     @Override
     public String toString() {
-        return "IfcDerivedUnit{"
-                        + userDefinedLabel != null ? "'" + userDefinedLabel + "'" : ""
-                + derivedUnitElements.stream().map(Object::toString).collect(joining(", "))
-                + '}';
+        return "IfcDerivedUnit{" + userDefinedLabel != null
+                ? "'" + userDefinedLabel + "'"
+                : ""
+                        + derivedUnitElements.stream().map(Object::toString).collect(joining(", "))
+                        + '}';
     }
 }

@@ -263,33 +263,30 @@ public class QudtTest {
     @Test
     public void testGetUnitFactors() {
         Unit unit = Qudt.unitFromLabel("newton meter");
-        List<UnitFactor> unitFactors = Qudt.unitFactors(unit);
-        assertTrue(unitFactors.contains(new UnitFactor(2, Qudt.unitFromLabel("meter"))));
-        assertTrue(unitFactors.contains(new UnitFactor(1, Qudt.unitFromLabel("kilogram"))));
-        assertTrue(unitFactors.contains(new UnitFactor(-2, Qudt.unitFromLabel("second"))));
-
+        List<FactorUnit> unitFactors = Qudt.factorUnits(unit);
+        assertTrue(unitFactors.contains(new FactorUnit(Qudt.unitFromLabel("meter"), 2)));
+        assertTrue(unitFactors.contains(new FactorUnit(Qudt.unitFromLabel("kilogram"), 1)));
+        assertTrue(unitFactors.contains(new FactorUnit(Qudt.unitFromLabel("second"), -2)));
         unit = Qudt.unitFromLabel("newton meter per square meter");
-        unitFactors = Qudt.unitFactors(unit);
-        assertTrue(unitFactors.contains(new UnitFactor(2, Qudt.unitFromLabel("meter"))));
-        assertTrue(unitFactors.contains(new UnitFactor(-2, Qudt.unitFromLabel("meter"))));
-        assertTrue(unitFactors.contains(new UnitFactor(1, Qudt.unitFromLabel("kilogram"))));
-        assertTrue(unitFactors.contains(new UnitFactor(-2, Qudt.unitFromLabel("second"))));
-
+        unitFactors = Qudt.factorUnits(unit);
+        assertTrue(unitFactors.contains(new FactorUnit(Qudt.unitFromLabel("meter"), 2)));
+        assertTrue(unitFactors.contains(new FactorUnit(Qudt.unitFromLabel("meter"), -2)));
+        assertTrue(unitFactors.contains(new FactorUnit(Qudt.unitFromLabel("kilogram"), 1)));
+        assertTrue(unitFactors.contains(new FactorUnit(Qudt.unitFromLabel("second"), -2)));
         unit = Qudt.Units.KiloN__M;
-        unitFactors = Qudt.unitFactors(unit);
-        assertTrue(unitFactors.contains(new UnitFactor(1, Qudt.Units.KiloN)));
-        assertTrue(unitFactors.contains(new UnitFactor(1, Qudt.Units.M)));
+        unitFactors = Qudt.factorUnits(unit);
+        assertTrue(unitFactors.contains(new FactorUnit(Qudt.Units.KiloN, 1)));
+        assertTrue(unitFactors.contains(new FactorUnit(Qudt.Units.M, 1)));
     }
 
     @Test
     public void testGetUnitFactorsUnscaled() {
         Unit unit = Qudt.Units.KiloN__M;
-        List<UnitFactor> unitFactors = Qudt.unitFactors(unit);
-        assertTrue(unitFactors.contains(new UnitFactor(1, Qudt.Units.KiloN)));
-        assertTrue(unitFactors.contains(new UnitFactor(1, Qudt.Units.M)));
-
-        unitFactors = Qudt.unscaleUnitFactors(unitFactors);
-        assertTrue(unitFactors.contains(new UnitFactor(1, Qudt.Units.N)));
-        assertTrue(unitFactors.contains(new UnitFactor(1, Qudt.Units.M)));
+        List<FactorUnit> unitFactors = Qudt.factorUnits(unit);
+        assertTrue(unitFactors.contains(new FactorUnit(Qudt.Units.KiloN, 1)));
+        assertTrue(unitFactors.contains(new FactorUnit(Qudt.Units.M, 1)));
+        unitFactors = Qudt.unscaleFactorUnits(unitFactors);
+        assertTrue(unitFactors.contains(new FactorUnit(Qudt.Units.N, 1)));
+        assertTrue(unitFactors.contains(new FactorUnit(Qudt.Units.M, 1)));
     }
 }

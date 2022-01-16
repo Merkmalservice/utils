@@ -8,6 +8,7 @@ import at.researchstudio.sat.merkmalservice.model.qudt.exception.NotFoundExcepti
 import at.researchstudio.sat.merkmalservice.model.qudt.exception.QudtInitializationException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Function;
@@ -31,8 +32,12 @@ import org.eclipse.rdf4j.rio.RDFParser;
 import org.eclipse.rdf4j.rio.Rio;
 import org.eclipse.rdf4j.rio.helpers.StatementCollector;
 import org.eclipse.rdf4j.sail.memory.MemoryStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Qudt {
+    private static final Logger logger =
+            LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     public static final String quantityKindBaseIri = "http://qudt.org/vocab/quantitykind/";
     public static final String unitBaseIri = "http://qudt.org/vocab/unit/";
     public static final String prefixBaseIri = "http://qudt.org/vocab/prefix/";
@@ -43,11 +48,10 @@ public class Qudt {
     private static final String queryGetScaledUnit;
     private static final String queryGetScaledUnitByLabel;
     private static final String queryGetUnitByLabel;
-    private static final String queryLoadDerivedUnits;
+    private static final String queryLoadFactorUnits;
     private static final Map<IRI, Unit> units;
     private static final Map<IRI, QuantityKind> quantityKinds;
     private static final Map<IRI, Prefix> prefixes;
-    private static final Map<IRI, DerivedUnit> derivedUnits;
 
     /*
      * The constants for units, quantity kinds and prefixes are kept in separate package-protected classes as they are
@@ -74,18 +78,18 @@ public class Qudt {
         try (RepositoryConnection con = qudtRepository.getConnection()) {
             TupleQuery query = con.prepareTupleQuery(queryGetUnitByLabel);
             query.setBinding("unitLabel", Values.literal(label));
-            Map<IRI, Unit> units = queryUnits(query);
-            if (units.size() > 1) {
+            Map<IRI, Unit> matchingUnits = queryUnits(query);
+            if (matchingUnits.size() > 1) {
                 throw new NonUniqueResultException(
                         String.format(
                                 "Expected to get exactly one result for a unit with label %s, but got %d: %s",
                                 label,
-                                units.size(),
-                                units.values().stream()
+                                matchingUnits.size(),
+                                matchingUnits.values().stream()
                                         .map(u -> u.getIri().toString())
                                         .collect(joining(",", "[", "]"))));
             }
-            return units.values().stream().findFirst().get();
+            return units.get(matchingUnits.values().stream().findFirst().get().getIri());
         }
     }
 
@@ -110,7 +114,7 @@ public class Qudt {
             TupleQuery query = con.prepareTupleQuery(queryGetScaledUnitByLabel);
             query.setBinding("prefixLabel", Values.literal(prefix));
             query.setBinding("baseUnitLabel", Values.literal(baseUnit));
-            return queryUnits(query).values().stream().findFirst().get();
+            return units.get(queryUnits(query).values().stream().findFirst().get().getIri());
         }
     }
 
@@ -119,50 +123,43 @@ public class Qudt {
             TupleQuery query = con.prepareTupleQuery(queryGetScaledUnit);
             query.setBinding("prefix", prefix.getIri());
             query.setBinding("baseUnit", baseUnit.getIri());
-            return queryUnits(query).values().stream().findFirst().get();
+            return units.get(queryUnits(query).values().stream().findFirst().get().getIri());
         }
     }
 
     public static Unit unscale(Unit unit) {
-        if (unit.getScalingOf().isEmpty()) {
+        if (unit.getScalingOfIri().isEmpty()) {
             return unit;
         }
-        return unit(unit.getScalingOf().get());
+        return unit(unit.getScalingOfIri().get());
     }
 
-    public static List<UnitFactor> unitFactors(String unitIri) {
-        return unitFactors(Values.iri(unitIri));
+    public static List<FactorUnit> factorUnits(String unitIri) {
+        return factorUnits(Values.iri(unitIri));
     }
 
-    public static List<UnitFactor> unitFactors(IRI unitIri) {
-        return unitFactors(unit(unitIri));
+    public static List<FactorUnit> factorUnits(IRI unitIri) {
+        return factorUnits(unit(unitIri));
     }
 
-    public static List<UnitFactor> unitFactors(Unit unit) {
-        DerivedUnit dr = derivedUnits.get(unit.getIri());
-        if (dr == null) {
-            return List.of(new UnitFactor(1, unit));
-        }
-        return simplifyUnitFactors(
-                dr.getLeafFactorUnits().stream()
-                        .map(fu -> new UnitFactor(fu.getExponent(), unit(fu.getUnitIri())))
-                        .collect(toList()));
+    public static List<FactorUnit> factorUnits(Unit unit) {
+        return simplifyFactorUnits(unit.getLeafFactorUnitsWithCumulativeExponents());
     }
 
-    public static List<UnitFactor> simplifyUnitFactors(List<UnitFactor> unitFactors) {
+    public static List<FactorUnit> simplifyFactorUnits(List<FactorUnit> factorUnits) {
         return new ArrayList<>(
-                unitFactors.stream()
+                factorUnits.stream()
                         .collect(
                                 Collectors.toMap(
-                                        UnitFactor::getKind,
+                                        FactorUnit::getKind,
                                         Function.identity(),
-                                        UnitFactor::combine))
+                                        FactorUnit::combine))
                         .values());
     }
 
-    public static List<UnitFactor> unscaleUnitFactors(List<UnitFactor> unitFactors) {
+    public static List<FactorUnit> unscaleFactorUnits(List<FactorUnit> unitFactors) {
         return unitFactors.stream()
-                .map(uf -> new UnitFactor(uf.getExponent(), unscale(uf.getUnit())))
+                .map(uf -> new FactorUnit(unscale(uf.getUnit()), uf.getExponent()))
                 .collect(toList());
     }
 
@@ -184,32 +181,32 @@ public class Qudt {
      * Vararg method, must be an even number of arguments, always alternating types of
      * Unit|IRI|String and Integer.
      *
-     * @param factorUnits
+     * @param factorUnitSpecs
      */
-    static Set<Unit> derivedUnitFromFactors(final Object... factorUnits) {
-        if (factorUnits.length % 2 != 0) {
+    static Set<Unit> derivedUnitFromFactors(final Object... factorUnitSpecs) {
+        if (factorUnitSpecs.length % 2 != 0) {
             throw new IllegalArgumentException("An even number of arguments is required");
         }
-        if (factorUnits.length > 14) {
+        if (factorUnitSpecs.length > 14) {
             throw new IllegalArgumentException(
                     "No more than 14 arguments (7 factor units) supported");
         }
         List<Unit> matchingUnits =
-                derivedUnits.values().stream()
-                        .filter(d -> d.matches(factorUnits))
-                        .map(d -> unit(d.getUnitIri()))
+                units.values().stream()
+                        .filter(d -> d.matches(factorUnitSpecs))
                         .collect(Collectors.toList());
+        /*
         if (matchingUnits.isEmpty()) {
             // try unscaling (except for GM - unscales to KiloGM), and try again
-            Object[] scaledFactorUnits = new Object[factorUnits.length];
+            Object[] scaledFactorUnits = new Object[factorUnitSpecs.length];
             double multiplier = 1;
-            for (int i = 0; i < factorUnits.length; i++) {
+            for (int i = 0; i < factorUnitSpecs.length; i++) {
                 if (i % 2 == 0) {
-                    Map.Entry<Unit, Double> scaled = scaleToBaseUnit((Unit) factorUnits[i]);
+                    Map.Entry<Unit, Double> scaled = scaleToBaseUnit((Unit) factorUnitSpecs[i]);
                     multiplier /= scaled.getValue();
                     scaledFactorUnits[i] = scaled.getKey();
                 } else {
-                    scaledFactorUnits[i] = factorUnits[i];
+                    scaledFactorUnits[i] = factorUnitSpecs[i];
                 }
             }
             final double unitMulitiplier = multiplier;
@@ -224,10 +221,10 @@ public class Qudt {
                                 .map(u -> scale(unit(u.getUnitIri()), scalingPrefix.get()))
                                 .collect(Collectors.toList());
             }
-        }
+        }*/
         if (matchingUnits.isEmpty()) {
             throw new NotFoundException(
-                    "No derived unit found for factors " + Arrays.toString(factorUnits));
+                    "No derived unit found for factors " + Arrays.toString(factorUnitSpecs));
         }
         return new HashSet<>(matchingUnits);
     }
@@ -237,9 +234,9 @@ public class Qudt {
                 units.values().stream()
                         .filter(
                                 u ->
-                                        unit.getIri().equals(u.getScalingOf().orElse(null))
+                                        unit.getIri().equals(u.getScalingOfIri().orElse(null))
                                                 && prefix.getIri()
-                                                        .equals(u.getPrefix().orElse(null)))
+                                                        .equals(u.getPrefixIri().orElse(null)))
                         .findFirst();
         return scaled.orElseThrow(
                 () ->
@@ -251,9 +248,9 @@ public class Qudt {
 
     // returns the base unit and the factor we had to scale by
     private static Map.Entry<Unit, Double> scaleToBaseUnit(Unit unit) {
-        if (unit.getScalingOf().isPresent() && unit.getPrefix().isPresent()) {
-            Unit base = unit(unit.getScalingOf().get());
-            Prefix prefx = prefix(unit.getPrefix().get());
+        if (unit.getScalingOfIri().isPresent() && unit.getPrefixIri().isPresent()) {
+            Unit base = unit(unit.getScalingOfIri().get());
+            Prefix prefx = prefix(unit.getPrefixIri().get());
             if (Units.GM.getIri().equals(base.getIri())) {
                 return Map.entry(Units.KiloGM, prefx.getMultiplier() * 1000);
             }
@@ -270,11 +267,11 @@ public class Qudt {
     }
 
     public static Set<Unit> derivedUnit(IRI baseUnit, int exponent) {
-        return derivedUnitFromFactors(baseUnit, exponent);
+        return derivedUnitFromFactors(unit(baseUnit), exponent);
     }
 
     public static Set<Unit> derivedUnit(String baseUnit, int exponent) {
-        return derivedUnitFromFactors(baseUnit, exponent);
+        return derivedUnitFromFactors(unit(baseUnit), exponent);
     }
 
     public static Set<Unit> derivedUnit(
@@ -301,7 +298,7 @@ public class Qudt {
             IRI baseUnit3,
             int exponent3) {
         return derivedUnitFromFactors(
-                baseUnit1, exponent1, baseUnit2, exponent2, baseUnit3, exponent3);
+                unit(baseUnit1), exponent1, unit(baseUnit2), exponent2, unit(baseUnit3), exponent3);
     }
 
     public static Set<Unit> derivedUnit(
@@ -312,7 +309,7 @@ public class Qudt {
             String baseUnit3,
             int exponent3) {
         return derivedUnitFromFactors(
-                baseUnit1, exponent1, baseUnit2, exponent2, baseUnit3, exponent3);
+                unit(baseUnit1), exponent1, unit(baseUnit2), exponent2, unit(baseUnit3), exponent3);
     }
 
     public static Set<Unit> derivedUnit(
@@ -339,7 +336,13 @@ public class Qudt {
             IRI baseUnit4,
             int exponent4) {
         return derivedUnitFromFactors(
-                baseUnit1, exponent1, baseUnit2, exponent2, baseUnit3, exponent3, baseUnit4,
+                unit(baseUnit1),
+                exponent1,
+                unit(baseUnit2),
+                exponent2,
+                unit(baseUnit3),
+                exponent3,
+                unit(baseUnit4),
                 exponent4);
     }
 
@@ -353,7 +356,13 @@ public class Qudt {
             String baseUnit4,
             int exponent4) {
         return derivedUnitFromFactors(
-                baseUnit1, exponent1, baseUnit2, exponent2, baseUnit3, exponent3, baseUnit4,
+                unit(baseUnit1),
+                exponent1,
+                unit(baseUnit2),
+                exponent2,
+                unit(baseUnit3),
+                exponent3,
+                unit(baseUnit4),
                 exponent4);
     }
 
@@ -385,8 +394,16 @@ public class Qudt {
             IRI baseUnit5,
             int exponent5) {
         return derivedUnitFromFactors(
-                baseUnit1, exponent1, baseUnit2, exponent2, baseUnit3, exponent3, baseUnit4,
-                exponent4, baseUnit5, exponent5);
+                unit(baseUnit1),
+                exponent1,
+                unit(baseUnit2),
+                exponent2,
+                unit(baseUnit3),
+                exponent3,
+                unit(baseUnit4),
+                exponent4,
+                unit(baseUnit5),
+                exponent5);
     }
 
     public static Set<Unit> derivedUnit(
@@ -401,8 +418,16 @@ public class Qudt {
             String baseUnit5,
             int exponent5) {
         return derivedUnitFromFactors(
-                baseUnit1, exponent1, baseUnit2, exponent2, baseUnit3, exponent3, baseUnit4,
-                exponent4, baseUnit5, exponent5);
+                unit(baseUnit1),
+                exponent1,
+                unit(baseUnit2),
+                exponent2,
+                unit(baseUnit3),
+                exponent3,
+                unit(baseUnit4),
+                exponent4,
+                unit(baseUnit5),
+                exponent5);
     }
 
     public static Set<Unit> derivedUnit(
@@ -437,8 +462,18 @@ public class Qudt {
             IRI baseUnit6,
             int exponent6) {
         return derivedUnitFromFactors(
-                baseUnit1, exponent1, baseUnit2, exponent2, baseUnit3, exponent3, baseUnit4,
-                exponent4, baseUnit5, exponent5, baseUnit6, exponent6);
+                unit(baseUnit1),
+                exponent1,
+                unit(baseUnit2),
+                exponent2,
+                unit(baseUnit3),
+                exponent3,
+                unit(baseUnit4),
+                exponent4,
+                unit(baseUnit5),
+                exponent5,
+                unit(baseUnit6),
+                exponent6);
     }
 
     public static Set<Unit> derivedUnit(
@@ -455,8 +490,18 @@ public class Qudt {
             String baseUnit6,
             int exponent6) {
         return derivedUnitFromFactors(
-                baseUnit1, exponent1, baseUnit2, exponent2, baseUnit3, exponent3, baseUnit4,
-                exponent4, baseUnit5, exponent5, baseUnit6, exponent6);
+                unit(baseUnit1),
+                exponent1,
+                unit(baseUnit2),
+                exponent2,
+                unit(baseUnit3),
+                exponent3,
+                unit(baseUnit4),
+                exponent4,
+                unit(baseUnit5),
+                exponent5,
+                unit(baseUnit6),
+                exponent6);
     }
 
     public static QuantityKind quantityKindFromLocalname(String localname) {
@@ -476,7 +521,9 @@ public class Qudt {
     }
 
     public static Set<QuantityKind> quantityKinds(Unit unit) {
-        return unit.getQuantityKinds().stream().map(Qudt::quantityKind).collect(Collectors.toSet());
+        return unit.getQuantityKindIris().stream()
+                .map(Qudt::quantityKind)
+                .collect(Collectors.toSet());
     }
 
     public static Set<QuantityKind> quantityKindsBroad(Unit unit) {
@@ -555,14 +602,14 @@ public class Qudt {
 
     public static QuantityValue convert(double fromValue, Unit fromUnit, Unit toUnit) {
         Set<IRI> fromDimensionVectors =
-                fromUnit.getQuantityKinds().stream()
+                fromUnit.getQuantityKindIris().stream()
                         .map(Qudt::quantityKind)
                         .map(QuantityKind::getDimensionVector)
                         .filter(Optional::isPresent)
                         .map(Optional::get)
                         .collect(toSet());
         Set<IRI> toDimensionVectors =
-                toUnit.getQuantityKinds().stream()
+                toUnit.getQuantityKindIris().stream()
                         .map(Qudt::quantityKind)
                         .map(QuantityKind::getDimensionVector)
                         .filter(Optional::isPresent)
@@ -597,11 +644,21 @@ public class Qudt {
         queryGetScaledUnit = loadQuery("/qudt/query/scaled-unit.rq");
         queryGetScaledUnitByLabel = loadQuery("/qudt/query/scaled-unit-by-label.rq");
         queryGetUnitByLabel = loadQuery("/qudt/query/unit-by-label.rq");
-        queryLoadDerivedUnits = loadQuery("/qudt/query/factor-units.rq");
-        units = loadUnits();
-        derivedUnits = loadDerivedUnits();
-        quantityKinds = loadQuantityKinds();
+        queryLoadFactorUnits = loadQuery("/qudt/query/factor-units.rq");
         prefixes = loadPrefixes();
+        units = loadUnits();
+        quantityKinds = loadQuantityKinds();
+        loadFactorUnits();
+        connectObjects();
+    }
+
+    private static void connectObjects() {
+        for (Unit unit : units.values()) {
+            unit.getPrefixIri().ifPresent(iri -> unit.setPrefix(prefixes.get(iri)));
+            unit.getScalingOfIri().ifPresent(iri -> unit.setScalingOf(units.get(iri)));
+            unit.getQuantityKindIris().stream()
+                    .forEach(iri -> unit.addQuantityKind(quantityKinds.get(iri)));
+        }
     }
 
     static Unit loadUnit(String localname) {
@@ -757,53 +814,24 @@ public class Qudt {
         }
     }
 
-    static Map<IRI, DerivedUnit> loadDerivedUnits() {
+    static void loadFactorUnits() {
         try (RepositoryConnection con = qudtRepository.getConnection()) {
-            TupleQuery query = con.prepareTupleQuery(queryLoadDerivedUnits);
+            TupleQuery query = con.prepareTupleQuery(queryLoadFactorUnits);
             try (TupleQueryResult result = query.evaluate()) {
                 Iterator<BindingSet> solutions = result.iterator();
-                DerivedUnit derivedUnit = null;
-                Map<IRI, DerivedUnit> results = new HashMap<>();
                 while (solutions.hasNext()) {
                     BindingSet bs = solutions.next();
                     IRI currentDerivedUnitIri = (IRI) bs.getBinding("derivedUnit").getValue();
-                    derivedUnit = results.get(currentDerivedUnitIri);
+                    Unit derivedUnit = units.get(currentDerivedUnitIri);
                     if (derivedUnit == null) {
-                        derivedUnit = new DerivedUnit(currentDerivedUnitIri);
-                        results.put(derivedUnit.getUnitIri(), derivedUnit);
+                        throw new IllegalArgumentException(
+                                "found a factor of unknown unit " + currentDerivedUnitIri);
                     }
-                    FactorUnit factorUnit = makeFactorUnit(bs);
-                    derivedUnit.addFactorUnit(factorUnit);
+                    Optional<FactorUnit> factorUnit = makeFactorUnit(bs);
+                    if (factorUnit.isPresent()) {
+                        derivedUnit.addFactorUnit(factorUnit.get());
+                    }
                 }
-                boolean allConnected = false;
-                List<DerivedUnit> unconnected = new ArrayList<>(results.values());
-                int size = unconnected.size();
-                while (!unconnected.isEmpty()) {
-                    List<DerivedUnit> stillUnconnected = new ArrayList<>();
-                    for (DerivedUnit du : unconnected) {
-                        boolean madeChanges = false;
-                        for (FactorUnit searchingForChildren : du.getLeafFactorUnits()) {
-                            DerivedUnit child = results.get(searchingForChildren.getUnitIri());
-                            if (child != null) {
-                                searchingForChildren.addDerivedUnitAsChildren(child);
-                                madeChanges = true;
-                            }
-                        }
-                        if (madeChanges) {
-                            stillUnconnected.add(du);
-                        }
-                    }
-                    unconnected = stillUnconnected;
-                    if (unconnected.size() >= size) {
-                        throw new IllegalStateException(
-                                "size of unconnected derived units must be shrinking each iteration, but it's not - last iteration: "
-                                        + size
-                                        + ", now: "
-                                        + unconnected.size());
-                    }
-                    size = unconnected.size();
-                }
-                return results;
             }
         }
     }
@@ -868,10 +896,13 @@ public class Qudt {
                         : null);
     }
 
-    private static FactorUnit makeFactorUnit(BindingSet bs) {
-        return new FactorUnit(
-                (IRI) bs.getValue("derivedUnit"),
-                (IRI) bs.getValue("factorUnit"),
-                ((Literal) bs.getValue("exponent")).intValue());
+    private static Optional<FactorUnit> makeFactorUnit(BindingSet bs) {
+        IRI unitIri = (IRI) bs.getValue("factorUnit");
+        Unit unit = units.get(unitIri);
+        if (unit == null) {
+            logger.info("Found factor unit for inexistent unit {}", unitIri);
+            return Optional.empty();
+        }
+        return Optional.of(new FactorUnit(unit, ((Literal) bs.getValue("exponent")).intValue()));
     }
 }

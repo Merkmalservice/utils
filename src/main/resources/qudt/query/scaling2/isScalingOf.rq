@@ -73,6 +73,14 @@ where
         FILTER( ?cm = 1 )
         BIND(?baseUnit as ?convertsTo)
     }
+    FILTER NOT EXISTS {
+        ?scaledUnit qudt:isScalingOf ?baseUnit .
+        {
+            ?scaledUnit qudt:prefix ?prefix
+        } UNION {
+            ?scaledUnit qudt:factorUnit ?x . # for derived units, we don't generate a prefix.
+        }
+    }
 }
 order by ?baseUnit ?scaledUnit
 
