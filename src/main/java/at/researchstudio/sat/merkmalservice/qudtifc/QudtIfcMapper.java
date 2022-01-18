@@ -335,7 +335,6 @@ public class QudtIfcMapper {
     private static List<IfcUnitType> getIfcUnitTypesForQuantityKinds(Unit unit) {
         List<IfcUnitType> types =
                 unit.getQuantityKinds().stream()
-                        .filter(t -> t.getBroaderQuantityKinds().isEmpty())
                         .map(t -> quantityKindToIfcUnitTypes.get(t))
                         .filter(Objects::nonNull)
                         .flatMap(t -> t.stream())
