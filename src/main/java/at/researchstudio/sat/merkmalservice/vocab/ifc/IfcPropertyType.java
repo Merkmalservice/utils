@@ -1,5 +1,7 @@
 package at.researchstudio.sat.merkmalservice.vocab.ifc;
 
+import at.researchstudio.sat.merkmalservice.model.qudt.exception.NotFoundException;
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -106,6 +108,17 @@ public enum IfcPropertyType {
         }
         throw new IllegalArgumentException(
                 "No IfcPropertyType enum constant for value: '" + propertyType + "'");
+    }
+
+    public static IfcPropertyType forIfcUnitType(IfcUnitType unitType) {
+        return Arrays.stream(values())
+                .filter(t -> t.unitType == unitType)
+                .findFirst()
+                .orElseThrow(
+                        () ->
+                                new NotFoundException(
+                                        "Did not find IfcPropertyType for IfcUnitType "
+                                                + unitType));
     }
 
     /** @return true if the PropertyType is considered to be a measurement type */

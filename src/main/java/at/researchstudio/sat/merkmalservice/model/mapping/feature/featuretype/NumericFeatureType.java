@@ -4,6 +4,7 @@ import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.builder.SubBuilderScaffold;
 import at.researchstudio.sat.merkmalservice.vocab.qudt.QudtQuantityKind;
 import at.researchstudio.sat.merkmalservice.vocab.qudt.QudtUnit;
+import java.util.Objects;
 
 public class NumericFeatureType extends FeatureType {
     private QuantityKind quantityKind;
@@ -29,6 +30,25 @@ public class NumericFeatureType extends FeatureType {
 
     public Unit getUnit() {
         return unit;
+    }
+
+    /**
+     * Compare unit and quantitykind, but not id.
+     *
+     * @param o
+     * @return
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        NumericFeatureType that = (NumericFeatureType) o;
+        return quantityKind.equals(that.quantityKind) && unit.equals(that.unit);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(quantityKind, unit);
     }
 
     public static Builder<?> numericFeatureBuilder() {

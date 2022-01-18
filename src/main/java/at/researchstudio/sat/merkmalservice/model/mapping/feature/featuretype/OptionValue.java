@@ -5,6 +5,7 @@ import at.researchstudio.sat.merkmalservice.model.builder.ListBuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.builder.SubBuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.mapping.MappingExecutionValue;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.Objects;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OptionValue {
@@ -15,6 +16,7 @@ public class OptionValue {
     public OptionValue() {}
 
     public OptionValue(String id, MappingExecutionValue value, String description) {
+        Objects.requireNonNull(value);
         this.id = id;
         this.value = value;
         this.description = description;
@@ -30,6 +32,19 @@ public class OptionValue {
 
     public String getDescription() {
         return description;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OptionValue that = (OptionValue) o;
+        return value.equals(that.value) && Objects.equals(description, that.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value, description);
     }
 
     public static Builder<?> builder() {

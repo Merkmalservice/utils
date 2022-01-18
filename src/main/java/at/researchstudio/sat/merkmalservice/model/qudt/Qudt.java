@@ -601,6 +601,9 @@ public class Qudt {
     }
 
     public static QuantityValue convert(double fromValue, Unit fromUnit, Unit toUnit) {
+        if (fromUnit.equals(toUnit)) {
+            return new QuantityValue(fromValue, toUnit);
+        }
         Set<IRI> fromDimensionVectors =
                 fromUnit.getQuantityKindIris().stream()
                         .map(Qudt::quantityKind)

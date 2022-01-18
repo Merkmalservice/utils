@@ -1,12 +1,11 @@
 package at.researchstudio.sat.merkmalservice.qudtifc;
 
-import static java.util.stream.Collectors.toSet;
-
 import at.researchstudio.sat.merkmalservice.model.ifc.IfcDerivedUnit;
 import at.researchstudio.sat.merkmalservice.model.ifc.IfcDerivedUnitElement;
 import at.researchstudio.sat.merkmalservice.model.ifc.IfcSIUnit;
 import at.researchstudio.sat.merkmalservice.model.ifc.IfcUnit;
 import at.researchstudio.sat.merkmalservice.model.qudt.*;
+import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcPropertyType;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasure;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasurePrefix;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitType;
@@ -81,7 +80,7 @@ public class QudtIfcMapper {
             associate(IfcUnitType.LINEARFORCEUNIT, Qudt.Units.N__PER__M);
             associate(IfcUnitType.LINEARMOMENTUNIT, Qudt.Units.N__M__PER__M);
             associate(IfcUnitType.LINEARVELOCITYUNIT, Qudt.Units.M__PER__SEC);
-            associate(IfcUnitType.MASSDENSITYUNIT, Qudt.Units.KiloGM__PER__M2);
+            associate(IfcUnitType.MASSDENSITYUNIT, Qudt.Units.KiloGM__PER__M3);
             associate(IfcUnitType.MASSFLOWRATEUNIT, Qudt.Units.KiloGM__PER__SEC);
             associate(IfcUnitType.MASSPERLENGTHUNIT, Qudt.Units.KiloGM__PER__M);
             associate(IfcUnitType.MODULUSOFELASTICITYUNIT, Qudt.Units.N__PER__M2);
@@ -298,16 +297,9 @@ public class QudtIfcMapper {
     }
 
     public static IfcUnitType getIfcUnitType(Unit unit) {
-        Set<IfcUnitType> types = dimensionVectorToIfcUnitTypes.get(unit.getDimensionVectorIri());
-        if (types == null && !unit.getQuantityKindIris().isEmpty()) {
-            types =
-                    unit.getQuantityKindIris().stream()
-                            .flatMap(
-                                    qk ->
-                                            quantityKindToIfcUnitTypes
-                                                    .get(Qudt.quantityKind(qk))
-                                                    .stream())
-                            .collect(toSet());
+        List<IfcUnitType> types = getIfcUnitTypesForQuantityKinds(unit);
+        if (types == null || types.isEmpty()) {
+            types = getIfcUnitTypesForBroadQuantityKinds(unit);
         }
         if (types == null || types.isEmpty()) {
             throw new UnsupportedOperationException(
@@ -315,6 +307,40 @@ public class QudtIfcMapper {
         }
         IfcUnitType type = types.stream().findFirst().get();
         return type;
+    }
+
+    public static IfcPropertyType getIfcPropertyType(Unit unit) {
+        return getIfcMeasure(unit);
+    }
+
+    public static IfcPropertyType getIfcMeasure(Unit unit) {
+        return getIfcMeasure(getIfcUnitType(unit));
+    }
+
+    public static IfcPropertyType getIfcMeasure(IfcUnitType unitType) {
+        return IfcPropertyType.forIfcUnitType(unitType);
+    }
+
+    private static List<IfcUnitType> getIfcUnitTypesForBroadQuantityKinds(Unit unit) {
+        List<IfcUnitType> types =
+                Qudt.quantityKindsBroad(unit).stream()
+                        .filter(t -> t.getBroaderQuantityKinds().isEmpty())
+                        .map(t -> quantityKindToIfcUnitTypes.get(t))
+                        .filter(Objects::nonNull)
+                        .flatMap(t -> t.stream())
+                        .collect(Collectors.toList());
+        return types;
+    }
+
+    private static List<IfcUnitType> getIfcUnitTypesForQuantityKinds(Unit unit) {
+        List<IfcUnitType> types =
+                unit.getQuantityKinds().stream()
+                        .filter(t -> t.getBroaderQuantityKinds().isEmpty())
+                        .map(t -> quantityKindToIfcUnitTypes.get(t))
+                        .filter(Objects::nonNull)
+                        .flatMap(t -> t.stream())
+                        .collect(Collectors.toList());
+        return types;
     }
 
     /**

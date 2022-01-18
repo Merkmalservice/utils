@@ -6,6 +6,7 @@ import at.researchstudio.sat.merkmalservice.model.mapping.MappingExecutionValue;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class EnumFeatureType extends FeatureType {
     private List<OptionValue> options;
@@ -17,6 +18,8 @@ public class EnumFeatureType extends FeatureType {
 
     public EnumFeatureType(List<OptionValue> options, Boolean allowMultiple) {
         super(Types.EnumerationValue.name());
+        Objects.requireNonNull(options);
+        Objects.requireNonNull(allowMultiple);
         this.options = options;
         this.allowMultiple = allowMultiple;
     }
@@ -27,6 +30,25 @@ public class EnumFeatureType extends FeatureType {
 
     public Boolean isAllowMultiple() {
         return allowMultiple;
+    }
+
+    /**
+     * Equals: require options equal and allowMultple equal - do not compare ids.
+     *
+     * @param o
+     * @return
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EnumFeatureType that = (EnumFeatureType) o;
+        return options.equals(that.options) && allowMultiple.equals(that.allowMultiple);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(options, allowMultiple);
     }
 
     public static Builder<?> enumTypeBuilder() {

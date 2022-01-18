@@ -5,6 +5,7 @@ import at.researchstudio.sat.merkmalservice.model.builder.SubBuilderScaffold;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import java.util.Objects;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "__typename")
 @JsonSubTypes({
@@ -44,6 +45,25 @@ public abstract class FeatureType {
 
     public static Builder<?> builder() {
         return new Builder<>();
+    }
+
+    /**
+     * Generic equals: compare ids if set, otherwise object identity.
+     *
+     * @param o
+     * @return
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FeatureType that = (FeatureType) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     public static <PARENT extends BuilderScaffold<?, PARENT>> Builder<PARENT> builder(

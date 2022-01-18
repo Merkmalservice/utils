@@ -3,14 +3,17 @@ package at.researchstudio.sat.merkmalservice.qudtifc;
 import static org.junit.jupiter.api.Assertions.*;
 
 import at.researchstudio.sat.merkmalservice.model.ifc.IfcDerivedUnit;
+import at.researchstudio.sat.merkmalservice.model.ifc.IfcDerivedUnitElement;
 import at.researchstudio.sat.merkmalservice.model.ifc.IfcSIUnit;
 import at.researchstudio.sat.merkmalservice.model.ifc.IfcUnit;
 import at.researchstudio.sat.merkmalservice.model.qudt.Qudt;
 import at.researchstudio.sat.merkmalservice.model.qudt.Unit;
 import at.researchstudio.sat.merkmalservice.model.qudt.exception.NotFoundException;
+import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcPropertyType;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasure;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasurePrefix;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitType;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.junit.jupiter.api.Assertions;
@@ -96,7 +99,7 @@ public class QudtIfcMapperTest {
     }
 
     @Test
-    public void testMassDensity() {
+    public void testMassDensity_ifc_to_qudt() {
         IfcDerivedUnit kgPerM3 =
                 new IfcDerivedUnit(101, IfcUnitType.MASSDENSITYUNIT, Map.of(kg, 1, m, -3), false);
         Set<Unit> mappedUnits = QudtIfcMapper.mapIfcUnitToQudtUnit(kgPerM3);
@@ -105,6 +108,40 @@ public class QudtIfcMapperTest {
                 new IfcDerivedUnit(101, IfcUnitType.MASSDENSITYUNIT, Map.of(kg, 1, cm, -3), false);
         mappedUnits = QudtIfcMapper.mapIfcUnitToQudtUnit(gPerCm3);
         assertTrue(mappedUnits.contains(Qudt.Units.KiloGM__PER__CentiM3));
+    }
+
+    @Test
+    public void testMassDensity_qudt_to_ifc() {
+        IfcUnit massdensity = QudtIfcMapper.mapQudtUnitToIfcUnit(Qudt.Units.KiloGM__PER__M3);
+        assertTrue(massdensity instanceof IfcDerivedUnit);
+        List<IfcDerivedUnitElement> elements =
+                ((IfcDerivedUnit) massdensity).getDerivedUnitElements();
+        assertEquals(2, elements.size());
+        assertTrue(
+                elements.stream()
+                        .anyMatch(
+                                u ->
+                                        u.getExponent() == 1
+                                                && u.getIfcUnit().getType() == IfcUnitType.MASSUNIT
+                                                && ((IfcSIUnit) u.getIfcUnit()).getMeasure()
+                                                        == IfcUnitMeasure.GRAM
+                                                && ((IfcSIUnit) u.getIfcUnit()).getPrefix()
+                                                        == IfcUnitMeasurePrefix.KILO));
+        assertTrue(
+                elements.stream()
+                        .anyMatch(
+                                u ->
+                                        u.getExponent() == -3
+                                                && u.getIfcUnit().getType()
+                                                        == IfcUnitType.LENGTHUNIT
+                                                && ((IfcSIUnit) u.getIfcUnit()).getMeasure()
+                                                        == IfcUnitMeasure.METRE
+                                                && ((IfcSIUnit) u.getIfcUnit()).getPrefix()
+                                                        == IfcUnitMeasurePrefix.NONE));
+        assertEquals(IfcUnitType.MASSDENSITYUNIT, massdensity.getType());
+        assertEquals(
+                IfcPropertyType.MASS_DENSITY_MEASURE,
+                QudtIfcMapper.getIfcMeasure(Qudt.Units.KiloGM__PER__M3));
     }
 
     @Test
