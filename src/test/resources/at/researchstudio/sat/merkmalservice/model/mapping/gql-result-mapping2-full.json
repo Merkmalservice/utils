@@ -1,0 +1,122 @@
+{
+  "data": {
+    "mapping": {
+      "id": "urn:uuid:83b6c69c-d70e-4455-a2fa-07b7aaafa5b1",
+      "name": "ACME 5D-Bauteil.Beschreibung -> 5dki Betongüte",
+      "featureSets": [
+        { "id": "urn:uuid:edceb68d-d008-459a-bdf2-e2006faf4cbb" }
+      ],
+      "actionGroups": [
+        {
+          "__typename": "AddActionGroup",
+          "id": "urn:uuid:f0a38313-b7fe-4cc0-9bb5-e2a0a202f45b",
+          "addToPropertySet": { "stringValue": "PSet_ACME" },
+          "actions": [
+            {
+              "__typename": "AddAction",
+              "id": "urn:uuid:6ac15e85-9d61-4076-8b01-faeb2dbec330",
+              "feature": {
+                "id": "urn:uuid:a474411a-a495-4cec-b8bd-c20047ee3fee",
+                "name": "5dki Betongüte",
+                "type": {
+                  "__typename": "EnumerationValue",
+                  "id": "urn:uuid:9b0b9c05-6088-40db-bc63-1621ce106699",
+                  "allowMultiple": false,
+                  "options": [
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:0c1b1db5-4912-4726-9b6e-29e5f7d4fac7",
+                      "description": "",
+                      "value": { "stringValue": "*C16/20" }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:1d47d45f-79be-48d1-80a9-6c71fa815d61",
+                      "description": "",
+                      "value": { "stringValue": "*C25/30" }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:2fbe889d-2d03-42da-bdc6-b31cf533e44e",
+                      "description": "",
+                      "value": { "stringValue": "Beton - Stb.Decke C35/45" }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:3cb82f2f-a4da-459d-ba60-b5b7008b7c8c",
+                      "description": "",
+                      "value": { "stringValue": "*C12/15" }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:4401651e-e44d-4d9a-b3b8-1f4d7183868c",
+                      "description": "",
+                      "value": { "stringValue": "Beton - Stb.Decke C25/30" }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:627f5192-7b16-44bb-9223-367be593d742",
+                      "description": "",
+                      "value": { "stringValue": "*C35/45" }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:6a73504f-dfac-4fce-94ce-fc30556a2076",
+                      "description": "",
+                      "value": { "stringValue": "*C30/37" }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:820ae8cc-3279-4b2d-a1ef-49bede79f266",
+                      "description": "",
+                      "value": { "stringValue": "*C*" }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:bf95b48c-61ef-4da2-a3bf-10b4172af717",
+                      "description": "",
+                      "value": { "stringValue": "Beton - Stb.Decke C35/45" }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:c354bf3f-d578-46f7-82ed-e205d4ec4b30",
+                      "description": "",
+                      "value": { "stringValue": "*C40/50" }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:ef33e17b-56df-434e-9bfd-963d381eab9f",
+                      "description": "",
+                      "value": { "stringValue": "*C20/25" }
+                    }
+                  ]
+                }
+              },
+              "value": {
+                "idValue": "urn:uuid:3cb82f2f-a4da-459d-ba60-b5b7008b7c8c"
+              }
+            }
+          ]
+        }
+      ],
+      "condition": {
+        "__typename": "ConditionGroup",
+        "id": "urn:uuid:fab3d225-937d-48c1-8d86-38d513122df1",
+        "connective": "AND",
+        "conditions": [
+          {
+            "__typename": "SingleCondition",
+            "id": "urn:uuid:fd277129-1bb5-43ab-a715-0f6960a63cf8",
+            "feature": {
+              "id": "urn:uuid:e521f11d-7240-45e5-adc5-01f4ed95e90e",
+              "name": "5D.Bauteil.Beschreibung",
+              "type": { "__typename": "StringValue" }
+            },
+            "predicate": "CONTAINS",
+            "value": { "stringValue": "C12/15" }
+          }
+        ]
+      }
+    }
+  }
+}

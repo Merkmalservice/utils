@@ -1,0 +1,71 @@
+PREFIX qudt: <http://qudt.org/schema/qudt/>
+PREFIX unit: <http://qudt.org/vocab/unit/>
+PREFIX kind: <http://qudt.org/vocab/quantitykind/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+# Bind
+# ?baseUnit1 ?exponent1 ?baseUnit2 ?exponent2 ?baseUnit3 ?exponent3 ?baseUnit4 ?exponent4 ?baseUnit5 ?exponent5
+# to get the derived unit as ?unit
+SELECT * WHERE
+{
+    {
+        #VALUES (?baseUnit1 ?exponent1 ?baseUnit2 ?exponent2 ?baseUnit3 ?exponent3 ?baseUnit4 ?exponent4 ?baseUnit5 ?exponent5) { (unit:BTU_IT 1 unit:FT 1 unit:FT -2 unit:HR -1 unit:DEG_F -1) }
+        ?unit a qudt:Unit ;
+           rdfs:label ?label ;
+           qudt:factorUnit ?factorUnit1 ;
+           qudt:factorUnit ?factorUnit2 ;
+           qudt:factorUnit ?factorUnit3 ;
+           qudt:factorUnit ?factorUnit4 ;
+           qudt:factorUnit ?factorUnit5 .
+        ?factorUnit1
+            qudt:unit ?baseUnit1 ;
+            qudt:exponent ?exponent1 .
+        ?factorUnit2
+            qudt:unit ?baseUnit2 ;
+            qudt:exponent ?exponent2 .
+        ?factorUnit3
+            qudt:unit ?baseUnit3 ;
+            qudt:exponent ?exponent3 .
+        ?factorUnit4
+            qudt:unit ?baseUnit4 ;
+            qudt:exponent ?exponent4 .
+        ?factorUnit5
+            qudt:unit ?baseUnit5 ;
+            qudt:exponent ?exponent5 .
+
+        ?baseUnit1 a qudt:Unit .
+        ?baseUnit2 a qudt:Unit .
+        ?baseUnit3 a qudt:Unit .
+        ?baseUnit4 a qudt:Unit .
+        ?baseUnit5 a qudt:Unit .
+
+        # force binding different factors
+        FILTER(?factorUnit1 NOT IN (?factorUnit2, ?factorUnit3, ?factorUnit4, ?factorUnit5))
+        FILTER(?factorUnit2 NOT IN (?factorUnit1, ?factorUnit3, ?factorUnit4, ?factorUnit5))
+        FILTER(?factorUnit3 NOT IN (?factorUnit1, ?factorUnit2, ?factorUnit4, ?factorUnit5))
+        FILTER(?factorUnit4 NOT IN (?factorUnit1, ?factorUnit2, ?factorUnit3, ?factorUnit5))
+
+        #make sure we have no other factor units
+        OPTIONAL {
+            ?unit qudt:factorUnit ?factorUnitX .
+            FILTER(?factorUnitX NOT IN(?factorUnit1, ?factorUnit2, ?factorUnit3, ?factorUnit4, ?factorUnit5))
+        }
+        FILTER( !BOUND(?factorUnitX) )
+    }
+
+    OPTIONAL {
+        ?unit qudt:prefix ?prefix
+    }
+    OPTIONAL {
+       ?unit qudt:conversionMultiplier ?conversionMultiplier
+    }
+    OPTIONAL {
+        ?unit qudt:hasQuantityKind ?quantityKind
+    }
+    OPTIONAL {
+        ?unit qudt:conversionOffset ?conversionOffset
+    }
+    OPTIONAL {
+        ?unit qudt:symbol ?symbol
+    }
+}

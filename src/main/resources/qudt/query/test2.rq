@@ -1,0 +1,50 @@
+PREFIX qudt: <http://qudt.org/schema/qudt/>
+PREFIX unit: <http://qudt.org/vocab/unit/>
+PREFIX kind: <http://qudt.org/vocab/quantitykind/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT *
+
+ WHERE
+{
+        VALUES ( ?u1 ?e1 ?u2 ?e2 ?u3 ?e3 ?u4 ?e4) { ( unit:M 1 unit:KiloGM 1 unit:SEC -2 unit:M -2)}
+        #VALUES ( ?u1 ?e1 ?u2 ?e2 ) { ( unit:M 1 unit:KiloGM 1)}
+        {
+            SELECT
+                ?unit
+                (GROUP_CONCAT(CONCAT("<",STR(?midUnit), ",", STR(?midExponent),">"); separator= ";") as ?midFactors)
+                (GROUP_CONCAT(?midExponent; separator= ";") as ?exponents)
+                ?endUnit
+                ?endFactor
+                ?depth
+            WHERE
+            {
+                ?unit qudt:factorUnit ?startFactor.
+                ?startFactor (qudt:unit/qudt:factorUnit)* ?midFactor .
+                ?midFactor (qudt:unit/qudt:factorUnit)* ?endFactor .
+                ?midFactor
+                    qudt:unit ?midUnit ;
+                    qudt:exponent ?midExponent .
+                ?endFactor
+                    qudt:unit ?endUnit ;
+                    qudt:exponent ?endExponent .
+                 {
+                 SELECT
+                     ?unitSub ?endFactorSub (count(*) as ?depth)
+                     WHERE
+                     {
+                         ?unitSub qudt:factorUnit ?startFactorSub.
+                         ?startFactorSub (qudt:unit/qudt:factorUnit)* ?midFactorSub .
+                         ?midFactorSub (qudt:unit/qudt:factorUnit)* ?endFactorSub .
+                     }
+                     GROUP BY ?unitSub ?endFactorSub
+                 }
+                 FILTER (?unit = ?unitSub && ?endFactor = ?endFactorSub)
+            }
+            GROUP BY ?unit ?endUnit ?endExponent ?endFactor ?depth
+        }
+        FILTER (?unit IN ( unit:N-M-PER-M2, unit:X-PER-HZ ) )
+}
+
+ORDER BY ?unit

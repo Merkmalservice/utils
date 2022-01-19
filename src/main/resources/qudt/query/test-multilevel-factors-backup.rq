@@ -1,0 +1,41 @@
+PREFIX qudt: <http://qudt.org/schema/qudt/>
+PREFIX unit: <http://qudt.org/vocab/unit/>
+PREFIX kind: <http://qudt.org/vocab/quantitykind/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+# Bind
+# ?baseUnit1 ?exponent1 (must be either untyped or xsd:integer!!)
+# to get the derived unit as ?unit
+SELECT * WHERE
+{
+
+        {
+            SELECT ?unit (GROUP_CONCAT(?midExponent; separator= "*") as ?exponents) ?endUnit ?endExponent
+            WHERE
+            {
+                VALUES (?unit ?u1 ?e1 ?u2 ?e2 ?u3 ?e3  ?u4 ?e4 ?u5 ?e5 ) { (unit:X-PER-HZ unit:M 1 unit:KiloGM 1 unit:SEC -2 unit:M -2 unit:HZ -1 )}
+                ?unit qudt:factorUnit/(qudt:unit/qudt:factorUnit)* ?midFactor .
+                ?midFactor (qudt:unit/qudt:factorUnit)*  ?endFactor .
+                ?midFactor
+                    qudt:unit ?midUnit ;
+                    qudt:exponent ?midExponent .
+                ?endFactor
+                    qudt:unit ?endUnit ;
+                    qudt:exponent ?endExponent .
+
+                FILTER(
+                    (?u1 = ?endUnit && ?e1 = ?endExponent)
+                    || (?u2 = ?endUnit && ?e2 = ?endExponent)
+                    || (?u3 = ?endUnit && ?e3 = ?endExponent)
+                    || (?u4 = ?endUnit && ?e4 = ?endExponent)
+                    || (?u5 = ?endUnit && ?e5 = ?endExponent)
+                    )
+
+            } GROUP BY ?unit ?endUnit ?endExponent
+        }
+#FILTER (?unit = unit:X-PER-HZ)
+
+}
+order by ?unit
+

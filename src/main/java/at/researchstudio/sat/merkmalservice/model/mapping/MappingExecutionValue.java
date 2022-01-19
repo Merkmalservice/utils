@@ -1,5 +1,6 @@
 package at.researchstudio.sat.merkmalservice.model.mapping;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class MappingExecutionValue {
@@ -57,6 +58,31 @@ public class MappingExecutionValue {
         this.graphQLType = graphQLType;
     }
 
+    public static MappingExecutionValue of(Object value) {
+        Objects.requireNonNull(value);
+        if (value instanceof String) {
+            return new MappingExecutionValue((String) value);
+        }
+        if (value instanceof Integer) {
+            return new MappingExecutionValue((Integer) value);
+        }
+        if (value instanceof Boolean) {
+            return new MappingExecutionValue((Boolean) value);
+        }
+        if (value instanceof Double) {
+            return new MappingExecutionValue((Double) value);
+        }
+        if (value instanceof Float) {
+            return new MappingExecutionValue(((Float) value).doubleValue());
+        }
+        if (value instanceof Long) {
+            return new MappingExecutionValue(((Long) value).intValue());
+        }
+        throw new IllegalArgumentException(
+                "Cannot create MappingExecutionValue from value of type "
+                        + value.getClass().getName());
+    }
+
     public Optional<String> getStringValue() {
         return Optional.ofNullable(stringValue);
     }
@@ -79,5 +105,45 @@ public class MappingExecutionValue {
 
     public Optional<String> getGraphQLType() {
         return Optional.ofNullable(graphQLType);
+    }
+
+    public <T> T getValue() {
+        if (stringValue != null) {
+            return (T) stringValue;
+        }
+        if (integerValue != null) {
+            return (T) integerValue;
+        }
+        if (booleanValue != null) {
+            return (T) booleanValue;
+        }
+        if (floatValue != null) {
+            return (T) floatValue;
+        }
+        if (idValue != null) {
+            return (T) idValue;
+        }
+        throw new IllegalStateException("No value found in MappingExecutionValue");
+    }
+
+    @Override
+    public String toString() {
+        return "MappingExecutionValue{"
+                + "stringValue='"
+                + stringValue
+                + '\''
+                + ", integerValue="
+                + integerValue
+                + ", booleanValue="
+                + booleanValue
+                + ", floatValue="
+                + floatValue
+                + ", idValue='"
+                + idValue
+                + '\''
+                + ", graphQLType='"
+                + graphQLType
+                + '\''
+                + '}';
     }
 }

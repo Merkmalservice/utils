@@ -15,7 +15,7 @@ public class IfcSIUnit extends IfcUnit {
     private final IfcUnitMeasurePrefix prefix;
 
     public IfcSIUnit(
-            String id,
+            Integer id,
             IfcUnitType type,
             IfcUnitMeasure measure,
             IfcUnitMeasurePrefix prefix,
@@ -26,7 +26,7 @@ public class IfcSIUnit extends IfcUnit {
     }
 
     public IfcSIUnit(
-            String id, String type, String measure, String prefix, boolean projectDefault) {
+            Integer id, String type, String measure, String prefix, boolean projectDefault) {
         super(id, type, projectDefault);
 
         IfcUnitMeasure tempMeasure = IfcUnitMeasure.UNKNOWN;
@@ -59,20 +59,21 @@ public class IfcSIUnit extends IfcUnit {
     }
 
     @Override
+    public String toString() {
+        return "IfcSIUnit{" + prefix + " " + measure + '}';
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         IfcSIUnit ifcSIUnit = (IfcSIUnit) o;
         return measure == ifcSIUnit.measure && prefix == ifcSIUnit.prefix;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(measure, prefix);
-    }
-
-    @Override
-    public String toString() {
-        return "IfcSIUnit{" + "measure=" + measure + ", prefix=" + prefix + '}';
+        return Objects.hash(super.hashCode(), measure, prefix);
     }
 }

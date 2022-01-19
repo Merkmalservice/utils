@@ -1,0 +1,52 @@
+PREFIX qudt: <http://qudt.org/schema/qudt/>
+PREFIX unit: <http://qudt.org/vocab/unit/>
+PREFIX kind: <http://qudt.org/vocab/quantitykind/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+# Bind
+# ?baseUnit1 ?exponent1 ?baseUnit2 ?exponent2
+# to get the derived unit as ?unit
+SELECT * WHERE
+{
+    # VALUES (?baseUnit1 ?exponent1 ?baseUnit2 ?exponent2) { (unit:M -3 unit:KiloGM 1) }
+    {
+        ?unit a qudt:Unit ;
+           rdfs:label ?label ;
+           qudt:factorUnit ?factorUnit1 ;
+           qudt:factorUnit ?factorUnit2 .
+        ?factorUnit1
+            qudt:unit ?baseUnit1 ;
+            qudt:exponent ?exponent1 .
+        ?factorUnit2
+            qudt:unit ?baseUnit2 ;
+            qudt:exponent ?exponent2 .
+        ?baseUnit1 a qudt:Unit .
+        ?baseUnit2 a qudt:Unit .
+
+        # force binding different factors
+        FILTER(?factorUnit1 NOT IN (?factorUnit2))
+
+        #make sure we have no other factor units
+        OPTIONAL {
+            ?unit qudt:factorUnit ?factorUnitX .
+            FILTER(?factorUnitX NOT IN(?factorUnit1, ?factorUnit2))
+        }
+        FILTER( !BOUND(?factorUnitX) )
+    }
+
+    OPTIONAL {
+        ?unit qudt:prefix ?prefix
+    }
+    OPTIONAL {
+       ?unit qudt:conversionMultiplier ?conversionMultiplier
+    }
+    OPTIONAL {
+        ?unit qudt:hasQuantityKind ?quantityKind
+    }
+    OPTIONAL {
+        ?unit qudt:conversionOffset ?conversionOffset
+    }
+    OPTIONAL {
+        ?unit qudt:symbol ?symbol
+    }
+}

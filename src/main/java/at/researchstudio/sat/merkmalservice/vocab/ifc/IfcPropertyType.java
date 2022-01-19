@@ -1,7 +1,13 @@
 package at.researchstudio.sat.merkmalservice.vocab.ifc;
 
+import at.researchstudio.sat.merkmalservice.model.qudt.exception.NotFoundException;
+import java.util.Arrays;
 import java.util.Objects;
 
+/**
+ * Represents * Express base types * IfcMeasureValue - see
+ * https://standards.buildingsmart.org/IFC/DEV/IFC4_3/RC1/HTML/link/ifcmeasurevalue.htm
+ */
 public enum IfcPropertyType {
     AREA_DENSITY_MEASURE(true, null, "IfcAreaDensityMeasure"), // TODO WHICH UNIT TYPE IS THIS?
     AREA_MEASURE(true, IfcUnitType.AREAUNIT, "IfcAreaMeasure", "IFCAREAMEASURE"),
@@ -104,6 +110,17 @@ public enum IfcPropertyType {
                 "No IfcPropertyType enum constant for value: '" + propertyType + "'");
     }
 
+    public static IfcPropertyType forIfcUnitType(IfcUnitType unitType) {
+        return Arrays.stream(values())
+                .filter(t -> t.unitType == unitType)
+                .findFirst()
+                .orElseThrow(
+                        () ->
+                                new NotFoundException(
+                                        "Did not find IfcPropertyType for IfcUnitType "
+                                                + unitType));
+    }
+
     /** @return true if the PropertyType is considered to be a measurement type */
     public boolean isMeasureType() {
         return measureType;
@@ -112,5 +129,102 @@ public enum IfcPropertyType {
     /** @return return the correct IfcUnitType, null if there is no corresponding unit */
     public IfcUnitType getUnitType() {
         return this.unitType;
+    }
+
+    public String getStepTypeName() {
+        if (this.typeUris == null || this.typeUris.length == 0) {
+            throw new UnsupportedOperationException(
+                    String.format("No step type name found for property type %s", name()));
+        }
+        return typeUris[0].toUpperCase();
+    }
+
+    /**
+     * Convert the specified string to an IfcPropertyType and check if the result is the specified
+     * type.
+     *
+     * @param typeString the name of the type
+     * @param type the type to test against
+     * @return true if equal
+     */
+    public static boolean is(String typeString, IfcPropertyType type) {
+        if (typeString == null) {
+            return false;
+        }
+        Objects.requireNonNull(type);
+        return fromString(typeString) == type;
+    }
+
+    /**
+     * Convert the specified string to an IfcPropertyType and check if the result is one of the
+     * specified types.
+     *
+     * @param typeString the name of the type
+     * @param types the types to test against
+     * @return
+     */
+    public static boolean isOneOf(String typeString, IfcPropertyType... types) {
+        if (typeString == null) {
+            return false;
+        }
+        Objects.requireNonNull(types);
+        IfcPropertyType fromString = fromString(typeString);
+        for (IfcPropertyType type : types) {
+            if (type == fromString) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static Object parsePropertyValue(String propertyString, String ifcPropertyTypeString) {
+        return parsePropertyValue(propertyString, fromString(ifcPropertyTypeString));
+    }
+
+    public static Object parsePropertyValue(
+            String propertyString, IfcPropertyType ifcPropertyType) {
+        if (propertyString == null) {
+            return null;
+        }
+        if (propertyString.equals("$")) {
+            return null;
+        }
+        switch (ifcPropertyType) {
+            case TEXT:
+            case LABEL:
+            case IDENTIFIER:
+                return propertyString;
+
+            case BOOL:
+                if (propertyString.equals(".T.")) {
+                    return Boolean.TRUE;
+                } else if (propertyString.equals(".F.")) {
+                    return Boolean.FALSE;
+                } else {
+                    throw new IllegalArgumentException(
+                            String.format(
+                                    "Cannot parse property value %s of type %s",
+                                    propertyString, ifcPropertyType.getStepTypeName()));
+                }
+
+            case EXPRESS_BOOL:
+            case LOGICAL:
+                return Boolean.valueOf(propertyString);
+
+            case INTEGER:
+            case EXPRESS_INTEGER:
+            case POSITIVE_INTEGER:
+                return Integer.valueOf(propertyString);
+
+            case REAL:
+                return Double.valueOf(propertyString);
+        }
+        if (ifcPropertyType.isMeasureType()) {
+            return Double.valueOf(propertyString);
+        }
+        throw new IllegalArgumentException(
+                String.format(
+                        "Cannot parse property value %s of type %s",
+                        propertyString, ifcPropertyType.getStepTypeName()));
     }
 }

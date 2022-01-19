@@ -1,0 +1,318 @@
+{
+  "data": {
+    "mapping": {
+      "id": "urn:uuid:5eec3925-9d4d-4f2e-be8a-91fcd19bec9e",
+      "name": "STRABAG Wandtyp",
+      "featureSets": [
+        {
+          "id": "urn:uuid:edceb68d-d008-459a-bdf2-e2006faf4cbb"
+        }
+      ],
+      "actionGroups": [
+        {
+          "__typename": "AddActionGroup",
+          "id": "urn:uuid:21af9ff5-ef9f-40bf-b882-eeaa3d6d91a1",
+          "addToPropertySet": {
+            "stringValue": "PSet_STRABAG"
+          },
+          "actions": [
+            {
+              "__typename": "AddAction",
+              "id": "urn:uuid:5a0fe676-0e41-4447-a05c-463d6b7ec8f9",
+              "feature": {
+                "id": "urn:uuid:da837b76-9254-4e4b-a6dc-8a9447961c42",
+                "name": "cpiFitMatchKey",
+                "type": {
+                  "__typename": "EnumerationValue",
+                  "id": "urn:uuid:f62d5efa-6e9a-42b5-88fa-8a2efa2ffa49",
+                  "allowMultiple": false,
+                  "options": [
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:1b5caeb0-98b5-4e70-aacd-5595469cf1ff",
+                      "description": "",
+                      "value": {
+                        "stringValue": "5D-KI-TRE-FT"
+                      }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:46756138-29e3-42e4-8c7a-6a8121901098",
+                      "description": "",
+                      "value": {
+                        "stringValue": "5D-KI-TRE-POD"
+                      }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:aedf7c72-cc5c-4f9f-ab7b-5757d430ed39",
+                      "description": "",
+                      "value": {
+                        "stringValue": "5D-KI-TRE-ORT"
+                      }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:ed01f77b-2b11-4acf-b85e-594d217f9110",
+                      "description": "",
+                      "value": {
+                        "stringValue": "5D-AB-DACH-HZ"
+                      }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:edeaafdf-8e2e-4c40-b08f-00191cccf304",
+                      "description": "5D-KI-STB-W",
+                      "value": {
+                        "stringValue": "5D-KI-STB-W"
+                      }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:f44614be-d2af-4b69-954c-e095cd2c2a73",
+                      "description": "",
+                      "value": {
+                        "stringValue": "5D-KI-TRE-FTPOD"
+                      }
+                    }
+                  ]
+                }
+              },
+              "value": {
+                "idValue": "urn:uuid:edeaafdf-8e2e-4c40-b08f-00191cccf304"
+              }
+            },
+            {
+              "__typename": "AddAction",
+              "id": "urn:uuid:1536820f-1f4f-4701-949d-2104bbc6b78f",
+              "feature": {
+                "id": "urn:uuid:d0672a75-dae0-44f6-8bcd-8f0beb24b7e2",
+                "name": "cpiComponentType",
+                "type": {
+                  "__typename": "EnumerationValue",
+                  "id": "urn:uuid:4bfbfc72-6445-41aa-8105-aa0170e42680",
+                  "allowMultiple": false,
+                  "options": [
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:0b6d9f56-6141-48ff-a0b6-179bae120285",
+                      "description": "",
+                      "value": {
+                        "stringValue": "Slab"
+                      }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:349771bd-61d1-4ed0-bf5e-fd8aa3518691",
+                      "description": "",
+                      "value": {
+                        "stringValue": "*Wall"
+                      }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:362af658-64b0-425a-a644-abe077d6b24f",
+                      "description": "",
+                      "value": {
+                        "stringValue": "*Slab"
+                      }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:38314ae7-e1b8-49f8-9ae1-4d69b41062e1",
+                      "description": "",
+                      "value": {
+                        "stringValue": "Foundation*"
+                      }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:4919b51f-85e7-47a3-b357-b02a4ecffb7f",
+                      "description": "",
+                      "value": {
+                        "stringValue": "Foundation"
+                      }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:4ae54977-c8a8-45de-9c6e-3a88a42d6c5b",
+                      "description": "",
+                      "value": {
+                        "stringValue": "Beam"
+                      }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:5bb66437-0601-4378-aef0-56edb3075fe8",
+                      "description": "",
+                      "value": {
+                        "stringValue": "Opening"
+                      }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:753e64ee-9d9a-48ad-bd70-5879befa44d5",
+                      "description": "",
+                      "value": {
+                        "stringValue": "Foundation_Slab"
+                      }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:8e1d6f92-35fb-41bb-a643-ad3488b23d57",
+                      "description": "",
+                      "value": {
+                        "stringValue": "Default"
+                      }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:96de4028-afc6-4f9d-8ed9-8f6db9f950f8",
+                      "description": "",
+                      "value": {
+                        "stringValue": "Attribute"
+                      }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:9c2ff24b-9445-4cf1-8b32-f345c6d9a3ae",
+                      "description": "",
+                      "value": {
+                        "stringValue": "Door"
+                      }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:9c392c8c-abef-47fa-a12b-da1b701334ab",
+                      "description": "",
+                      "value": {
+                        "stringValue": "Window"
+                      }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:cdc062ea-4f03-46e1-b0d4-e7e95acd9da2",
+                      "description": "",
+                      "value": {
+                        "stringValue": "Column"
+                      }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:e569ded9-2589-4d62-9cae-ea423f01222f",
+                      "description": "",
+                      "value": {
+                        "stringValue": "Space"
+                      }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:f02ba801-ca3c-41c2-98b8-890c29741feb",
+                      "description": "",
+                      "value": {
+                        "stringValue": "Wall"
+                      }
+                    },
+                    {
+                      "__typename": "OptionValue",
+                      "id": "urn:uuid:f4ca6752-ad0e-4e4e-a893-a5d8745bf060",
+                      "description": "",
+                      "value": {
+                        "stringValue": "Slab*"
+                      }
+                    }
+                  ]
+                }
+              },
+              "value": {
+                "idValue": "urn:uuid:349771bd-61d1-4ed0-bf5e-fd8aa3518691"
+              }
+            },
+            {
+              "__typename": "AddAction",
+              "id": "urn:uuid:9b6c34f2-3cde-4907-9044-d83749702c57",
+              "feature": {
+                "id": "urn:uuid:20e2a561-1157-4f7a-91d8-06ad8beae946",
+                "name": "Tragwerk",
+                "type": {
+                  "__typename": "BooleanValue"
+                }
+              },
+              "value": {
+                "booleanValue": false
+              }
+            },
+            {
+              "__typename": "AddAction",
+              "id": "urn:uuid:8bbd19c1-0571-4542-9a2c-9a388f4d0e8f",
+              "feature": {
+                "id": "urn:uuid:2541fefb-50e8-4fd2-bd8f-4cc6e0ac711a",
+                "name": "5dki Bewehrung Stab kg pro m3",
+                "type": {
+                  "__typename": "NumericValue",
+                  "quantityKind": {
+                    "id": "http://qudt.org/vocab/quantitykind/Dimensionless",
+                    "label": "Dimensionless"
+                  },
+                  "unit": {
+                    "id": "http://qudt.org/vocab/unit/UNITLESS",
+                    "label": "Unitless"
+                  }
+                }
+              },
+              "value": {
+                "floatValue": 300.0
+              }
+            }
+          ]
+        },
+        {
+          "__typename": "ConvertActionGroup",
+          "id": "urn:uuid:ae1e153f-cae0-4f29-a6b1-eef881b0b890",
+          "actions": [
+            {
+              "__typename": "ConvertAction",
+              "id": "urn:uuid:49a0ff1d-b929-4ada-9e4a-f216f5f137d3",
+              "inputFeature": {
+                "id": "urn:uuid:15405409-6c76-42e9-9ea1-52ab80f5d86b",
+                "name": "Width",
+                "type": {
+                  "__typename": "NumericValue"
+                }
+              },
+              "outputFeature": {
+                "id": "urn:uuid:3bb24fc0-d23a-47a4-8839-cbd0cecebca0",
+                "name": "Breite",
+                "type": {
+                  "__typename": "NumericValue"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "condition": {
+        "__typename": "ConditionGroup",
+        "id": "urn:uuid:ad0f1666-b250-4e41-8110-4e886606adf8",
+        "connective": "AND",
+        "conditions": [
+          {
+            "__typename": "SingleCondition",
+            "id": "urn:uuid:c203ea53-fcdf-4803-9daf-e03cf3787562",
+            "feature": {
+              "id": "urn:uuid:e521f11d-7240-45e5-adc5-01f4ed95e90e",
+              "name": "5D.Bauteil.Beschreibung",
+              "type": {
+                "__typename": "StringValue"
+              }
+            },
+            "predicate": "CONTAINS",
+            "value": {
+              "stringValue": "Beton Wand"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

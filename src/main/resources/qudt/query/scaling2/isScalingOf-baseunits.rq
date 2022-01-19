@@ -1,0 +1,42 @@
+PREFIX qudt: <http://qudt.org/schema/qudt/>
+PREFIX unit: <http://qudt.org/vocab/unit/>
+PREFIX prefix: <http://qudt.org/vocab/prefix/>
+PREFIX kind: <http://qudt.org/vocab/quantitykind/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+select * where
+{
+    {
+        # select all base units (not using prefixes)
+        ?baseUnit a qudt:Unit ;
+            BIND(REPLACE(STR(?baseUnit), "^.+/", "") as ?baseUnitLocalName)
+            FILTER NOT EXISTS {
+                ?prefix
+                    a qudt:Prefix ;
+                    rdfs:label ?prefixLabel
+                FILTER(CONTAINS(?baseUnitLocalName, STR(?prefixLabel)))
+            }
+    }
+
+  # ?scaledUnit a qudt:Unit ;
+  # #BIND(REPLACE(STR(?scaledUnit), "^.+/", "") as ?scaledUnitLocalName)
+  # ?prefix2
+  #     a qudt:Prefix ;
+  #     rdfs:label ?prefixLabel2 .
+  # FILTER EXISTS {
+
+  #      FILTER (
+  #         ?scaledUnitLocalName = CONCAT(STR(?prefixLabel2), ?baseUnitLocalName)
+  #         || ?scaledUnitLocalName = REPLACE(?baseUnitLocalName, "KiloGM", CONCAT(STR(?prefixLabel2),"GM"))
+  #         || ( ?scaledUnitLocalName = REPLACE(?baseUnitLocalName, "KiloGM", "GM") )
+  #      )
+  # }
+  # FILTER(?scaledUnit != ?baseUnit)
+  # FILTER NOT EXISTS {
+  #     ?scaledUnit qudt:isScalingOf ?unit
+  # }
+  # BIND ( IF( ?scaledUnit != unit:GM, ?prefix2, ?unbound) as ?prefix)
+}
+order by ?baseUnit
+
+

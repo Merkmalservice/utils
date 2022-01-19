@@ -1,0 +1,33 @@
+PREFIX qudt: <http://qudt.org/schema/qudt/>
+PREFIX unit: <http://qudt.org/vocab/unit/>
+PREFIX prefix: <http://qudt.org/vocab/prefix/>
+PREFIX kind: <http://qudt.org/vocab/quantitykind/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT * WHERE
+{
+    {
+        {
+            ?derivedUnit a qudt:Unit ;
+                BIND(REPLACE(STR(?derivedUnit), "^.+/", "") as ?derivedUnitLocalName)
+            FILTER(REPLACE(?derivedUnitLocalName, "(PER|2|3|4|5|6)\\b", "") != ?derivedUnitLocalName)
+        }
+        {
+            ?baseUnit a qudt:Unit ;
+                    BIND(REPLACE(STR(?baseUnit), "^.+/", "") as ?baseUnitLocalName)
+                FILTER(!CONTAINS(?baseUnitLocalName, "-"))
+                FILTER(REPLACE(?baseUnitLocalName, "(2|3|4|5|6)\\b", "") = ?baseUnitLocalName)
+        }
+        FILTER (
+            REPLACE(
+                ?derivedUnitLocalName,
+                CONCAT("\\b",?baseUnitLocalName, "(2|3|4|5|6)?\\b"),
+                "")
+                != ?derivedUnitLocalName
+        )
+    }
+}
+order by ?derivedUnit ?baseUnit
+
+
+

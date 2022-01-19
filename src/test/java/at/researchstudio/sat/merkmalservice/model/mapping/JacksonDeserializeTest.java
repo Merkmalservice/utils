@@ -9,7 +9,7 @@ import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class JacksonDeserializeTest {
 
@@ -28,6 +28,23 @@ public class JacksonDeserializeTest {
     public void testDeserializeMapping_full() throws IOException {
         String json =
                 Files.readString(inputFolder.resolve(Path.of("gql-result-mapping-full.json")));
+        Mapping mapping =
+                new ObjectMapper().readValue(json, DataResult.class).getData().getMapping();
+    }
+
+    @Test
+    public void testDeserializeMapping2_full() throws IOException {
+        String json =
+                Files.readString(inputFolder.resolve(Path.of("gql-result-mapping2-full.json")));
+        Mapping mapping =
+                new ObjectMapper().readValue(json, DataResult.class).getData().getMapping();
+    }
+
+    @Test
+    public void testDeserializeMapping_with_quantityKind() throws IOException {
+        String json =
+                Files.readString(
+                        inputFolder.resolve(Path.of("gql-result-mapping-with-quantitykind.json")));
         Mapping mapping =
                 new ObjectMapper().readValue(json, DataResult.class).getData().getMapping();
     }

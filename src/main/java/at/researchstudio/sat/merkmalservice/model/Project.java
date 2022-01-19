@@ -1,6 +1,9 @@
 package at.researchstudio.sat.merkmalservice.model;
 
+import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.builder.SubBuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.mapping.Mapping;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -61,5 +64,96 @@ public class Project {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    public static Builder<?> builder() {
+        return new Builder<>();
+    }
+
+    public static <PARENT extends BuilderScaffold<?, PARENT>> Builder<PARENT> builder(
+            PARENT parent) {
+        return new Builder(parent);
+    }
+
+    public static class Builder<PARENT extends BuilderScaffold<?, PARENT>>
+            extends MyBuilderScaffold<Builder<PARENT>, PARENT> {
+        public Builder(PARENT parent) {
+            super(parent);
+        }
+
+        public Builder() {}
+    }
+
+    abstract static class MyBuilderScaffold<
+                    THIS extends MyBuilderScaffold<THIS, PARENT>,
+                    PARENT extends BuilderScaffold<?, PARENT>>
+            extends SubBuilderScaffold<Project, THIS, PARENT> {
+        private Project product;
+        private Standard.ListBuilder<THIS> standardListBuilder = Standard.listBuilder((THIS) this);
+        private Mapping.ListBuilder<THIS> mappingListBuilder = Mapping.listBuilder((THIS) this);
+
+        MyBuilderScaffold(PARENT parent) {
+            super(parent);
+            this.product = new Project();
+        }
+
+        public MyBuilderScaffold() {
+            super();
+        }
+
+        public THIS id(String id) {
+            product.id = id;
+            return (THIS) this;
+        }
+
+        public THIS name(String name) {
+            product.name = name;
+            return (THIS) this;
+        }
+
+        public THIS description(String description) {
+            product.description = description;
+            return (THIS) this;
+        }
+
+        public THIS standard(Standard standard) {
+            initializeStandardsList();
+            product.standards.add(standard);
+            return (THIS) this;
+        }
+
+        private void initializeStandardsList() {
+            if (product.standards == null) {
+                product.standards = new ArrayList<>();
+            }
+        }
+
+        public Standard.Builder standard() {
+            return standardListBuilder.newBuilder();
+        }
+
+        public THIS mapping(Mapping mapping) {
+            initializeMappingsList();
+            product.mappings.add(mapping);
+            return (THIS) this;
+        }
+
+        public Mapping.Builder mapping() {
+            return mappingListBuilder.newBuilder();
+        }
+
+        private void initializeMappingsList() {
+            if (product.mappings == null) {
+                product.mappings = new ArrayList<>();
+            }
+        }
+
+        public Project build() {
+            initializeStandardsList();
+            product.standards.addAll(standardListBuilder.build());
+            initializeMappingsList();
+            product.mappings.addAll(mappingListBuilder.build());
+            return product;
+        }
     }
 }

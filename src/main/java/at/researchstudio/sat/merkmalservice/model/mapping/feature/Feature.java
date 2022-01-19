@@ -1,7 +1,10 @@
 package at.researchstudio.sat.merkmalservice.model.mapping.feature;
 
 import at.researchstudio.sat.merkmalservice.model.FeatureGroup;
-import at.researchstudio.sat.merkmalservice.model.mapping.feature.featuretype.FeatureType;
+import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.builder.SubBuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.mapping.feature.featuretype.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -125,5 +128,121 @@ public class Feature {
     @Override
     public int hashCode() {
         return Objects.hash(name, description, featureGroups);
+    }
+
+    public static <PARENT extends BuilderScaffold<?, PARENT>> Builder<PARENT> builder() {
+        return new Builder<>();
+    }
+
+    public static <PARENT extends BuilderScaffold<?, PARENT>> Builder<PARENT> builder(
+            PARENT parent) {
+        return new Builder<>(parent);
+    }
+
+    public static class Builder<PARENT extends BuilderScaffold<?, PARENT>>
+            extends MyBuilderScaffold<Builder<PARENT>, PARENT> {
+        Builder() {}
+
+        Builder(PARENT parent) {
+            super(parent);
+        }
+    }
+
+    abstract static class MyBuilderScaffold<
+                    THIS extends MyBuilderScaffold<THIS, PARENT>,
+                    PARENT extends BuilderScaffold<?, PARENT>>
+            extends SubBuilderScaffold<Feature, THIS, PARENT> {
+        private Feature product;
+        private FeatureGroup.ListBuilder<THIS> featureGroupListBuilder =
+                FeatureGroup.listBuilder((THIS) this);
+        private FeatureType.Builder<THIS> featureTypeBuilder;
+        private EnumFeatureType.Builder<THIS> enumFeatureTypeBuilder;
+        private NumericFeatureType.Builder<THIS> numericFeatureTypeBuilder;
+
+        MyBuilderScaffold() {
+            super();
+            this.product = new Feature();
+        }
+
+        MyBuilderScaffold(PARENT parent) {
+            super(parent);
+            this.product = new Feature();
+        }
+
+        public Feature build() {
+            initializeFeatureGroupList();
+            product.featureGroups.addAll(this.featureGroupListBuilder.build());
+            if (this.featureTypeBuilder != null) {
+                product.type = featureTypeBuilder.build();
+            }
+            if (this.numericFeatureTypeBuilder != null) {
+                product.type = this.numericFeatureTypeBuilder.build();
+            }
+            if (this.enumFeatureTypeBuilder != null) {
+                product.type = this.enumFeatureTypeBuilder.build();
+            }
+            return product;
+        }
+
+        public THIS featureGroup(FeatureGroup featureGroup) {
+            initializeFeatureGroupList();
+            product.featureGroups.add(featureGroup);
+            return (THIS) this;
+        }
+
+        private void initializeFeatureGroupList() {
+            if (product.featureGroups == null) {
+                product.featureGroups = new ArrayList<>();
+            }
+        }
+
+        public FeatureGroup.Builder<THIS> featureGroup() {
+            return this.featureGroupListBuilder.newBuilder();
+        }
+
+        public THIS name(String name) {
+            product.name = name;
+            return (THIS) this;
+        }
+
+        public THIS description(String descrption) {
+            product.description = descrption;
+            return (THIS) this;
+        }
+
+        public THIS id(String id) {
+            product.id = id;
+            return (THIS) this;
+        }
+
+        public THIS featureType(FeatureType featureType) {
+            product.type = featureType;
+            return (THIS) this;
+        }
+
+        public THIS stringType() {
+            this.featureTypeBuilder = StringFeatureType.builder((THIS) this).stringType();
+            return (THIS) this;
+        }
+
+        public THIS referenceType() {
+            this.featureTypeBuilder = ReferenceFeatureType.builder((THIS) this).referenceType();
+            return (THIS) this;
+        }
+
+        public THIS booleanType() {
+            this.featureTypeBuilder = BooleanFeatureType.builder((THIS) this).booleanType();
+            return (THIS) this;
+        }
+
+        public EnumFeatureType.Builder<THIS> enumType() {
+            this.enumFeatureTypeBuilder = EnumFeatureType.enumTypeBuilder((THIS) this);
+            return this.enumFeatureTypeBuilder;
+        }
+
+        public NumericFeatureType.Builder<THIS> numericType() {
+            this.numericFeatureTypeBuilder = NumericFeatureType.numericFeatureBuilder((THIS) this);
+            return this.numericFeatureTypeBuilder;
+        }
     }
 }
