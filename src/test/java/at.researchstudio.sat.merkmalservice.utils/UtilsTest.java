@@ -17,11 +17,9 @@ public class UtilsTest {
         String s1 = "1-Fl\\X2\\00FC\\X0\\gelfenster 23";
         String s2 = "Zugeh\\X2\\00F6\\X0\\riger Raumname";
         String s3 = "\\X2\\00DC\\X0\\berobjekt-ID";
-
         Assertions.assertEquals("1-Flügelfenster 23", Utils.convertIFCStringToUtf8(s1));
         Assertions.assertEquals("Zugehöriger Raumname", Utils.convertIFCStringToUtf8(s2));
         Assertions.assertEquals("Überobjekt-ID", Utils.convertIFCStringToUtf8(s3));
-
         Assertions.assertEquals(s1, Utils.convertUtf8ToIFCString(Utils.convertIFCStringToUtf8(s1)));
         Assertions.assertEquals(s2, Utils.convertUtf8ToIFCString(Utils.convertIFCStringToUtf8(s2)));
         Assertions.assertEquals(s3, Utils.convertUtf8ToIFCString(Utils.convertIFCStringToUtf8(s3)));
@@ -30,7 +28,6 @@ public class UtilsTest {
     @Test
     public final void TestReadWrite() throws IOException {
         List<Feature> features = new ArrayList<>();
-
         StringFeature s = new StringFeature("string");
         features.add(s);
         NumericFeature n1 =
@@ -40,18 +37,14 @@ public class UtilsTest {
         features.add(n2);
         BooleanFeature b = new BooleanFeature("bool");
         features.add(b);
-
         List<EnumFeature.OptionValue> options =
                 Collections.singletonList(new EnumFeature.MEStringValue("x2", null));
         EnumFeature e = new EnumFeature("enum1", options, false);
         features.add(e);
-
-        Utils.writeToJson("temp.json", features, true);
-        List<Feature> readFeatures = Utils.readFromJson(new File("temp.json"));
-
+        Utils.writeFeaturesToJson("temp.json", features, true);
+        List<Feature> readFeatures = Utils.readFeaturesFromJson(new File("temp.json"));
         Assertions.assertEquals(
                 features.size(), readFeatures.size()); // TODO: THIS CHECK ALONE DOES NOT SUFFICE
-
         for (Feature f : features) {
             String featureName = f.getName();
             switch (featureName) {

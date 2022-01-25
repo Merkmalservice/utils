@@ -18,6 +18,26 @@ public class Utils {
             Pattern.compile("\\\\X2\\\\(.*?)\\\\X0\\\\", Pattern.CASE_INSENSITIVE);
 
     public static void writeToJson(
+            String outputFileName, JsonModel jsonModel, boolean withDescription)
+            throws IOException {
+        try (FileWriter jsonFileWriter = new FileWriter(outputFileName, StandardCharsets.UTF_8)) {
+            if (withDescription) {
+                Gson gson = new GsonBuilder().setPrettyPrinting().create();
+                gson.toJson(jsonModel, jsonFileWriter);
+            } else {
+                Gson gson =
+                        new GsonBuilder()
+                                .setExclusionStrategies(new ExcludeDescriptionStrategy())
+                                .setPrettyPrinting()
+                                .create();
+                gson.toJson(jsonModel, jsonFileWriter);
+            }
+        } catch (IOException ioException) {
+            throw ioException;
+        }
+    }
+
+    public static void writeFeaturesToJson(
             String outputFileName, List<Feature> extractedFeatures, boolean withDescription)
             throws IOException {
         try (FileWriter jsonFileWriter = new FileWriter(outputFileName, StandardCharsets.UTF_8)) {
@@ -37,20 +57,26 @@ public class Utils {
         }
     }
 
-    public static List<Feature> readFromJson(File file) throws FileNotFoundException {
+    public static JsonModel readFromJson(File file) throws FileNotFoundException {
         // New JSON Schema Version
-        /** { features: [...], featureGroups: [...] } */
+        /** { features: [...], featureGroups: [...], propertySets: [...] } */
+        Gson gson =
+                new GsonBuilder()
+                        .registerTypeAdapter(Feature.class, new InterfaceAdapter<Feature>())
+                        .registerTypeAdapter(
+                                EnumFeature.OptionValue.class,
+                                new InterfaceAdapter<EnumFeature.OptionValue>())
+                        .create();
+        JsonReader reader = new JsonReader(new FileReader(file.getPath()));
+        JsonModel jsonModel = gson.fromJson(reader, JsonModel.class);
+        return jsonModel;
+    }
+
+    public static List<Feature> readFeaturesFromJson(File file) throws FileNotFoundException {
+        // New JSON Schema Version
+        /** { features: [...], featureGroups: [...], propertySets: [...] } */
         try {
-            Gson gson =
-                    new GsonBuilder()
-                            .registerTypeAdapter(Feature.class, new InterfaceAdapter<Feature>())
-                            .registerTypeAdapter(
-                                    EnumFeature.OptionValue.class,
-                                    new InterfaceAdapter<EnumFeature.OptionValue>())
-                            .create();
-            JsonReader reader = new JsonReader(new FileReader(file.getPath()));
-            JsonModel jsonModel = gson.fromJson(reader, JsonModel.class);
-            return jsonModel.getFeatures();
+            return readFromJson(file).getFeatures();
         } catch (Exception e) {
             // Fallback: Old Version
             /** [features] */
@@ -67,9 +93,9 @@ public class Utils {
         }
     }
 
-    public static void writeToJson(String outputFileName, List<Feature> extractedFeatures)
+    public static void writeFeaturesToJson(String outputFileName, List<Feature> extractedFeatures)
             throws IOException {
-        writeToJson(outputFileName, extractedFeatures, true);
+        writeFeaturesToJson(outputFileName, extractedFeatures, true);
     }
 
     /**
