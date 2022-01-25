@@ -12,37 +12,58 @@ import org.slf4j.LoggerFactory;
 public class IfcProperty {
     private static final Logger logger =
             LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-
+    private final Integer id;
     private final String name;
     private final IfcPropertyType type;
-
     private IfcUnit unit;
-
     private Set<String> extractedUniqueValues;
-
     private Set<String> enumOptionValues;
 
     public IfcProperty(String name, IfcPropertyType type) {
+        this.id = null;
+        this.name = Utils.convertIFCStringToUtf8(name);
+        this.type = type;
+    }
+
+    public IfcProperty(int id, String name, IfcPropertyType type) {
+        this.id = id;
         this.name = Utils.convertIFCStringToUtf8(name);
         this.type = type;
     }
 
     public IfcProperty(String name, String type) {
+        this.id = null;
         this.name = Utils.convertIFCStringToUtf8(name);
-
         IfcPropertyType tempType = IfcPropertyType.UNKNOWN;
         try {
             tempType = IfcPropertyType.fromString(type);
         } catch (IllegalArgumentException e) {
             logger.error(e.getMessage());
         }
+        this.type = tempType;
+    }
 
+    public IfcProperty(int id, String name, String type) {
+        this.id = id;
+        this.name = Utils.convertIFCStringToUtf8(name);
+        IfcPropertyType tempType = IfcPropertyType.UNKNOWN;
+        try {
+            tempType = IfcPropertyType.fromString(type);
+        } catch (IllegalArgumentException e) {
+            logger.error(e.getMessage());
+        }
         this.type = tempType;
     }
 
     public IfcProperty(String name, IfcPropertyType type, IfcUnit unit) {
         this(name, type);
+        if (this.type.isMeasureType()) {
+            this.unit = unit;
+        }
+    }
 
+    public IfcProperty(int id, String name, IfcPropertyType type, IfcUnit unit) {
+        this(id, name, type);
         if (this.type.isMeasureType()) {
             this.unit = unit;
         }
@@ -53,7 +74,6 @@ public class IfcProperty {
         if (Objects.nonNull(projectUnits)) {
             IfcUnitType tempUnitType = type.getUnitType();
             List<IfcUnit> units = projectUnits.get(tempUnitType);
-
             if (Objects.nonNull(units)) {
                 if (units.size() == 1) {
                     IfcUnit ifcUnit = units.get(0);
@@ -95,6 +115,10 @@ public class IfcProperty {
 
     public Set<String> getEnumOptionValues() {
         return enumOptionValues;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public void addExtractedValue(String value) {
@@ -141,7 +165,6 @@ public class IfcProperty {
                             + enumOptionValues.stream()
                                     .collect(Collectors.joining("\n\t", "{\n\t", "\n}"));
         }
-
         return "IfcProperty{"
                 + "name='"
                 + name

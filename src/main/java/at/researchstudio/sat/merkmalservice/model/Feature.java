@@ -8,7 +8,7 @@ public abstract class Feature {
     private String name;
     private String description;
     private List<FeatureGroup> featureGroups;
-
+    private Set<PropertySet> propertySets;
     private transient Set<String> uniqueValues;
 
     public Feature() {}
@@ -22,9 +22,26 @@ public abstract class Feature {
         this.description = description;
     }
 
+    public Feature(String name, String description, Set<PropertySet> propertySets) {
+        this.name = name;
+        this.description = description;
+        this.propertySets = propertySets;
+    }
+
     public Feature(String name, List<FeatureGroup> featureGroups) {
         this.name = name;
         this.featureGroups = featureGroups;
+    }
+
+    public Feature(String name, Set<PropertySet> propertySets) {
+        this.name = name;
+        this.propertySets = propertySets;
+    }
+
+    public Feature(String name, List<FeatureGroup> featureGroups, Set<PropertySet> propertySets) {
+        this.name = name;
+        this.featureGroups = featureGroups;
+        this.propertySets = propertySets;
     }
 
     public Feature(String name, String description, List<FeatureGroup> featureGroups) {
@@ -88,5 +105,13 @@ public abstract class Feature {
     @Override
     public int hashCode() {
         return Objects.hash(name, description, featureGroups);
+    }
+
+    public Set<PropertySet> getPropertySets() {
+        return propertySets;
+    }
+
+    public void setPropertySets(Set<PropertySet> propertySets) {
+        this.propertySets = propertySets;
     }
 }
