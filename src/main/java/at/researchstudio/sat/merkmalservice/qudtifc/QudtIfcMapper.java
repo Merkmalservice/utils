@@ -310,8 +310,7 @@ public class QudtIfcMapper {
                     "TODO: handle unit " + unit + ": no IfcUnitTypes mapped");
         }
         IfcUnitType type =
-                types
-                        .stream()
+                types.stream()
                         .collect(Collectors.groupingBy(Function.identity(), toList()))
                         .entrySet()
                         .stream()
