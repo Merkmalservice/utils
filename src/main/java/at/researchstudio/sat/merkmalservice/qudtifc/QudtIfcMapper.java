@@ -9,15 +9,16 @@ import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcPropertyType;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasure;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasurePrefix;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitType;
-import java.lang.invoke.MethodHandles;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import org.eclipse.rdf4j.model.IRI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.stream.Collectors.toSet;
+import java.lang.invoke.MethodHandles;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 public class QudtIfcMapper {
     private static final Logger logger =
@@ -310,26 +311,14 @@ public class QudtIfcMapper {
         }
         IfcUnitType type =
                 types.stream()
-                        .collect(Collectors.groupingBy(Function.identity(), toSet()))
+                        .collect(Collectors.groupingBy(Function.identity(), toList()))
                         .entrySet()
                         .stream()
                         .map(e -> Map.entry(e.getKey(), e.getValue().size()))
-                        .reduce(
-                                null,
-                                (left, right) -> {
-                                    if (left == null) {
-                                        return right;
-                                    } else if (right == null) {
-                                        return left;
-                                    } else {
-                                        if (left.getValue() < right.getValue()) {
-                                            return right;
-                                        } else {
-                                            return left;
-                                        }
-                                    }
-                                })
-                        .getKey();
+                        .sorted((left, right) -> right.getValue() - left.getValue())
+                        .findFirst()
+                        .map(e -> e.getKey())
+                        .get();
         return type;
     }
 
@@ -352,7 +341,7 @@ public class QudtIfcMapper {
                         .map(t -> quantityKindToIfcUnitTypes.get(t))
                         .filter(Objects::nonNull)
                         .flatMap(t -> t.stream())
-                        .collect(Collectors.toList());
+                        .collect(toList());
         return types;
     }
 
@@ -362,7 +351,7 @@ public class QudtIfcMapper {
                         .map(t -> quantityKindToIfcUnitTypes.get(t))
                         .filter(Objects::nonNull)
                         .flatMap(t -> t.stream())
-                        .collect(Collectors.toList());
+                        .collect(toList());
         return types;
     }
 
@@ -393,7 +382,7 @@ public class QudtIfcMapper {
                                                             .findFirst()
                                                             .get(),
                                                     e.getExponent()))
-                            .collect(Collectors.toList());
+                            .collect(toList());
             return Qudt.derivedUnit(convertedFactorUnits);
         }
         throw new IllegalArgumentException("No QudtUnit for IfcUnit<" + ifcUnit + ">");
