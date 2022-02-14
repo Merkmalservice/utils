@@ -1,5 +1,7 @@
 package at.researchstudio.sat.merkmalservice.qudtifc;
 
+import static java.util.stream.Collectors.toList;
+
 import at.researchstudio.sat.merkmalservice.model.ifc.IfcDerivedUnit;
 import at.researchstudio.sat.merkmalservice.model.ifc.IfcDerivedUnitElement;
 import at.researchstudio.sat.merkmalservice.model.ifc.IfcSIUnit;
@@ -9,16 +11,13 @@ import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcPropertyType;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasure;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasurePrefix;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitType;
-import org.eclipse.rdf4j.model.IRI;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.invoke.MethodHandles;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
+import org.eclipse.rdf4j.model.IRI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class QudtIfcMapper {
     private static final Logger logger =
