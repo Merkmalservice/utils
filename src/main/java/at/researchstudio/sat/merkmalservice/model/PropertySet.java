@@ -4,22 +4,21 @@ import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.builder.ListBuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.builder.SubBuilderScaffold;
 import org.eclipse.rdf4j.model.IRI;
-import org.eclipse.rdf4j.model.util.Values;
 
 public class PropertySet {
-    private IRI id;
+    private String id;
     private String name;
     private String description;
 
     private PropertySet() {}
 
-    public PropertySet(IRI id, String name, String description) {
+    public PropertySet(String id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
     }
 
-    public IRI getId() {
+    public String getId() {
         return id;
     }
 
@@ -85,12 +84,12 @@ public class PropertySet {
         }
 
         public THIS id(IRI iri) {
-            product.id = iri;
+            product.id = iri.toString();
             return (THIS) this;
         }
 
         public THIS id(String iri) {
-            product.id = Values.iri(iri);
+            product.id = iri;
             return (THIS) this;
         }
     }
