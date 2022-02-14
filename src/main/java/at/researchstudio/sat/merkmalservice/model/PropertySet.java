@@ -1,25 +1,23 @@
 package at.researchstudio.sat.merkmalservice.model;
 
+import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.builder.ListBuilderScaffold;
+import at.researchstudio.sat.merkmalservice.model.builder.SubBuilderScaffold;
+import org.eclipse.rdf4j.model.IRI;
+import org.eclipse.rdf4j.model.util.Values;
+
 public class PropertySet {
-    private String id;
+    private IRI id;
     private String name;
-    private String description;
 
-    public PropertySet() {}
+    private PropertySet() {}
 
-    public PropertySet(String id, String name) {
+    public PropertySet(IRI id, String name) {
         this.id = id;
         this.name = name;
-        this.description = "";
     }
 
-    public PropertySet(String id, String name, String description) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-    }
-
-    public String getId() {
+    public IRI getId() {
         return id;
     }
 
@@ -27,33 +25,62 @@ public class PropertySet {
         return name;
     }
 
-    public String getDescription() {
-        return description;
+    public static <PARENT extends BuilderScaffold<?, PARENT>> Builder<PARENT> builder(
+            PARENT parent) {
+        return new Builder<>(parent);
     }
 
-    public static Builder builder() {
-        return new Builder();
+    public static <PARENT extends BuilderScaffold<?, PARENT>> ListBuilder<PARENT> listBuilder(
+            PARENT parent) {
+        return new ListBuilder<>(parent);
     }
 
-    public static class Builder implements IBuilder<PropertySet> {
-        private PropertySet product;
+    public static class ListBuilder<PARENT extends BuilderScaffold<?, PARENT>>
+            extends ListBuilderScaffold<PropertySet, Builder<PARENT>, PARENT> {
+        private ListBuilder(PARENT parent) {
+            super(() -> PropertySet.builder(parent));
+        }
+    }
 
-        public Builder() {
-            this.product = new PropertySet();
+    public static class Builder<PARENT extends BuilderScaffold<?, PARENT>>
+            extends MyBuilderScaffold<Builder<PARENT>, PARENT> {
+        Builder() {}
+
+        Builder(PARENT parent) {
+            super(parent);
+        }
+    }
+
+    abstract static class MyBuilderScaffold<
+                    THIS extends MyBuilderScaffold<THIS, PARENT>,
+                    PARENT extends BuilderScaffold<?, PARENT>>
+            extends SubBuilderScaffold<PropertySet, THIS, PARENT> {
+
+        private PropertySet product = new PropertySet();
+
+        MyBuilderScaffold() {}
+
+        MyBuilderScaffold(PARENT parent) {
+            super(parent);
         }
 
         public PropertySet build() {
             return product;
         }
 
-        public PropertySet.Builder id(String id) {
-            product.id = id;
-            return this;
+        public THIS name(String name) {
+            product.name = name;
+            return (THIS) this;
         }
 
-        public PropertySet.Builder name(String name) {
-            product.name = name;
-            return this;
+        public THIS id(IRI iri) {
+            product.id = iri;
+            return (THIS) this;
+        }
+
+        public THIS id(String iri) {
+            product.id = Values.iri(iri);
+            return (THIS) this;
         }
     }
 }
