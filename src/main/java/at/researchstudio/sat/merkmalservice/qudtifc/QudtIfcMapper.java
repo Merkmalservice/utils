@@ -11,10 +11,13 @@ import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasurePrefix;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitType;
 import java.lang.invoke.MethodHandles;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.eclipse.rdf4j.model.IRI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.stream.Collectors.toSet;
 
 public class QudtIfcMapper {
     private static final Logger logger =
@@ -305,7 +308,28 @@ public class QudtIfcMapper {
             throw new UnsupportedOperationException(
                     "TODO: handle unit " + unit + ": no IfcUnitTypes mapped");
         }
-        IfcUnitType type = types.stream().findFirst().get();
+        IfcUnitType type =
+                types.stream()
+                        .collect(Collectors.groupingBy(Function.identity(), toSet()))
+                        .entrySet()
+                        .stream()
+                        .map(e -> Map.entry(e.getKey(), e.getValue().size()))
+                        .reduce(
+                                null,
+                                (left, right) -> {
+                                    if (left == null) {
+                                        return right;
+                                    } else if (right == null) {
+                                        return left;
+                                    } else {
+                                        if (left.getValue() < right.getValue()) {
+                                            return right;
+                                        } else {
+                                            return left;
+                                        }
+                                    }
+                                })
+                        .getKey();
         return type;
     }
 

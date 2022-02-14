@@ -9,12 +9,14 @@ import org.eclipse.rdf4j.model.util.Values;
 public class PropertySet {
     private IRI id;
     private String name;
+    private String description;
 
     private PropertySet() {}
 
-    public PropertySet(IRI id, String name) {
+    public PropertySet(IRI id, String name, String description) {
         this.id = id;
         this.name = name;
+        this.description = description;
     }
 
     public IRI getId() {
@@ -23,6 +25,10 @@ public class PropertySet {
 
     public String getName() {
         return name;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public static <PARENT extends BuilderScaffold<?, PARENT>> Builder<PARENT> builder(
@@ -70,6 +76,11 @@ public class PropertySet {
 
         public THIS name(String name) {
             product.name = name;
+            return (THIS) this;
+        }
+
+        public THIS description(String description) {
+            product.description = description;
             return (THIS) this;
         }
 
