@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "__typename")
 @JsonSubTypes({
     @JsonSubTypes.Type(value = SingleCondition.class, name = "SingleCondition"),
+    @JsonSubTypes.Type(value = ElementCondition.class, name = "ElementCondition"),
     @JsonSubTypes.Type(value = ConditionGroup.class, name = "ConditionGroup")
 })
 public interface Condition {}

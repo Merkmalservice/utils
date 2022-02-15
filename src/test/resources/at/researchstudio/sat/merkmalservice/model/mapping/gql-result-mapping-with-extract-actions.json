@@ -1,0 +1,57 @@
+{
+  "data": {
+    "mapping": {
+      "id": "urn:uuid:b9547d6b-63bc-473b-9be5-bb456c4f741c",
+      "name": "Std Elemente Name, Beschreibung -> Formel",
+      "featureSets": [
+        {
+          "id": "urn:uuid:a107ebb5-50c3-42a4-9d30-c1c46c0b9fd1"
+        }
+      ],
+      "actionGroups": [
+        {
+          "__typename": "ConvertActionGroup",
+          "id": "urn:uuid:7f8f5fc2-c8a3-4344-abcb-b35c327e2f2b",
+          "addToPropertySet": {
+            "stringValue": "NEW_PROPERTIES"
+          },
+          "actions": [
+            {
+              "__typename": "ExtractAction",
+              "id": "urn:uuid:78399bdf-cc60-4bf4-bacc-33efac321b93",
+              "source": "ELEMENT_NAME",
+              "outputFeature": {
+                "id": "urn:uuid:9a9f21c1-f9ac-495f-9413-19cbfe6d54aa",
+                "name": "Formel_1",
+                "type": {
+                  "__typename": "StringValue"
+                }
+              }
+            },
+            {
+              "__typename": "ExtractAction",
+              "id": "urn:uuid:fca217dc-38fe-4c31-828f-99362eb74eb9",
+              "source": "ELEMENT_DESCRIPTION",
+              "outputFeature": {
+                "id": "urn:uuid:d21cb03a-4e7c-493b-b90c-b922c5c18144",
+                "name": "Formel_2",
+                "type": {
+                  "__typename": "StringValue"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "condition": {
+        "__typename": "ElementCondition",
+        "id": "urn:uuid:d4c6a664-3b7c-4db2-b814-9672c915c552",
+        "source": "ELEMENT_NAME",
+        "predicate": "CONTAINS",
+        "value": {
+          "stringValue": "Std"
+        }
+      }
+    }
+  }
+}

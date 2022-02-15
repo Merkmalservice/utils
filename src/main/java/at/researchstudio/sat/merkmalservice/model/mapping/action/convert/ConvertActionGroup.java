@@ -5,15 +5,16 @@ import at.researchstudio.sat.merkmalservice.model.builder.ListBuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.builder.SubBuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.mapping.MappingExecutionValue;
 import at.researchstudio.sat.merkmalservice.model.mapping.action.ActionGroup;
+import java.util.ArrayList;
 import java.util.List;
 
-public class ConvertActionGroup extends ActionGroup<ConvertAction> {
+public class ConvertActionGroup extends ActionGroup<TransferAction> {
     private MappingExecutionValue addToPropertySet;
 
     public ConvertActionGroup() {}
 
     public ConvertActionGroup(
-            String id, List<ConvertAction> actions, MappingExecutionValue addToPropertySet) {
+            String id, List<TransferAction> actions, MappingExecutionValue addToPropertySet) {
         super(id, actions);
         this.addToPropertySet = addToPropertySet;
     }
@@ -56,10 +57,12 @@ public class ConvertActionGroup extends ActionGroup<ConvertAction> {
                     THIS extends MyBuilderScaffold<THIS, PARENT>,
                     PARENT extends BuilderScaffold<?, PARENT>>
             extends SubBuilderScaffold<ConvertActionGroup, THIS, PARENT>
-            implements ActionGroupBuilder<PARENT, ConvertActionGroup, ConvertAction> {
+            implements ActionGroupBuilder<PARENT, ConvertActionGroup, TransferAction> {
 
         private ConvertAction.ListBuilder<THIS> convertActionListBuilder =
                 ConvertAction.listBuilder((THIS) this);
+        private ExtractAction.ListBuilder<THIS> extractActionListBuilder =
+                ExtractAction.listBuilder((THIS) this);
         private String id = null;
         private MappingExecutionValue addToPropertySet = null;
 
@@ -92,10 +95,16 @@ public class ConvertActionGroup extends ActionGroup<ConvertAction> {
             return convertActionListBuilder.newBuilder();
         }
 
+        public ExtractAction.Builder<THIS> extractAction() {
+            return extractActionListBuilder.newBuilder();
+        }
+
         @Override
         public ConvertActionGroup build() {
-            return new ConvertActionGroup(
-                    id, this.convertActionListBuilder.build(), addToPropertySet);
+            List<TransferAction> actions = new ArrayList<>();
+            actions.addAll(this.convertActionListBuilder.build());
+            actions.addAll(this.extractActionListBuilder.build());
+            return new ConvertActionGroup(id, actions, addToPropertySet);
         }
     }
 }
