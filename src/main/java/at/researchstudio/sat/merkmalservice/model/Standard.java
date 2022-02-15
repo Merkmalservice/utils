@@ -3,6 +3,7 @@ package at.researchstudio.sat.merkmalservice.model;
 import at.researchstudio.sat.merkmalservice.model.builder.BuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.builder.ListBuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.builder.SubBuilderScaffold;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -12,6 +13,7 @@ public class Standard {
     private String name;
     private boolean isPublic;
     private Organization organization;
+    private List<PropertySet> propertySets;
 
     public Standard() {}
 
@@ -20,7 +22,8 @@ public class Standard {
             String name,
             String description,
             boolean isPublic,
-            Organization organization) {
+            Organization organization,
+            List<PropertySet> propertySets) {
         Objects.requireNonNull(id);
         Objects.requireNonNull(organization);
         this.id = id;
@@ -28,6 +31,7 @@ public class Standard {
         this.organization = organization;
         this.description = description;
         this.isPublic = isPublic;
+        this.propertySets = propertySets;
     }
 
     public String getId() {
@@ -48,6 +52,10 @@ public class Standard {
 
     public Organization getOrganization() {
         return organization;
+    }
+
+    public List<PropertySet> getPropertySets() {
+        return propertySets;
     }
 
     @Override
@@ -99,6 +107,8 @@ public class Standard {
                     PARENT extends BuilderScaffold<?, PARENT>>
             extends SubBuilderScaffold<Standard, THIS, PARENT> {
         private Standard product;
+        private PropertySet.ListBuilder<THIS> propertySetListBuilder =
+                PropertySet.listBuilder((THIS) this);
 
         public MyBuilderScaffold() {
             super();
@@ -133,6 +143,10 @@ public class Standard {
         public THIS organization(Organization organization) {
             product.organization = organization;
             return (THIS) this;
+        }
+
+        public PropertySet.Builder propertySet() {
+            return propertySetListBuilder.newBuilder();
         }
 
         @Override

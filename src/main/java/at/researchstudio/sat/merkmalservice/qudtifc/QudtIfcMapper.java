@@ -1,5 +1,7 @@
 package at.researchstudio.sat.merkmalservice.qudtifc;
 
+import static java.util.stream.Collectors.toList;
+
 import at.researchstudio.sat.merkmalservice.model.ifc.IfcDerivedUnit;
 import at.researchstudio.sat.merkmalservice.model.ifc.IfcDerivedUnitElement;
 import at.researchstudio.sat.merkmalservice.model.ifc.IfcSIUnit;
@@ -11,6 +13,7 @@ import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitMeasurePrefix;
 import at.researchstudio.sat.merkmalservice.vocab.ifc.IfcUnitType;
 import java.lang.invoke.MethodHandles;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.eclipse.rdf4j.model.IRI;
 import org.slf4j.Logger;
@@ -305,7 +308,16 @@ public class QudtIfcMapper {
             throw new UnsupportedOperationException(
                     "TODO: handle unit " + unit + ": no IfcUnitTypes mapped");
         }
-        IfcUnitType type = types.stream().findFirst().get();
+        IfcUnitType type =
+                types.stream()
+                        .collect(Collectors.groupingBy(Function.identity(), toList()))
+                        .entrySet()
+                        .stream()
+                        .map(e -> Map.entry(e.getKey(), e.getValue().size()))
+                        .sorted((left, right) -> right.getValue() - left.getValue())
+                        .findFirst()
+                        .map(e -> e.getKey())
+                        .get();
         return type;
     }
 
@@ -328,7 +340,7 @@ public class QudtIfcMapper {
                         .map(t -> quantityKindToIfcUnitTypes.get(t))
                         .filter(Objects::nonNull)
                         .flatMap(t -> t.stream())
-                        .collect(Collectors.toList());
+                        .collect(toList());
         return types;
     }
 
@@ -338,7 +350,7 @@ public class QudtIfcMapper {
                         .map(t -> quantityKindToIfcUnitTypes.get(t))
                         .filter(Objects::nonNull)
                         .flatMap(t -> t.stream())
-                        .collect(Collectors.toList());
+                        .collect(toList());
         return types;
     }
 
@@ -369,7 +381,7 @@ public class QudtIfcMapper {
                                                             .findFirst()
                                                             .get(),
                                                     e.getExponent()))
-                            .collect(Collectors.toList());
+                            .collect(toList());
             return Qudt.derivedUnit(convertedFactorUnits);
         }
         throw new IllegalArgumentException("No QudtUnit for IfcUnit<" + ifcUnit + ">");

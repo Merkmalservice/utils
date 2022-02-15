@@ -604,6 +604,9 @@ public class Qudt {
         if (fromUnit.equals(toUnit)) {
             return new QuantityValue(fromValue, toUnit);
         }
+        if (Qudt.Units.UNITLESS.equals(fromUnit) || Qudt.Units.UNITLESS.equals(toUnit)) {
+            return new QuantityValue(fromValue, toUnit);
+        }
         Set<IRI> fromDimensionVectors =
                 fromUnit.getQuantityKindIris().stream()
                         .map(Qudt::quantityKind)
@@ -623,8 +626,7 @@ public class Qudt {
         if (!isConvertible) {
             throw new InconvertibleQuantitiesException(
                     String.format(
-                            "Cannot convert from %s to %s",
-                            fromUnit.getLabels(), toUnit.getLabels()));
+                            "Cannot convert from %s to %s", fromUnit.getIri(), toUnit.getIri()));
         }
         double fromOffset = fromUnit.getConversionOffset().orElse(0.0);
         double fromMultiplier = fromUnit.getConversionMultiplier().orElse(1.0);

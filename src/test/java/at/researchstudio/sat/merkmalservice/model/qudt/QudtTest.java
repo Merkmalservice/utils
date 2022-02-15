@@ -289,4 +289,17 @@ public class QudtTest {
         assertTrue(unitFactors.contains(new FactorUnit(Qudt.Units.N, 1)));
         assertTrue(unitFactors.contains(new FactorUnit(Qudt.Units.M, 1)));
     }
+
+    @Test
+    public void testUnitless() {
+        assertEquals(
+                new QuantityValue(1.1234, Qudt.Units.UNITLESS),
+                Qudt.convert(1.1234, Qudt.Units.KiloGM__PER__M3, Qudt.Units.UNITLESS));
+        assertEquals(
+                new QuantityValue(1.1234, Qudt.Units.KiloGM__PER__M3),
+                Qudt.convert(1.1234, Qudt.Units.UNITLESS, Qudt.Units.KiloGM__PER__M3));
+        assertEquals(
+                new QuantityValue(1.1234, Qudt.Units.UNITLESS),
+                Qudt.convert(1.1234, Qudt.Units.UNITLESS, Qudt.Units.UNITLESS));
+    }
 }
