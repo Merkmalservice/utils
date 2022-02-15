@@ -6,7 +6,7 @@
 
     <groupId>at.researchstudio.sat</groupId>
     <artifactId>merkmalservice-utils</artifactId>
-    <version>0.4.12</version>
+    <version>0.4.13</version>
     <properties>
         <java.version>11</java.version>
     </properties>
