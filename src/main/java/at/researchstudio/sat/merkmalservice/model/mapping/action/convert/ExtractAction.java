@@ -5,20 +5,20 @@ import at.researchstudio.sat.merkmalservice.model.builder.ListBuilderScaffold;
 import at.researchstudio.sat.merkmalservice.model.mapping.action.BaseAction;
 import at.researchstudio.sat.merkmalservice.model.mapping.feature.Feature;
 
-public class ConvertAction extends TransferAction {
-    private Feature inputFeature;
+public class ExtractAction extends TransferAction {
     private Feature outputFeature;
+    private ExtractionSource source;
 
-    public ConvertAction() {}
+    public ExtractAction() {}
 
-    public ConvertAction(String id, Feature inputFeature, Feature outputFeature) {
+    public ExtractAction(String id, ExtractionSource source, Feature outputFeature) {
         super(id);
-        this.inputFeature = inputFeature;
         this.outputFeature = outputFeature;
+        this.source = source;
     }
 
-    public Feature getInputFeature() {
-        return inputFeature;
+    public ExtractionSource getSource() {
+        return source;
     }
 
     public Feature getOutputFeature() {
@@ -40,9 +40,9 @@ public class ConvertAction extends TransferAction {
     }
 
     public static class ListBuilder<PARENT extends BuilderScaffold<?, PARENT>>
-            extends ListBuilderScaffold<ConvertAction, Builder<PARENT>, PARENT> {
+            extends ListBuilderScaffold<ExtractAction, Builder<PARENT>, PARENT> {
         ListBuilder(PARENT parent) {
-            super(() -> ConvertAction.builder(parent));
+            super(() -> ExtractAction.builder(parent));
         }
     }
 
@@ -58,26 +58,20 @@ public class ConvertAction extends TransferAction {
     abstract static class MyBuilderScaffold<
                     THIS extends MyBuilderScaffold<THIS, PARENT>,
                     PARENT extends BuilderScaffold<?, PARENT>>
-            extends BaseAction.MyBuilderScaffold<ConvertAction, THIS, PARENT> {
-        private Feature.Builder<THIS> inputFeatureBuilder = null;
+            extends BaseAction.MyBuilderScaffold<ExtractAction, THIS, PARENT> {
         private Feature.Builder<THIS> outputFeatureBuilder = null;
 
         public MyBuilderScaffold() {
-            super(new ConvertAction());
+            super(new ExtractAction());
         }
 
         public MyBuilderScaffold(PARENT parent) {
-            super(parent, new ConvertAction());
+            super(parent, new ExtractAction());
         }
 
-        public THIS inputFeature(Feature inputFeature) {
-            product.inputFeature = inputFeature;
+        public THIS source(ExtractionSource source) {
+            product.source = source;
             return (THIS) this;
-        }
-
-        public Feature.Builder<THIS> inputFeature() {
-            this.inputFeatureBuilder = Feature.builder((THIS) this);
-            return this.inputFeatureBuilder;
         }
 
         public THIS outputFeature(Feature outputFeature) {
@@ -91,11 +85,8 @@ public class ConvertAction extends TransferAction {
         }
 
         @Override
-        public ConvertAction build() {
+        public ExtractAction build() {
             super.build();
-            if (this.inputFeatureBuilder != null) {
-                this.product.inputFeature = inputFeatureBuilder.build();
-            }
             if (this.outputFeatureBuilder != null) {
                 this.product.outputFeature = outputFeatureBuilder.build();
             }
