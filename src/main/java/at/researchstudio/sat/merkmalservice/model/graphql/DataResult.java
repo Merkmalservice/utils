@@ -1,11 +1,19 @@
 package at.researchstudio.sat.merkmalservice.model.graphql;
 
 public class DataResult {
-    private GraphQlResult data;
+    private GraphqlResult data;
 
     public DataResult() {}
 
-    public GraphQlResult getData() {
+    public DataResult(GraphqlResult data) {
+        this.data = data;
+    }
+
+    public GraphqlResult getData() {
         return data;
+    }
+
+    public void setData(GraphqlResult data) {
+        this.data = data;
     }
 }
