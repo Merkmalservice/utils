@@ -1,5 +1,6 @@
 package at.researchstudio.sat.merkmalservice.qudtifc;
 
+import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.toList;
 
 import at.researchstudio.sat.merkmalservice.model.ifc.IfcDerivedUnit;
@@ -310,11 +311,10 @@ public class QudtIfcMapper {
         }
         IfcUnitType type =
                 types.stream()
-                        .collect(Collectors.groupingBy(Function.identity(), toList()))
+                        .collect(Collectors.groupingBy(Function.identity(), counting()))
                         .entrySet()
                         .stream()
-                        .map(e -> Map.entry(e.getKey(), e.getValue().size()))
-                        .sorted((left, right) -> right.getValue() - left.getValue())
+                        .sorted((left, right) -> Long.signum(right.getValue() - left.getValue()))
                         .findFirst()
                         .map(e -> e.getKey())
                         .get();
