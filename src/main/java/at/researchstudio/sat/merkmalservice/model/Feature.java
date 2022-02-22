@@ -3,13 +3,15 @@ package at.researchstudio.sat.merkmalservice.model;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public abstract class Feature {
     private String name;
     private String description;
     private List<FeatureGroup> featureGroups;
     private Set<PropertySet> propertySets;
-    private transient Set<String> uniqueValues;
+    protected transient Set<String> uniqueValues;
+    protected List<EnumFeature.OptionValue> instanceValues;
 
     public Feature() {}
 
@@ -50,12 +52,20 @@ public abstract class Feature {
         this.featureGroups = featureGroups;
     }
 
+    public List<EnumFeature.OptionValue> getInstanceValues() {
+        return instanceValues;
+    }
+
     public Set<String> getUniqueValues() {
         return uniqueValues;
     }
 
     public void setUniqueValues(Set<String> uniqueValues) {
         this.uniqueValues = uniqueValues;
+        this.instanceValues =
+                uniqueValues.stream()
+                        .map(EnumFeature.MEStringValue::new)
+                        .collect(Collectors.toList());
     }
 
     public String getName() {
@@ -68,20 +78,6 @@ public abstract class Feature {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public void setDescriptionFromUniqueValues(Set<String> uniqueValues) {
-        setDescriptionFromUniqueValues(uniqueValues, "### Extracted Values:\n- `", "`\n- `", "`");
-    }
-
-    public void setDescriptionFromUniqueValues(
-            Set<String> uniqueValues, String prefix, String delimiter, String postfix) {
-        if (uniqueValues != null && uniqueValues.size() > 0) {
-            this.description =
-                    prefix
-                            + String.join(delimiter, uniqueValues)
-                            + ((postfix == null ? "" : postfix));
-        }
     }
 
     public List<FeatureGroup> getFeatureGroups() {

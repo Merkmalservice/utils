@@ -66,6 +66,10 @@ public class EnumFeature extends Feature {
     public static class MEStringValue extends OptionValue {
         private String stringValue;
 
+        public MEStringValue(String stringValue) {
+            this(stringValue, null);
+        }
+
         public MEStringValue(String stringValue, String description) {
             super(stringValue, description);
             this.stringValue = stringValue;
@@ -78,6 +82,10 @@ public class EnumFeature extends Feature {
 
     public static class MEIntegerValue extends OptionValue {
         private Integer integerValue;
+
+        public MEIntegerValue(Integer integerValue) {
+            this(integerValue, null);
+        }
 
         public MEIntegerValue(Integer integerValue, String description) {
             super(String.valueOf(integerValue), description);
@@ -92,6 +100,10 @@ public class EnumFeature extends Feature {
     public static class MEFloatValue extends OptionValue {
         private Float floatValue;
 
+        public MEFloatValue(Float floatValue) {
+            this(floatValue, null);
+        }
+
         public MEFloatValue(Float floatValue, String description) {
             super(String.valueOf(floatValue), description);
             this.floatValue = floatValue;
@@ -104,6 +116,10 @@ public class EnumFeature extends Feature {
 
     public static class MEBooleanValue extends OptionValue {
         private String name;
+
+        public MEBooleanValue(String name) {
+            this(String.valueOf(name), null);
+        }
 
         public MEBooleanValue(String name, String description) {
             super(name, description);

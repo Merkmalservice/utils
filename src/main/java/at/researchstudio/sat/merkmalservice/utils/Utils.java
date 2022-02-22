@@ -18,16 +18,16 @@ public class Utils {
             Pattern.compile("\\\\X2\\\\(.*?)\\\\X0\\\\", Pattern.CASE_INSENSITIVE);
 
     public static void writeToJson(
-            String outputFileName, JsonModel jsonModel, boolean withDescription)
+            String outputFileName, JsonModel jsonModel, boolean withInstanceValues)
             throws IOException {
         try (FileWriter jsonFileWriter = new FileWriter(outputFileName, StandardCharsets.UTF_8)) {
-            if (withDescription) {
+            if (withInstanceValues) {
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
                 gson.toJson(jsonModel, jsonFileWriter);
             } else {
                 Gson gson =
                         new GsonBuilder()
-                                .setExclusionStrategies(new ExcludeDescriptionStrategy())
+                                .setExclusionStrategies(new ExcludeInstanceValuesStrategy())
                                 .setPrettyPrinting()
                                 .create();
                 gson.toJson(jsonModel, jsonFileWriter);
@@ -38,16 +38,16 @@ public class Utils {
     }
 
     public static void writeFeaturesToJson(
-            String outputFileName, List<Feature> extractedFeatures, boolean withDescription)
+            String outputFileName, List<Feature> extractedFeatures, boolean withInstanceValues)
             throws IOException {
         try (FileWriter jsonFileWriter = new FileWriter(outputFileName, StandardCharsets.UTF_8)) {
-            if (withDescription) {
+            if (withInstanceValues) {
                 Gson gson = new GsonBuilder().setPrettyPrinting().create();
                 gson.toJson(extractedFeatures, jsonFileWriter);
             } else {
                 Gson gson =
                         new GsonBuilder()
-                                .setExclusionStrategies(new ExcludeDescriptionStrategy())
+                                .setExclusionStrategies(new ExcludeInstanceValuesStrategy())
                                 .setPrettyPrinting()
                                 .create();
                 gson.toJson(extractedFeatures, jsonFileWriter);
