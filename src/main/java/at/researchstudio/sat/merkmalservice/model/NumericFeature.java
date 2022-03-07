@@ -44,24 +44,26 @@ public class NumericFeature extends Feature {
     @Override
     public void setUniqueValues(Set<String> uniqueValues) {
         this.uniqueValues = uniqueValues;
-        this.instanceValues =
-                uniqueValues.stream()
-                        .map(
-                                uniqueValue -> {
-                                    try {
-                                        return new EnumFeature.MEIntegerValue(
-                                                Integer.parseInt(uniqueValue));
-                                    } catch (NumberFormatException nfe) {
+        if (Objects.nonNull(uniqueValues)) {
+            this.instanceValues =
+                    uniqueValues.stream()
+                            .map(
+                                    uniqueValue -> {
                                         try {
-                                            return new EnumFeature.MEFloatValue(
-                                                    Float.parseFloat(uniqueValue));
-                                        } catch (NumberFormatException nfe2) {
-                                            return null;
+                                            return new EnumFeature.MEIntegerValue(
+                                                    Integer.parseInt(uniqueValue));
+                                        } catch (NumberFormatException nfe) {
+                                            try {
+                                                return new EnumFeature.MEFloatValue(
+                                                        Float.parseFloat(uniqueValue));
+                                            } catch (NumberFormatException nfe2) {
+                                                return null;
+                                            }
                                         }
-                                    }
-                                })
-                        .filter(Objects::nonNull)
-                        .collect(Collectors.toList());
+                                    })
+                            .filter(Objects::nonNull)
+                            .collect(Collectors.toList());
+        }
     }
 
     private class FeatureType {
