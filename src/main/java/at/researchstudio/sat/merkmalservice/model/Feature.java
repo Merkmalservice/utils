@@ -62,10 +62,12 @@ public abstract class Feature {
 
     public void setUniqueValues(Set<String> uniqueValues) {
         this.uniqueValues = uniqueValues;
-        this.instanceValues =
-                uniqueValues.stream()
-                        .map(EnumFeature.MEStringValue::new)
-                        .collect(Collectors.toList());
+        if (Objects.nonNull(uniqueValues)) {
+            this.instanceValues =
+                    uniqueValues.stream()
+                            .map(EnumFeature.MEStringValue::new)
+                            .collect(Collectors.toList());
+        }
     }
 
     public String getName() {
