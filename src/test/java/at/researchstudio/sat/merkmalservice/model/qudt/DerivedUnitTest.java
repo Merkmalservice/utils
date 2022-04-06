@@ -80,7 +80,6 @@ public class DerivedUnitTest {
     public void testDeepFactorUnitWithDuplicateUnitExponentCombination() {
         Unit du = Qudt.Units.N__M__PER__KiloGM;
         boolean matches = du.matches(Qudt.Units.N, 1, Qudt.Units.KiloGM, -1, Qudt.Units.M, 1);
-        System.out.println(matches);
         assertTrue(matches);
         assertTrue(
                 du.matches(

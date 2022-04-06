@@ -4,7 +4,7 @@ import at.researchstudio.sat.merkmalservice.model.IBuilder;
 
 public class StringFeatureType extends FeatureType {
     public StringFeatureType() {
-        super(Types.StringValue.name());
+        super(Types.StringType.name());
     }
 
     public static class Builder implements IBuilder<StringFeatureType> {

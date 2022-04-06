@@ -4,7 +4,7 @@ import at.researchstudio.sat.merkmalservice.model.IBuilder;
 
 public class ReferenceFeatureType extends FeatureType {
     public ReferenceFeatureType() {
-        super(Types.ReferenceValue.name());
+        super(Types.ReferenceType.name());
     }
 
     public static class Builder implements IBuilder<ReferenceFeatureType> {

@@ -70,6 +70,5 @@ public class JacksonDeserializeTest {
                         new StringFeatureType());
         StringWriter w = new StringWriter();
         new ObjectMapper().writer().writeValue(w, f);
-        System.out.println(w.toString());
     }
 }

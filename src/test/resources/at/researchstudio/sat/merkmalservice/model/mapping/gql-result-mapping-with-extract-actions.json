@@ -24,7 +24,7 @@
                 "id": "urn:uuid:9a9f21c1-f9ac-495f-9413-19cbfe6d54aa",
                 "name": "Formel_1",
                 "type": {
-                  "__typename": "StringValue"
+                  "__typename": "StringType"
                 }
               }
             },
@@ -36,7 +36,7 @@
                 "id": "urn:uuid:d21cb03a-4e7c-493b-b90c-b922c5c18144",
                 "name": "Formel_2",
                 "type": {
-                  "__typename": "StringValue"
+                  "__typename": "StringType"
                 }
               }
             }
