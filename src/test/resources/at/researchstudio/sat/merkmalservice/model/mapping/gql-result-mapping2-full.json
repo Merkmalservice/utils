@@ -19,7 +19,7 @@
                 "id": "urn:uuid:a474411a-a495-4cec-b8bd-c20047ee3fee",
                 "name": "5dki Betongüte",
                 "type": {
-                  "__typename": "EnumerationValue",
+                  "__typename": "EnumerationType",
                   "id": "urn:uuid:9b0b9c05-6088-40db-bc63-1621ce106699",
                   "allowMultiple": false,
                   "options": [
@@ -110,7 +110,7 @@
             "feature": {
               "id": "urn:uuid:e521f11d-7240-45e5-adc5-01f4ed95e90e",
               "name": "5D.Bauteil.Beschreibung",
-              "type": { "__typename": "StringValue" }
+              "type": { "__typename": "StringType" }
             },
             "predicate": "CONTAINS",
             "value": { "stringValue": "C12/15" }

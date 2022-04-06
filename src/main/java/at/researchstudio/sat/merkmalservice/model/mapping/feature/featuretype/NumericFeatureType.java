@@ -11,7 +11,7 @@ public class NumericFeatureType extends FeatureType {
     private Unit unit;
 
     public NumericFeatureType(QuantityKind quantityKind, Unit unit) {
-        super(Types.NumericValue.name());
+        super(Types.NumericType.name());
         this.quantityKind = quantityKind;
         this.unit = unit;
     }
@@ -21,7 +21,7 @@ public class NumericFeatureType extends FeatureType {
     }
 
     public NumericFeatureType() {
-        super(Types.NumericValue.name());
+        super(Types.NumericType.name());
     }
 
     public QuantityKind getQuantityKind() {

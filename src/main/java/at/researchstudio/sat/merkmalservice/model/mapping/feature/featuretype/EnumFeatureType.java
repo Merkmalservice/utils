@@ -13,11 +13,11 @@ public class EnumFeatureType extends FeatureType {
     private Boolean allowMultiple;
 
     public EnumFeatureType() {
-        super(Types.EnumerationValue.name());
+        super(Types.EnumerationType.name());
     }
 
     public EnumFeatureType(List<OptionValue> options, Boolean allowMultiple) {
-        super(Types.EnumerationValue.name());
+        super(Types.EnumerationType.name());
         Objects.requireNonNull(options);
         Objects.requireNonNull(allowMultiple);
         this.options = options;

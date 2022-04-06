@@ -23,7 +23,7 @@
                 "id": "urn:uuid:da837b76-9254-4e4b-a6dc-8a9447961c42",
                 "name": "cpiFitMatchKey",
                 "type": {
-                  "__typename": "EnumerationValue",
+                  "__typename": "EnumerationType",
                   "id": "urn:uuid:f62d5efa-6e9a-42b5-88fa-8a2efa2ffa49",
                   "allowMultiple": false,
                   "options": [
@@ -89,7 +89,7 @@
                 "id": "urn:uuid:d0672a75-dae0-44f6-8bcd-8f0beb24b7e2",
                 "name": "cpiComponentType",
                 "type": {
-                  "__typename": "EnumerationValue",
+                  "__typename": "EnumerationType",
                   "id": "urn:uuid:4bfbfc72-6445-41aa-8105-aa0170e42680",
                   "allowMultiple": false,
                   "options": [
@@ -235,7 +235,7 @@
                 "id": "urn:uuid:20e2a561-1157-4f7a-91d8-06ad8beae946",
                 "name": "Tragwerk",
                 "type": {
-                  "__typename": "BooleanValue"
+                  "__typename": "BooleanType"
                 }
               },
               "value": {
@@ -249,7 +249,7 @@
                 "id": "urn:uuid:2541fefb-50e8-4fd2-bd8f-4cc6e0ac711a",
                 "name": "5dki Bewehrung Stab kg pro m3",
                 "type": {
-                  "__typename": "NumericValue",
+                  "__typename": "NumericType",
                   "quantityKind": {
                     "id": "http://qudt.org/vocab/quantitykind/Dimensionless",
                     "label": "Dimensionless"
@@ -277,14 +277,14 @@
                 "id": "urn:uuid:15405409-6c76-42e9-9ea1-52ab80f5d86b",
                 "name": "Width",
                 "type": {
-                  "__typename": "NumericValue"
+                  "__typename": "NumericType"
                 }
               },
               "outputFeature": {
                 "id": "urn:uuid:3bb24fc0-d23a-47a4-8839-cbd0cecebca0",
                 "name": "Breite",
                 "type": {
-                  "__typename": "NumericValue"
+                  "__typename": "NumericType"
                 }
               }
             }
@@ -303,7 +303,7 @@
               "id": "urn:uuid:e521f11d-7240-45e5-adc5-01f4ed95e90e",
               "name": "5D.Bauteil.Beschreibung",
               "type": {
-                "__typename": "StringValue"
+                "__typename": "StringType"
               }
             },
             "predicate": "CONTAINS",

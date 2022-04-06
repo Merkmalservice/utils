@@ -14,7 +14,7 @@
           "id": "urn:uuid:5d38dc66-f3f0-4962-8b7b-08a350ef8b4e",
           "name": "2D Drehfl�gel links sichtbar",
           "type": {
-            "__typename": "BooleanValue"
+            "__typename": "BooleanType"
           }
         },
         "predicate": "PRESENT",

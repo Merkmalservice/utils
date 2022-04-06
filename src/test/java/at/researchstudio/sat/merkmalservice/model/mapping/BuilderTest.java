@@ -41,7 +41,7 @@ public class BuilderTest {
                         .build();
         Assertions.assertEquals(MappingPredicate.PRESENT, c.getPredicate());
         Assertions.assertEquals("someFeature", c.getFeature().getName());
-        Assertions.assertEquals("EnumerationValue", c.getFeature().getType().getType());
+        Assertions.assertEquals("EnumerationType", c.getFeature().getType().getType());
     }
 
     @Test

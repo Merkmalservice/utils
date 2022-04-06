@@ -9,20 +9,20 @@ import java.util.Objects;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "__typename")
 @JsonSubTypes({
-    @JsonSubTypes.Type(name = "BooleanValue", value = BooleanFeatureType.class),
-    @JsonSubTypes.Type(name = "StringValue", value = StringFeatureType.class),
-    @JsonSubTypes.Type(name = "ReferenceValue", value = ReferenceFeatureType.class),
-    @JsonSubTypes.Type(name = "NumericValue", value = NumericFeatureType.class),
-    @JsonSubTypes.Type(name = "EnumerationValue", value = EnumFeatureType.class),
+    @JsonSubTypes.Type(name = "BooleanType", value = BooleanFeatureType.class),
+    @JsonSubTypes.Type(name = "StringType", value = StringFeatureType.class),
+    @JsonSubTypes.Type(name = "ReferenceType", value = ReferenceFeatureType.class),
+    @JsonSubTypes.Type(name = "NumericType", value = NumericFeatureType.class),
+    @JsonSubTypes.Type(name = "EnumerationType", value = EnumFeatureType.class),
 })
 public abstract class FeatureType {
 
     public static enum Types {
-        BooleanValue,
-        StringValue,
-        ReferenceValue,
-        NumericValue,
-        EnumerationValue;
+        BooleanType,
+        StringType,
+        ReferenceType,
+        NumericType,
+        EnumerationType;
     }
 
     @JsonIgnore private String type;

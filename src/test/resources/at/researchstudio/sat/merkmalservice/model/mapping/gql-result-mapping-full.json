@@ -18,7 +18,7 @@
                 "id": "urn:uuid:687c2f9c-dc9d-44bd-ac0a-a35e937169b1",
                 "name": "3D.Bauteil",
                 "type": {
-                  "__typename": "StringValue"
+                  "__typename": "StringType"
                 }
               },
               "id": "urn:uuid:9a06b7fe-8af5-44d0-b732-a069201bd2fd"
@@ -32,7 +32,7 @@
           "id": "urn:uuid:687c2f9c-dc9d-44bd-ac0a-a35e937169b1",
           "name": "3D.Bauteil",
           "type": {
-            "__typename": "StringValue"
+            "__typename": "StringType"
           }
         },
         "predicate": "PRESENT",
